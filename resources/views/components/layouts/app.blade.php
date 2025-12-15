@@ -22,7 +22,7 @@
                     <li><a href="{{ route('suppliers.index') }}" class="hover:text-blue-100 transition flex items-center gap-2"><i class="fas fa-truck"></i> Suppliers</a></li>
                     <li><a href="{{ route('purchases.index') }}" class="hover:text-blue-100 transition flex items-center gap-2"><i class="fas fa-shopping-cart"></i> Purchases</a></li>
                     <li><a href="{{ route('sales.index') }}" class="hover:text-blue-100 transition flex items-center gap-2"><i class="fas fa-cash-register"></i> Sales</a></li>
-                    <li><a href="#dashboard" class="hover:text-blue-100 transition flex items-center gap-2"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                    <li><a href="{{ route('dashboard') }}" class="hover:text-blue-100 transition flex items-center gap-2"><i class="fas fa-chart-line"></i> Dashboard</a></li>
                 </ul>
             </div>
         </div>
