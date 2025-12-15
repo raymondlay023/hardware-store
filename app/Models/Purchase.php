@@ -8,6 +8,11 @@ class Purchase extends Model
 {
     protected $fillable = ['supplier_id', 'total_amount', 'date', 'status'];
 
+    protected $casts = [
+        'date' => 'datetime',
+        'total_amount' => 'decimal:2',
+    ];
+
     public function supplier()
     {
         return $this->belongsTo(Supplier::class);

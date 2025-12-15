@@ -41,6 +41,12 @@ class CreateProduct extends Component
         $this->dispatch('product-created');
     }
 
+     public function cancel()
+    {
+        $this->reset();
+        $this->dispatch('close-create-form');
+    }
+
     public function render()
     {
         $suppliers = Supplier::all();

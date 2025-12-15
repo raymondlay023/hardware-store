@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Livewire\Products;
+namespace App\Livewire\Suppliers;
 
-use App\Models\Product;
+use App\Models\Supplier;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class ProductList extends Component
+class SupplierList extends Component
 {
     use WithPagination;
 
@@ -19,8 +19,8 @@ class ProductList extends Component
         $this->resetPage();
     }
 
-     #[On('product-created')]
-    public function productCreated()
+    #[On('supplier-created')]
+    public function supplierCreated()
     {
         $this->showCreateForm = false;
         $this->resetPage();
@@ -32,19 +32,19 @@ class ProductList extends Component
         $this->showCreateForm = false;
     }
 
-    public function deleteProduct($id)
+    public function deleteSupplier($id)
     {
-        Product::find($id)->delete();
-        $this->dispatch('notification', message: 'Product deleted successfully');
+        Supplier::find($id)->delete();
+        $this->dispatch('notification', message: 'Supplier deleted successfully');
     }
 
     public function render()
     {
-        $products = Product::query()
+        $suppliers = Supplier::query()
             ->where('name', 'like', '%' . $this->search . '%')
-            ->orWhere('category', 'like', '%' . $this->search . '%')
+            ->orWhere('contact', 'like', '%' . $this->search . '%')
             ->paginate(10);
 
-        return view('livewire.products.product-list', ['products' => $products]);
+        return view('livewire.suppliers.supplier-list', ['suppliers' => $suppliers]);
     }
 }
