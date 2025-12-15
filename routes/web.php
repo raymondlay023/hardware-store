@@ -7,18 +7,35 @@ use App\Livewire\Purchases\PurchaseList;
 use App\Livewire\Sales\SaleList;
 use App\Livewire\Dashboard\DashboardView;
 
-Route::get('/dashboard', DashboardView::class)->name('dashboard');
-Route::get('/', function () {
-    return redirect()->route('dashboard');
+Route::middleware(['auth'])->group(function () {
+    // Dashboard - accessible by admin and manager only
+    Route::middleware('role:admin,manager')->group(function () {
+        Route::get('/dashboard', DashboardView::class)->name('dashboard');
+    });
+
+    // Products - accessible by admin and manager
+    Route::middleware('role:admin,manager')->group(function () {
+        Route::get('/products', ProductList::class)->name('products.index');
+    });
+
+    // Suppliers - accessible by admin and manager
+    Route::middleware('role:admin,manager')->group(function () {
+        Route::get('/suppliers', SupplierList::class)->name('suppliers.index');
+    });
+
+    // Purchases - accessible by admin and manager
+    Route::middleware('role:admin,manager')->group(function () {
+        Route::get('/purchases', PurchaseList::class)->name('purchases.index');
+    });
+
+    // Sales - accessible by all roles (admin, manager, cashier)
+    Route::get('/sales', SaleList::class)->name('sales.index');
 });
 
+Route::view('/', 'welcome');
 
-Route::get('/sales', SaleList::class)->name('sales.index');
-Route::get('/purchases', PurchaseList::class)->name('purchases.index');
-Route::get('/suppliers', SupplierList::class)->name('suppliers.index');
-Route::get('/products', ProductList::class)->name('products.index');
+Route::view('profile', 'profile')
+    ->middleware(['auth'])
+    ->name('profile.edit');
 
-
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+require __DIR__.'/auth.php';

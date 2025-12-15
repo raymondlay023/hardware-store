@@ -3,6 +3,7 @@
 namespace App\Livewire\Sales;
 
 use App\Models\Sale;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -12,8 +13,11 @@ class SaleList extends Component
     use WithPagination;
 
     public $search = '';
+
     public $showCreateForm = false;
+
     public $dateFrom = '';
+
     public $dateTo = '';
 
     public function updatedSearch()
@@ -57,12 +61,17 @@ class SaleList extends Component
         $this->dispatch('notification', message: 'Sale deleted and stock restored');
     }
 
+    public function canDeleteSale()
+    {
+        return Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists();
+    }
+
     public function render()
     {
         $query = Sale::with('saleItems.product');
 
         if ($this->search) {
-            $query->where('customer_name', 'like', '%' . $this->search . '%');
+            $query->where('customer_name', 'like', '%'.$this->search.'%');
         }
 
         if ($this->dateFrom) {
