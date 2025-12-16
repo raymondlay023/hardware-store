@@ -35,13 +35,34 @@
                 <div
                     class="sticky top-0 bg-gradient-to-r from-green-500 to-green-600 px-6 py-4 flex justify-between items-center">
                     <h2 class="text-xl font-bold text-white">Add New Product</h2>
-                    <button wire:click="$toggle('showCreateForm')" class="text-white hover:text-gray-200 transition">
+                    <button wire:click="$set('showCreateForm', false)"
+                        class="text-white hover:text-gray-200 transition">
                         <i class="fas fa-times text-xl"></i>
                     </button>
                 </div>
 
                 <div class="p-6">
-                    <livewire:products.create-product />
+                    <livewire:products.product-form :key="'create-' . time()" />
+                </div>
+            </div>
+        </div>
+    @endif
+
+    <!-- Edit Form Modal -->
+    @if ($editingProductId)
+        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+                <div
+                    class="sticky top-0 bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4 flex justify-between items-center">
+                    <h2 class="text-xl font-bold text-white"><i class="fas fa-edit mr-2"></i>Edit Product</h2>
+                    <button wire:click="$set('editingProductId', null)"
+                        class="text-white hover:text-gray-200 transition">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <div class="p-6">
+                    <livewire:products.product-form :productId="$editingProductId" :key="'edit-' . $editingProductId" />
                 </div>
             </div>
         </div>
@@ -97,7 +118,7 @@
                             </td>
                             <td class="px-6 py-4 text-center">
                                 <div class="flex gap-2 justify-center">
-                                    <button wire:click="$dispatch('edit-product', { id: {{ $product->id }} })"
+                                    <button wire:click="editProduct({{ $product->id }})"
                                         class="p-2 text-blue-600 hover:bg-blue-50 rounded transition" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </button>
@@ -134,7 +155,4 @@
             {{ $products->links() }}
         </div>
     </div>
-
-    <!-- Edit Product Modal -->
-    <livewire:products.edit-product />
 </div>

@@ -16,6 +16,8 @@ class ProductList extends Component
 
     public $showCreateForm = false;
 
+    public $editingProductId = null;
+
     public $filterStockLevel = 'all'; // all, low, critical
 
     public function updatedSearch()
@@ -35,10 +37,21 @@ class ProductList extends Component
         $this->resetPage();
     }
 
+    #[On('product-updated')]
+    public function productUpdated()
+    {
+        $this->editingProductId = null;
+    }
+
     #[On('close-create-form')]
     public function closeCreateForm()
     {
         $this->showCreateForm = false;
+    }
+
+    public function editProduct($id)
+    {
+        $this->editingProductId = $id;
     }
 
     public function deleteProduct($id)
