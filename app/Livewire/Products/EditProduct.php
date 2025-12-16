@@ -28,6 +28,17 @@ class EditProduct extends Component
     #[Validate('nullable|exists:suppliers,id')]
     public $supplier_id = '';
 
+    #[Validate('nullable|integer|min:1')]
+    public $low_stock_threshold = 10;
+
+    #[Validate('nullable|integer|min:1')]
+    public $critical_stock_threshold = 5;
+
+    public $auto_reorder_enabled = false;
+
+    #[Validate('nullable|integer|min:1')]
+    public $reorder_quantity = '';
+
     #[On('edit-product')]
     public function editProduct($id)
     {
@@ -40,6 +51,10 @@ class EditProduct extends Component
             $this->unit = $this->product->unit;
             $this->price = $this->product->price;
             $this->supplier_id = $this->product->supplier_id;
+            $this->low_stock_threshold = $this->product->low_stock_threshold;
+            $this->critical_stock_threshold = $this->product->critical_stock_threshold;
+            $this->auto_reorder_enabled = $this->product->auto_reorder_enabled;
+            $this->reorder_quantity = $this->product->reorder_quantity;            
         }
     }
 
@@ -54,6 +69,10 @@ class EditProduct extends Component
                 'unit' => $this->unit,
                 'price' => $this->price,
                 'supplier_id' => $this->supplier_id ?: null,
+                'low_stock_threshold' => $this->low_stock_threshold,
+                'critical_stock_threshold' => $this->critical_stock_threshold,
+                'auto_reorder_enabled' => $this->auto_reorder_enabled,
+                'reorder_quantity' => $this->reorder_quantity,
             ]);
         }
 

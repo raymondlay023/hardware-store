@@ -6,7 +6,21 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    protected $fillable = ['name', 'category', 'unit', 'price', 'current_stock', 'supplier_id'];
+    protected $fillable = [
+        'name', 'category', 'unit', 'price', 'current_stock', 'supplier_id',
+        'barcode', 'low_stock_threshold', 'critical_stock_threshold',
+        'auto_reorder_enabled', 'reorder_quantity',
+    ];
+
+    public function isLowStock()
+    {
+        return $this->current_stock < $this->low_stock_threshold;
+    }
+
+    public function isCriticalStock()
+    {
+        return $this->current_stock < $this->critical_stock_threshold;
+    }
 
     public function supplier()
     {

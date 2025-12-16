@@ -6,8 +6,7 @@
                 <h1 class="text-4xl font-bold text-gray-900 mb-2">Product Inventory</h1>
                 <p class="text-gray-600">Manage your construction materials and supplies</p>
             </div>
-            <button 
-                wire:click="$toggle('showCreateForm')"
+            <button wire:click="$toggle('showCreateForm')"
                 class="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-lg hover:from-green-600 hover:to-green-700 transition shadow-lg flex items-center gap-2">
                 <i class="fas fa-plus"></i> Add New Product
             </button>
@@ -15,30 +14,32 @@
     </div>
 
     <!-- Search and Filter -->
-    <div class="mb-6">
-        <div class="relative">
+    <div class="mb-6 flex gap-6">
+        <div class="flex-1 relative">
             <i class="fas fa-search absolute left-4 top-3 text-gray-400"></i>
-            <input 
-                type="text" 
-                wire:model.live="search" 
-                placeholder="Search by product name or category..."
+            <input type="text" wire:model.live="search" placeholder="Search by product name or category..."
                 class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm">
         </div>
+        <select wire:model.live="filterStockLevel"
+            class="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm">
+            <option value="all">All Products</option>
+            <option value="low">Low Stock</option>
+            <option value="critical">Critical Stock</option>
+        </select>
     </div>
 
     <!-- Create Form Modal -->
-    @if($showCreateForm)
+    @if ($showCreateForm)
         <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div class="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-                <div class="sticky top-0 bg-gradient-to-r from-green-500 to-green-600 px-6 py-4 flex justify-between items-center">
+                <div
+                    class="sticky top-0 bg-gradient-to-r from-green-500 to-green-600 px-6 py-4 flex justify-between items-center">
                     <h2 class="text-xl font-bold text-white">Add New Product</h2>
-                    <button 
-                        wire:click="$toggle('showCreateForm')"
-                        class="text-white hover:text-gray-200 transition">
+                    <button wire:click="$toggle('showCreateForm')" class="text-white hover:text-gray-200 transition">
                         <i class="fas fa-times text-xl"></i>
                     </button>
                 </div>
-                
+
                 <div class="p-6">
                     <livewire:products.create-product />
                 </div>
@@ -73,20 +74,20 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-gray-600">{{ ucfirst($product->unit) }}</td>
-                            <td class="px-6 py-4 font-semibold text-gray-900">${{ number_format($product->price, 2) }}</td>
+                            <td class="px-6 py-4 font-semibold text-gray-900">${{ number_format($product->price, 2) }}
+                            </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-2">
-                                    <span class="px-3 py-1 rounded-full text-sm font-semibold
-                                        @if($product->current_stock < 5)
-                                            bg-red-100 text-red-800
+                                    <span
+                                        class="px-3 py-1 rounded-full text-sm font-semibold
+                                        @if ($product->current_stock < 5) bg-red-100 text-red-800
                                         @elseif($product->current_stock < 10)
                                             bg-yellow-100 text-yellow-800
                                         @else
-                                            bg-green-100 text-green-800
-                                        @endif">
+                                            bg-green-100 text-green-800 @endif">
                                         {{ $product->current_stock }} {{ $product->unit }}
                                     </span>
-                                    @if($product->current_stock < 10)
+                                    @if ($product->current_stock < 10)
                                         <i class="fas fa-exclamation-circle text-orange-500"></i>
                                     @endif
                                 </div>
@@ -96,13 +97,18 @@
                             </td>
                             <td class="px-6 py-4 text-center">
                                 <div class="flex gap-2 justify-center">
-                                    <button 
-                                        wire:click="$dispatch('edit-product', { id: {{ $product->id }} })"
+                                    <button wire:click="$dispatch('edit-product', { id: {{ $product->id }} })"
                                         class="p-2 text-blue-600 hover:bg-blue-50 rounded transition" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button 
-                                        wire:click="deleteProduct({{ $product->id }})"
+                                    @if ($product->isLowStock() && $product->auto_reorder_enabled && $product->supplier_id)
+                                        <button wire:click="autoReorder({{ $product->id }})"
+                                            class="p-2 text-green-600 hover:bg-green-50 rounded transition"
+                                            title="Auto Reorder">
+                                            <i class="fas fa-redo"></i>
+                                        </button>
+                                    @endif
+                                    <button wire:click="deleteProduct({{ $product->id }})"
                                         wire:confirm="Are you sure you want to delete this product?"
                                         class="p-2 text-red-600 hover:bg-red-50 rounded transition" title="Delete">
                                         <i class="fas fa-trash"></i>
