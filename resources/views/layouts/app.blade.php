@@ -20,7 +20,7 @@
         <div class="min-h-screen">
             
             <livewire:notifications.toast-notification />
-            
+            <livewire:sales.sale-details />
             <!-- Navigation -->
             <livewire:layout.navigation />
 

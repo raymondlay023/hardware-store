@@ -3,8 +3,7 @@
 use App\Livewire\Actions\Logout;
 use Livewire\Volt\Component;
 
-new class extends Component
-{
+new class extends Component {
     /**
      * Log the current user out of the application.
      */
@@ -22,7 +21,8 @@ new class extends Component
             <!-- Logo and Brand -->
             <div class="flex items-center">
                 <div class="shrink-0 flex items-center gap-3">
-                    <a href="{{ route('dashboard') }}" wire:navigate class="flex items-center gap-3 hover:opacity-90 transition">
+                    <a href="{{ route('dashboard') }}" wire:navigate
+                        class="flex items-center gap-3 hover:opacity-90 transition">
                         <i class="fas fa-hammer text-2xl"></i>
                         <span class="text-2xl font-bold">Hardware Store</span>
                     </a>
@@ -32,37 +32,54 @@ new class extends Component
                 <div class="hidden md:flex md:items-center md:gap-8 md:ms-10">
                     @auth
                         <!-- Dashboard - Admin & Manager only -->
-                        @if(Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
-                            <a href="{{ route('dashboard') }}" wire:navigate class="hover:text-blue-100 transition flex items-center gap-2 {{ request()->routeIs('dashboard') ? 'border-b-2 border-white pb-1' : '' }}">
+                        @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
+                            <a href="{{ route('dashboard') }}" wire:navigate
+                                class="hover:text-blue-100 transition flex items-center gap-2 {{ request()->routeIs('dashboard') ? 'border-b-2 border-white pb-1' : '' }}">
                                 <i class="fas fa-chart-line"></i> Dashboard
                             </a>
                         @endif
 
                         <!-- Products - Admin & Manager only -->
-                        @if(Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
-                            <a href="{{ route('products.index') }}" wire:navigate class="hover:text-blue-100 transition flex items-center gap-2 {{ request()->routeIs('products.*') ? 'border-b-2 border-white pb-1' : '' }}">
+                        @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
+                            <a href="{{ route('products.index') }}" wire:navigate
+                                class="hover:text-blue-100 transition flex items-center gap-2 {{ request()->routeIs('products.*') ? 'border-b-2 border-white pb-1' : '' }}">
                                 <i class="fas fa-box"></i> Products
                             </a>
                         @endif
 
                         <!-- Suppliers - Admin & Manager only -->
-                        @if(Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
-                            <a href="{{ route('suppliers.index') }}" wire:navigate class="hover:text-blue-100 transition flex items-center gap-2 {{ request()->routeIs('suppliers.*') ? 'border-b-2 border-white pb-1' : '' }}">
+                        @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
+                            <a href="{{ route('suppliers.index') }}" wire:navigate
+                                class="hover:text-blue-100 transition flex items-center gap-2 {{ request()->routeIs('suppliers.*') ? 'border-b-2 border-white pb-1' : '' }}">
                                 <i class="fas fa-truck"></i> Suppliers
                             </a>
                         @endif
 
                         <!-- Purchases - Admin & Manager only -->
-                        @if(Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
-                            <a href="{{ route('purchases.index') }}" wire:navigate class="hover:text-blue-100 transition flex items-center gap-2 {{ request()->routeIs('purchases.*') ? 'border-b-2 border-white pb-1' : '' }}">
+                        @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
+                            <a href="{{ route('purchases.index') }}" wire:navigate
+                                class="hover:text-blue-100 transition flex items-center gap-2 {{ request()->routeIs('purchases.*') ? 'border-b-2 border-white pb-1' : '' }}">
                                 <i class="fas fa-shopping-cart"></i> Purchases
                             </a>
                         @endif
 
                         <!-- Sales - All roles -->
-                        <a href="{{ route('sales.index') }}" wire:navigate class="hover:text-blue-100 transition flex items-center gap-2 {{ request()->routeIs('sales.*') ? 'border-b-2 border-white pb-1' : '' }}">
+                        <a href="{{ route('sales.index') }}" wire:navigate
+                            class="hover:text-blue-100 transition flex items-center gap-2 {{ request()->routeIs('sales.*') ? 'border-b-2 border-white pb-1' : '' }}">
                             <i class="fas fa-cash-register"></i> Sales
                         </a>
+
+                        @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
+                            <a href="{{ route('sales-report') }}" @class([
+                                'px-3 py-2 rounded-md text-sm font-medium',
+                                'bg-blue-700 text-white' => request()->routeIs('sales-report'),
+                                'text-gray-300 hover:bg-blue-700 hover:text-white' => !request()->routeIs(
+                                    'sales-report'),
+                            ])>
+                                <i class="fas fa-chart-line mr-2"></i> Sales Report
+                            </a>
+                        @endif
+
                     @endauth
                 </div>
             </div>
@@ -85,8 +102,10 @@ new class extends Component
                                 <p class="text-sm font-semibold text-gray-900">{{ Auth::user()->name }}</p>
                                 <p class="text-xs text-gray-600">{{ Auth::user()->email }}</p>
                                 <p class="text-xs text-blue-600 font-semibold mt-1">
-                                    @foreach(Auth::user()->roles as $role)
-                                        {{ ucfirst($role->name) }}@if(!$loop->last), @endif
+                                    @foreach (Auth::user()->roles as $role)
+                                        {{ ucfirst($role->name) }}@if (!$loop->last)
+                                            ,
+                                        @endif
                                     @endforeach
                                 </p>
                             </div>
@@ -97,7 +116,7 @@ new class extends Component
                             </x-dropdown-link>
 
                             <!-- Admin Only: User Management -->
-                            @if(Auth::user()->roles()->where('name', 'admin')->exists())
+                            @if (Auth::user()->roles()->where('name', 'admin')->exists())
                                 <x-dropdown-link href="#users">
                                     <i class="fas fa-users me-2"></i> Manage Users
                                 </x-dropdown-link>
@@ -106,7 +125,8 @@ new class extends Component
                             <!-- Logout -->
                             <button wire:click="logout" class="w-full text-start border-t border-gray-200">
                                 <x-dropdown-link>
-                                    <i class="fas fa-sign-out-alt me-2 text-red-600"></i> <span class="text-red-600">Log Out</span>
+                                    <i class="fas fa-sign-out-alt me-2 text-red-600"></i> <span class="text-red-600">Log
+                                        Out</span>
                                 </x-dropdown-link>
                             </button>
                         </x-slot>
@@ -114,7 +134,8 @@ new class extends Component
                 @endauth
 
                 @guest
-                    <a href="{{ route('login') }}" class="bg-white text-blue-600 px-4 py-2 rounded-lg font-semibold hover:bg-blue-50 transition text-sm">
+                    <a href="{{ route('login') }}"
+                        class="bg-white text-blue-600 px-4 py-2 rounded-lg font-semibold hover:bg-blue-50 transition text-sm">
                         <i class="fas fa-sign-in-alt"></i> Login
                     </a>
                 @endguest
@@ -123,12 +144,17 @@ new class extends Component
             <!-- Mobile Menu Button -->
             <div class="md:hidden flex items-center">
                 @auth
-                    <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md hover:bg-blue-500 focus:outline-none transition">
-                        <svg class="h-6 w-6" :class="{'hidden': open, 'inline-flex': ! open }" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    <button @click="open = ! open"
+                        class="inline-flex items-center justify-center p-2 rounded-md hover:bg-blue-500 focus:outline-none transition">
+                        <svg class="h-6 w-6" :class="{ 'hidden': open, 'inline-flex': !open }" stroke="currentColor"
+                            fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
-                        <svg class="h-6 w-6" :class="{'hidden': ! open, 'inline-flex': open }" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        <svg class="h-6 w-6" :class="{ 'hidden': !open, 'inline-flex': open }" stroke="currentColor"
+                            fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 @endauth
@@ -143,39 +169,44 @@ new class extends Component
     </div>
 
     <!-- Mobile Responsive Menu -->
-    <div :class="{'block': open, 'hidden': ! open }" class="hidden md:hidden">
+    <div :class="{ 'block': open, 'hidden': !open }" class="hidden md:hidden">
         @auth
             <div class="pt-2 pb-3 space-y-1">
                 <!-- Dashboard -->
-                @if(Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
-                    <a href="{{ route('dashboard') }}" wire:navigate class="block px-3 py-2 rounded-md hover:bg-blue-500 transition {{ request()->routeIs('dashboard') ? 'bg-blue-500' : '' }}">
+                @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
+                    <a href="{{ route('dashboard') }}" wire:navigate
+                        class="block px-3 py-2 rounded-md hover:bg-blue-500 transition {{ request()->routeIs('dashboard') ? 'bg-blue-500' : '' }}">
                         <i class="fas fa-chart-line me-2"></i> Dashboard
                     </a>
                 @endif
 
                 <!-- Products -->
-                @if(Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
-                    <a href="{{ route('products.index') }}" wire:navigate class="block px-3 py-2 rounded-md hover:bg-blue-500 transition {{ request()->routeIs('products.*') ? 'bg-blue-500' : '' }}">
+                @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
+                    <a href="{{ route('products.index') }}" wire:navigate
+                        class="block px-3 py-2 rounded-md hover:bg-blue-500 transition {{ request()->routeIs('products.*') ? 'bg-blue-500' : '' }}">
                         <i class="fas fa-box me-2"></i> Products
                     </a>
                 @endif
 
                 <!-- Suppliers -->
-                @if(Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
-                    <a href="{{ route('suppliers.index') }}" wire:navigate class="block px-3 py-2 rounded-md hover:bg-blue-500 transition {{ request()->routeIs('suppliers.*') ? 'bg-blue-500' : '' }}">
+                @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
+                    <a href="{{ route('suppliers.index') }}" wire:navigate
+                        class="block px-3 py-2 rounded-md hover:bg-blue-500 transition {{ request()->routeIs('suppliers.*') ? 'bg-blue-500' : '' }}">
                         <i class="fas fa-truck me-2"></i> Suppliers
                     </a>
                 @endif
 
                 <!-- Purchases -->
-                @if(Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
-                    <a href="{{ route('purchases.index') }}" wire:navigate class="block px-3 py-2 rounded-md hover:bg-blue-500 transition {{ request()->routeIs('purchases.*') ? 'bg-blue-500' : '' }}">
+                @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
+                    <a href="{{ route('purchases.index') }}" wire:navigate
+                        class="block px-3 py-2 rounded-md hover:bg-blue-500 transition {{ request()->routeIs('purchases.*') ? 'bg-blue-500' : '' }}">
                         <i class="fas fa-shopping-cart me-2"></i> Purchases
                     </a>
                 @endif
 
                 <!-- Sales -->
-                <a href="{{ route('sales.index') }}" wire:navigate class="block px-3 py-2 rounded-md hover:bg-blue-500 transition {{ request()->routeIs('sales.*') ? 'bg-blue-500' : '' }}">
+                <a href="{{ route('sales.index') }}" wire:navigate
+                    class="block px-3 py-2 rounded-md hover:bg-blue-500 transition {{ request()->routeIs('sales.*') ? 'bg-blue-500' : '' }}">
                     <i class="fas fa-cash-register me-2"></i> Sales
                 </a>
             </div>
@@ -186,24 +217,28 @@ new class extends Component
                     <div class="font-medium text-base">{{ Auth::user()->name }}</div>
                     <div class="font-medium text-sm text-blue-100">{{ Auth::user()->email }}</div>
                     <div class="font-medium text-xs text-blue-100 mt-1">
-                        @foreach(Auth::user()->roles as $role)
-                            {{ ucfirst($role->name) }}@if(!$loop->last), @endif
+                        @foreach (Auth::user()->roles as $role)
+                            {{ ucfirst($role->name) }}@if (!$loop->last)
+                                ,
+                            @endif
                         @endforeach
                     </div>
                 </div>
 
                 <div class="mt-3 space-y-1">
-                    <a href="{{ route('profile.edit') }}" wire:navigate class="block px-4 py-2 rounded hover:bg-blue-500 transition">
+                    <a href="{{ route('profile.edit') }}" wire:navigate
+                        class="block px-4 py-2 rounded hover:bg-blue-500 transition">
                         <i class="fas fa-user-edit me-2"></i> Edit Profile
                     </a>
 
-                    @if(Auth::user()->roles()->where('name', 'admin')->exists())
+                    @if (Auth::user()->roles()->where('name', 'admin')->exists())
                         <a href="#users" class="block px-4 py-2 rounded hover:bg-blue-500 transition">
                             <i class="fas fa-users me-2"></i> Manage Users
                         </a>
                     @endif
 
-                    <button wire:click="logout" class="w-full text-start px-4 py-2 rounded hover:bg-blue-500 transition text-red-200">
+                    <button wire:click="logout"
+                        class="w-full text-start px-4 py-2 rounded hover:bg-blue-500 transition text-red-200">
                         <i class="fas fa-sign-out-alt me-2"></i> Log Out
                     </button>
                 </div>

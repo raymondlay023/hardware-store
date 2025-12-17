@@ -1,11 +1,12 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Livewire\Dashboard\DashboardView;
 use App\Livewire\Products\ProductList;
-use App\Livewire\Suppliers\SupplierList;
 use App\Livewire\Purchases\PurchaseList;
 use App\Livewire\Sales\SaleList;
-use App\Livewire\Dashboard\DashboardView;
+use App\Livewire\Sales\SalesReport;
+use App\Livewire\Suppliers\SupplierList;
+use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->group(function () {
     // Dashboard - accessible by admin and manager only
@@ -30,6 +31,10 @@ Route::middleware(['auth'])->group(function () {
 
     // Sales - accessible by all roles (admin, manager, cashier)
     Route::get('/sales', SaleList::class)->name('sales.index');
+
+    Route::middleware('role:admin,manager')->group(function () {
+        Route::get('/sales-report', SalesReport::class)->name('sales-report');
+    });
 });
 
 Route::view('/', 'welcome');
