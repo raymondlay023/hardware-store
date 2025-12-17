@@ -46,6 +46,11 @@ Route::get('/receipt/{sale}/{token}', function(\App\Models\Sale $sale, $token) {
     if (!$sale->verifyReceiptToken($token)) {
         abort(403, 'Invalid receipt link');
     }
+
+     // Check if receipt is expired (30 days)
+    if ($sale->created_at->lt(now()->subDays(30))) {
+        return view('receipts.expired', compact('sale'));
+    }
     
     // Load relationships
     $sale->load(['saleItems.product', 'user']);
