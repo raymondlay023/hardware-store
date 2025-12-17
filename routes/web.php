@@ -41,6 +41,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/sales/{saleId}/receipt', \App\Livewire\Sales\PrintReceipt::class)->name('sales.receipt');
 });
 
+Route::get('/receipt/{sale}/{token}', function(\App\Models\Sale $sale, $token) {
+    // Verify token to prevent unauthorized access
+    if (!$sale->verifyReceiptToken($token)) {
+        abort(403, 'Invalid receipt link');
+    }
+    
+    // Load relationships
+    $sale->load(['saleItems.product', 'user']);
+    
+    return view('receipts.digital', compact('sale'));
+})->name('receipt.digital');
+
 Route::view('/', 'welcome');
 
 Route::view('profile', 'profile')

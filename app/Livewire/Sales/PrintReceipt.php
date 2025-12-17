@@ -6,12 +6,13 @@ use App\Models\Sale;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class PrintReceipt extends Component
 {
     public $saleId = null;
     public $sale = null;
-    public $printFormat = 'thermal';
+    public $printFormat = 'digital';
     public $orientation = 'portrait'; // Add this property
 
     public function mount($saleId = null)
@@ -34,6 +35,20 @@ class PrintReceipt extends Component
             );
             $this->sale = null;
         }
+    }
+
+    /**
+     * Generate QR Code for digital receipt
+     */
+    public function getQrCodeProperty()
+    {
+        if (!$this->sale) {
+            return null;
+        }
+
+        return QrCode::size(250)
+                     ->margin(2)
+                     ->generate($this->sale->digital_receipt_url);
     }
 
     public function printThermal()

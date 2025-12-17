@@ -60,4 +60,26 @@ class Sale extends Model
     {
         return 'Rp ' . number_format($this->getFinalAmount(), 0, ',', '.');
     }
+
+    /**
+     * Generate secure URL for digital receipt
+     */
+    public function getDigitalReceiptUrlAttribute()
+    {
+        $token = hash_hmac('sha256', $this->id . $this->created_at, config('app.key'));
+        
+        return route('receipt.digital', [
+            'sale' => $this->id,
+            'token' => $token
+        ]);
+    }
+
+    /**
+     * Verify receipt token
+     */
+    public function verifyReceiptToken($token)
+    {
+        $expectedToken = hash_hmac('sha256', $this->id . $this->created_at, config('app.key'));
+        return hash_equals($expectedToken, $token);
+    }
 }

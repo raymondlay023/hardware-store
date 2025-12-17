@@ -34,7 +34,30 @@
                     </h3>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <!-- Option 1: Thermal Printer (58mm) -->
+                        <!-- Option 1: Digital Receipt (QR Code) -->
+                        <div class="border-2 border-gray-300 rounded-lg p-4 hover:border-purple-500 hover:bg-purple-50 transition cursor-pointer group"
+                            wire:click="$set('printFormat', 'digital')">
+                            <div class="flex items-start justify-between mb-3">
+                                <div>
+                                    <h4 class="font-bold text-gray-900 text-sm uppercase">Digital Receipt (QR)</h4>
+                                    <p class="text-xs text-gray-600 mt-1">Paperless</p>
+                                </div>
+                                <div class="w-5 h-5 border-2 border-purple-500 rounded-full flex items-center justify-center"
+                                    :class="{ 'bg-purple-500': @js($printFormat === 'digital') }">
+                                    @if ($printFormat === 'digital')
+                                        <i class="fas fa-check text-white text-xs"></i>
+                                    @endif
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-600 mb-4">Customer scans QR code to get digital receipt.
+                                Eco-friendly & modern!</p>
+
+                            <div
+                                class="bg-purple-100 text-purple-700 px-4 py-2 rounded-lg font-semibold text-sm text-center">
+                                <i class="fas fa-qrcode mr-2"></i>QR Code Ready
+                            </div>
+                        </div>
+                        <!-- Option 2: Thermal Printer (58mm) -->
                         <div class="border-2 border-gray-300 rounded-lg p-4 hover:border-green-500 hover:bg-green-50 transition cursor-pointer group"
                             wire:click="$set('printFormat', 'thermal')">
                             <div class="flex items-start justify-between mb-3">
@@ -58,7 +81,7 @@
                             </button>
                         </div>
 
-                        <!-- Option 2: PDF (A4) -->
+                        <!-- Option 3: PDF (A4) -->
                         <div class="border-2 border-gray-300 rounded-lg p-4 hover:border-blue-500 hover:bg-blue-50 transition cursor-pointer group"
                             wire:click="$set('printFormat', 'pdf')">
                             <div class="flex items-start justify-between mb-3">
@@ -96,30 +119,6 @@
                                 <i class="fas fa-file-pdf mr-2"></i>Download PDF
                             </button>
                         </div>
-
-                        <!-- Option 3: Browser Print -->
-                        <div class="border-2 border-gray-300 rounded-lg p-4 hover:border-purple-500 hover:bg-purple-50 transition cursor-pointer group"
-                            wire:click="$set('printFormat', 'browser')">
-                            <div class="flex items-start justify-between mb-3">
-                                <div>
-                                    <h4 class="font-bold text-gray-900 text-sm uppercase">Browser Print</h4>
-                                    <p class="text-xs text-gray-600 mt-1">Any Printer</p>
-                                </div>
-                                <div class="w-5 h-5 border-2 border-purple-500 rounded-full flex items-center justify-center"
-                                    :class="{ 'bg-purple-500': @js($printFormat === 'browser') }">
-                                    @if ($printFormat === 'browser')
-                                        <i class="fas fa-check text-white text-xs"></i>
-                                    @endif
-                                </div>
-                            </div>
-                            <p class="text-xs text-gray-600 mb-4">Open in browser print dialog. Works with any connected
-                                printer.</p>
-
-                            <button type="button" onclick="window.print()"
-                                class="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white px-4 py-2 rounded-lg font-semibold text-sm transition">
-                                <i class="fas fa-print mr-2"></i>Print Now
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -129,6 +128,53 @@
                 <h3 class="text-lg font-bold text-gray-900 mb-4">
                     <i class="fas fa-eye text-gray-600 mr-2"></i>Receipt Preview
                 </h3>
+
+                <!-- Digital Receipt Preview -->
+                @if ($printFormat === 'digital')
+                    <div
+                        class="max-w-md mx-auto bg-gradient-to-br from-purple-50 to-blue-50 p-8 rounded-lg text-center">
+                        <div class="bg-white rounded-lg p-6 shadow-lg inline-block">
+                            <h4 class="text-xl font-bold text-gray-900 mb-4">
+                                <i class="fas fa-mobile-alt text-purple-600 mr-2"></i>Scan for Digital Receipt
+                            </h4>
+
+                            @if ($this->qrCode)
+                                <div class="bg-white p-4 rounded-lg border-4 border-purple-200 inline-block">
+                                    {!! $this->qrCode !!}
+                                </div>
+                            @endif
+
+                            <div class="mt-6 space-y-2">
+                                <p class="text-sm font-semibold text-gray-700">
+                                    Invoice #{{ str_pad($sale->id, 6, '0', STR_PAD_LEFT) }}
+                                </p>
+                                <p class="text-xs text-gray-500">
+                                    <i class="fas fa-leaf text-green-500 mr-1"></i>Eco-friendly • No paper waste
+                                </p>
+                                <p class="text-xs text-gray-500">
+                                    <i class="fas fa-clock text-blue-500 mr-1"></i>Valid for 30 days
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 bg-white rounded-lg p-4 text-left text-sm text-gray-700">
+                            <p class="font-semibold mb-2"><i
+                                    class="fas fa-info-circle text-blue-500 mr-2"></i>Instructions:</p>
+                            <ol class="list-decimal list-inside space-y-1 text-xs">
+                                <li>Show this QR code to customer</li>
+                                <li>Customer scans with any QR scanner app</li>
+                                <li>Digital receipt opens instantly on their phone</li>
+                                <li>Customer can save, share, or print it later</li>
+                            </ol>
+                        </div>
+
+                        <!-- Copy Link Button -->
+                        <button type="button" onclick="copyReceiptLink('{{ $sale->digital_receipt_url }}')"
+                            class="mt-4 w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold text-sm transition">
+                            <i class="fas fa-copy mr-2"></i>Copy Receipt Link
+                        </button>
+                    </div>
+                @endif
 
                 <!-- Thermal Preview -->
                 @if ($printFormat === 'thermal')
@@ -195,7 +241,8 @@
                         <div class="border-t-2 border-gray-300 pt-4 space-y-2 text-sm">
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Subtotal:</span>
-                                <span class="font-bold">Rp {{ number_format($sale->total_amount, 0, ',', '.') }}</span>
+                                <span class="font-bold">Rp
+                                    {{ number_format($sale->total_amount, 0, ',', '.') }}</span>
                             </div>
                             @if ($sale->discount_value > 0)
                                 <div class="flex justify-between text-red-600">
@@ -215,18 +262,6 @@
                             <p>Thank you for your purchase!</p>
                             <p>{{ now()->format('d/m/Y H:i:s') }}</p>
                         </div>
-                    </div>
-                @endif
-
-                <!-- Browser Print Preview -->
-                @if ($printFormat === 'browser')
-                    <div class="bg-blue-50 border-2 border-blue-200 p-4 rounded-lg text-center">
-                        <i class="fas fa-info-circle text-blue-600 text-2xl mb-3 block"></i>
-                        <p class="text-gray-900 font-semibold mb-2">Ready to Print</p>
-                        <p class="text-gray-600 text-sm">Click the "Print Now" button above to open your browser's
-                            print
-                            dialog.</p>
-                        <p class="text-gray-600 text-sm mt-2">You can then select any printer or print to PDF.</p>
                     </div>
                 @endif
             </div>
@@ -250,7 +285,7 @@
         </div>
     @endif
 
-    @push('scripts')
+    @push('head')
         <style>
             @media print {
                 body * {
@@ -279,5 +314,17 @@
                 }
             }
         </style>
+    @endpush
+
+    @push('scripts')
+        <script>
+            function copyReceiptLink(url) {
+                navigator.clipboard.writeText(url).then(() => {
+                    alert('Receipt link copied! You can send it via WhatsApp, email, or SMS.');
+                }).catch(err => {
+                    console.error('Failed to copy:', err);
+                });
+            }
+        </script>
     @endpush
 </div>
