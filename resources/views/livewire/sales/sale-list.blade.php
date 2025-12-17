@@ -6,10 +6,10 @@
                 <h1 class="text-4xl font-bold text-gray-900 mb-2">Sales</h1>
                 <p class="text-gray-600">Track customer sales and inventory movements</p>
             </div>
-            <button wire:click="$toggle('showCreateForm')"
+            <a href="{{ route('sales.create') }}"
                 class="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-lg hover:from-green-600 hover:to-green-700 transition shadow-lg flex items-center gap-2">
                 <i class="fas fa-plus"></i> Record Sale
-            </button>
+            </a>
         </div>
 
         <!-- Statistics Cards -->
@@ -124,7 +124,12 @@
                                         title="View Details">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
+                                    <a href="{{ route('sales.receipt', ['saleId' => $sale->id]) }}"
+                                        class="p-2 text-blue-600 hover:bg-blue-50 rounded transition"
+                                        title="View Details">
+                                        <i class="fas fa-receipt"></i>
+                                    </a>
+                                   @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
                                         <button wire:click="deleteSale({{ $sale->id }})"
                                             wire:confirm="Are you sure you want to delete this sale? Stock will be restored."
                                             class="p-2 text-red-600 hover:bg-red-50 rounded transition" title="Delete">

@@ -1,151 +1,513 @@
 <div>
-    <form wire:submit="save" class="space-y-5">
-        <!-- Customer Name and Date -->
-        <div class="grid grid-cols-2 gap-4">
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                    <i class="fas fa-user mr-2 text-green-600"></i>Customer Name <span class="text-red-500">*</span>
-                </label>
-                <input type="text" wire:model="customer_name" placeholder="e.g., John Doe"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm">
-                @error('customer_name')
-                    <span class="text-red-600 text-sm mt-1 block"><i
-                            class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</span>
-                @enderror
+
+    <div class="space-y-5">
+        <form wire:submit="save" class="space-y-5">
+            <!-- Header with Quick Stats -->
+            <div
+                class="bg-gradient-to-r from-green-500 via-green-600 to-emerald-600 text-white rounded-lg p-6 shadow-lg">
+                <div class="flex items-center justify-between mb-2">
+                    <div>
+                        <h2 class="text-2xl font-bold">
+                            <i class="fas fa-shopping-cart mr-2"></i>Create New Sale
+                        </h2>
+                        <p class="text-green-100 text-sm">Quick and easy transaction entry</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-green-100 text-xs">{{ now()->format('H:i') }}</p>
+                        <p class="text-2xl font-bold">Rp {{ number_format($totalAmount, 0, ',', '.') }}</p>
+                    </div>
+                </div>
             </div>
 
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                    <i class="fas fa-calendar mr-2 text-green-600"></i>Date <span class="text-red-500">*</span>
-                </label>
-                <input type="date" wire:model="date"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm">
-                @error('date')
-                    <span class="text-red-600 text-sm mt-1 block"><i
-                            class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</span>
-                @enderror
-            </div>
-        </div>
+            <!-- Main Grid: Left (Products) + Right (Summary) -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                <!-- LEFT COLUMN: Products & Cart (2 cols) -->
+                <div class="lg:col-span-2 space-y-5">
 
-        <!-- Add Items Section -->
-        <div class="border-t pt-5">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4"><i
-                    class="fas fa-shopping-cart mr-2 text-green-600"></i>Sale Items</h3>
-
-            <div class="space-y-4 mb-4">
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Product</label>
-                    <div class="relative">
-                        <input type="text" wire:model.live="productSearch"
-                            @if ($selectedProduct) disabled @endif
-                            placeholder="Search product (only in-stock items)..."
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm @if ($selectedProduct) bg-gray-50 @endif">
-
-                        @if (!$selectedProduct && $products)
-                            <div
-                                class="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10">
-                                @foreach ($products as $product)
-                                    <button type="button"
-                                        wire:click="selectProduct({{ $product['id'] }}, '{{ addslashes($product['name']) }}')"
-                                        class="block w-full text-left px-4 py-2 hover:bg-green-50 text-gray-700 border-b last:border-b-0">
-                                        <div class="flex justify-between">
-                                            <span>{{ $product['name'] }}</span>
-                                            <span class="text-sm text-gray-500">Stock:
-                                                {{ $product['current_stock'] }}</span>
-                                        </div>
-                                    </button>
-                                @endforeach
+                    <!-- Customer Info & Payment Method (Compact Top Section) -->
+                    <div class="bg-white rounded-lg shadow p-5 border-l-4 border-blue-500">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <!-- Customer Name - with suggestions -->
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
+                                    <i class="fas fa-user mr-1 text-blue-600"></i>Customer
+                                </label>
+                                <input type="text" wire:model.debounce.500ms="customer_name"
+                                    placeholder="e.g., PT. Maju Jaya"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm text-sm">
+                                @error('customer_name')
+                                    <span class="text-red-600 text-xs mt-1 block">{{ $message }}</span>
+                                @enderror
                             </div>
-                        @endif
 
-                        @if ($selectedProduct)
-                            <button type="button" wire:click="clearProduct"
-                                class="absolute right-3 top-3 text-gray-400 hover:text-gray-600">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        @endif
+                            <!-- Date - with quick select buttons -->
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
+                                    <i class="fas fa-calendar mr-1 text-blue-600"></i>Date
+                                </label>
+                                <div class="flex gap-1">
+                                    <input type="date" wire:model="date"
+                                        class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm text-sm">
+                                    <button type="button" wire:click="$set('date', now()->format('Y-m-d'))"
+                                        class="px-2 py-2 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 transition text-xs font-semibold"
+                                        title="Today">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </div>
+                                @error('date')
+                                    <span class="text-red-600 text-xs mt-1 block">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Payment Method - with icons -->
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
+                                    <i class="fas fa-credit-card mr-1 text-blue-600"></i>Payment
+                                </label>
+                                <select wire:model="payment_method"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm text-sm font-medium">
+                                    <option value="cash">💵 Cash</option>
+                                    <option value="card">💳 Card</option>
+                                    <option value="check">✓ Check</option>
+                                    <option value="transfer">📱 Transfer</option>
+                                </select>
+                                @error('payment_method')
+                                    <span class="text-red-600 text-xs mt-1 block">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Product Search Section - ENHANCED -->
+                    <div class="bg-white rounded-lg shadow p-5 border-l-4 border-green-500">
+                        <h3 class="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide">
+                            <i class="fas fa-search text-green-600 mr-2"></i>Add Products
+                        </h3>
+
+                        <div class="space-y-3">
+                            <!-- Search Bar with keyboard hint -->
+                            <div class="relative group">
+                                <input type="text" wire:model.live.debounce.300ms="productSearch"
+                                    @if ($selectedProduct) disabled @endif
+                                    @focus="$wire.showProductSearch = true" @keydown.enter="$wire.addItem()"
+                                    placeholder="Type product name or category... (Enter to add)"
+                                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm @if ($selectedProduct) bg-green-50 @endif text-sm">
+
+                                <!-- Search icon inside input -->
+                                <i class="fas fa-search absolute right-3 top-3 text-gray-400"></i>
+
+                                @if ($selectedProduct)
+                                    <button type="button" wire:click="clearProduct"
+                                        class="absolute right-10 top-3 text-gray-400 hover:text-red-600 transition"
+                                        title="Clear selection">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                @endif
+
+                                <!-- Product Suggestions - Enhanced with categories -->
+                                @if (!$selectedProduct && $showProductSearch && $products)
+                                    <div
+                                        class="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-gray-300 rounded-lg shadow-2xl z-20 max-h-80 overflow-y-auto">
+                                        <div
+                                            class="sticky top-0 bg-gray-50 px-4 py-2 border-b text-xs font-semibold text-gray-600">
+                                            {{ count($products) }} result{{ count($products) !== 1 ? 's' : '' }} found
+                                        </div>
+                                        @foreach ($products as $product)
+                                            <button type="button"
+                                                wire:click="selectProduct({{ $product['id'] }}, '{{ addslashes($product['name']) }}', {{ $product['price'] }})"
+                                                class="w-full text-left px-4 py-3 hover:bg-green-50 border-b last:border-b-0 transition group">
+                                                <div class="flex justify-between items-start gap-3">
+                                                    <div class="flex-1">
+                                                        <p
+                                                            class="font-semibold text-gray-900 text-sm group-hover:text-green-600">
+                                                            {{ $product['name'] }}</p>
+                                                        <div class="flex gap-2 mt-1">
+                                                            <span
+                                                                class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded">
+                                                                {{ $product['category'] }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="text-right flex-shrink-0">
+                                                        <p class="font-bold text-green-600 text-sm">Rp
+                                                            {{ number_format($product['price'], 0, ',', '.') }}</p>
+                                                        <p class="text-xs text-gray-500">
+                                                            <i
+                                                                class="fas fa-box mr-1"></i>{{ $product['current_stock'] }}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </button>
+                                        @endforeach
+                                    </div>
+                                @elseif (!$selectedProduct && $showProductSearch && strlen($productSearch) >= 1 && !$products)
+                                    <div
+                                        class="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-gray-300 rounded-lg shadow-2xl z-20 p-4 text-center">
+                                        <i class="fas fa-inbox text-3xl text-gray-300 mb-2 block"></i>
+                                        <p class="text-gray-600 text-sm font-medium">No products found</p>
+                                        <p class="text-gray-500 text-xs">Try searching with different keywords</p>
+                                    </div>
+                                @endif
+                            </div>
+
+                            <!-- Quantity Control - Only when product selected -->
+                            @if ($selectedProduct)
+                                <div
+                                    class="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-lg p-4">
+                                    <label class="block text-xs font-bold text-gray-700 mb-3 uppercase tracking-wide">
+                                        <i class="fas fa-boxes mr-1 text-green-600"></i>Quantity
+                                    </label>
+                                    <div class="flex items-center gap-2 mb-4">
+                                        <!-- Decrease -->
+                                        <button type="button" wire:click="decrementQuantity"
+                                            @if ($quantity <= 1) disabled @endif
+                                            class="px-4 py-2 bg-red-500 hover:bg-red-600 disabled:bg-gray-300 text-white rounded-lg font-bold text-lg transition shadow-sm">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+
+                                        <!-- Quantity Input -->
+                                        <input type="number" wire:model.live="quantity" min="1"
+                                            @keydown.enter="$wire.addItem()"
+                                            class="flex-1 text-center px-4 py-2 text-3xl font-black border-2 border-green-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white shadow-sm">
+
+                                        <!-- Increase -->
+                                        <button type="button" wire:click="incrementQuantity"
+                                            class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-bold text-lg transition shadow-sm">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+
+                                    <!-- Add to Cart Button with keyboard hint -->
+                                    <button type="button" wire:click="addItem"
+                                        class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 rounded-lg font-semibold shadow-lg flex items-center justify-center gap-2 transition transform hover:scale-105 active:scale-95">
+                                        <i class="fas fa-cart-plus text-lg"></i> Add to Cart (Press Enter)
+                                    </button>
+                                </div>
+                            @endif
+
+                            @error('items')
+                                <div class="bg-red-50 border-l-4 border-red-500 p-3 rounded">
+                                    <p class="text-red-700 text-sm"><i
+                                            class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</p>
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Cart Items Table - ENHANCED -->
+                    @if ($items)
+                        <div class="bg-white rounded-lg shadow overflow-hidden border-l-4 border-purple-500">
+                            <div
+                                class="px-5 py-3 bg-gradient-to-r from-purple-50 to-purple-100 border-b flex items-center justify-between">
+                                <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wide">
+                                    <i class="fas fa-receipt mr-2 text-purple-600"></i>Cart Items
+                                </h3>
+                                <span class="bg-purple-600 text-white text-xs font-bold rounded-full px-3 py-1">
+                                    {{ count($items) }} item{{ count($items) !== 1 ? 's' : '' }}
+                                </span>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead class="bg-gray-100 border-b">
+                                        <tr>
+                                            <th class="px-4 py-3 text-left font-bold text-gray-900">#</th>
+                                            <th class="px-4 py-3 text-left font-bold text-gray-900">Product</th>
+                                            <th class="px-4 py-3 text-center font-bold text-gray-900">Qty</th>
+                                            <th class="px-4 py-3 text-right font-bold text-gray-900">Price</th>
+                                            <th class="px-4 py-3 text-right font-bold text-gray-900">Subtotal</th>
+                                            <th class="px-4 py-3 text-center font-bold text-gray-900">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y">
+                                        @foreach ($items as $index => $item)
+                                            <tr class="hover:bg-gray-50 transition group">
+                                                <td class="px-4 py-3 font-bold text-gray-900">{{ $index + 1 }}</td>
+                                                <td class="px-4 py-3">
+                                                    <p class="font-semibold text-gray-900">{{ $item['product_name'] }}
+                                                    </p>
+                                                    <p class="text-xs text-gray-600">{{ $item['category'] }}</p>
+                                                </td>
+                                                <td class="px-4 py-3">
+                                                    <div
+                                                        class="flex items-center justify-center gap-1 bg-gray-100 rounded w-fit mx-auto px-2 py-1">
+                                                        <button type="button"
+                                                            wire:click="updateQuantity({{ $index }}, {{ $item['quantity'] - 1 }})"
+                                                            @if ($item['quantity'] <= 1) disabled @endif
+                                                            class="px-2 py-0 text-gray-600 hover:text-gray-900 disabled:text-gray-300 transition">
+                                                            <i class="fas fa-minus text-xs"></i>
+                                                        </button>
+                                                        <input type="number"
+                                                            wire:change="updateQuantity({{ $index }}, $event.target.value)"
+                                                            value="{{ $item['quantity'] }}" min="1"
+                                                            class="w-10 text-center px-0 py-0 border-none focus:outline-none font-bold bg-transparent text-sm">
+                                                        <button type="button"
+                                                            wire:click="updateQuantity({{ $index }}, {{ $item['quantity'] + 1 }})"
+                                                            class="px-2 py-0 text-gray-600 hover:text-gray-900 transition">
+                                                            <i class="fas fa-plus text-xs"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                                <td class="px-4 py-3 text-right font-medium text-gray-900">
+                                                    Rp {{ number_format($item['price'], 0, ',', '.') }}
+                                                </td>
+                                                <td class="px-4 py-3 text-right font-bold text-green-600">
+                                                    Rp
+                                                    {{ number_format($item['quantity'] * $item['price'], 0, ',', '.') }}
+                                                </td>
+                                                <td class="px-4 py-3 text-center">
+                                                    <button type="button"
+                                                        wire:click="removeItem({{ $index }})"
+                                                        class="text-red-600 hover:text-red-800 hover:bg-red-50 px-3 py-1 rounded transition font-semibold text-sm group-hover:opacity-100 opacity-75">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Cart Summary -->
+                            <div
+                                class="bg-gradient-to-r from-green-50 via-blue-50 to-purple-50 px-5 py-4 border-t-2 border-gray-200">
+                                <div class="grid grid-cols-3 gap-4 text-center">
+                                    <div class="bg-white rounded-lg p-3 shadow-sm">
+                                        <p class="text-xs text-gray-600 font-semibold">TOTAL ITEMS</p>
+                                        <p class="text-2xl font-black text-blue-600">
+                                            {{ collect($items)->sum('quantity') }}
+                                        </p>
+                                    </div>
+                                    <div class="bg-white rounded-lg p-3 shadow-sm">
+                                        <p class="text-xs text-gray-600 font-semibold">LINE ITEMS</p>
+                                        <p class="text-2xl font-black text-purple-600">
+                                            {{ count($items) }}
+                                        </p>
+                                    </div>
+                                    <div class="bg-white rounded-lg p-3 shadow-sm border-2 border-green-500">
+                                        <p class="text-xs text-gray-600 font-semibold">SUBTOTAL</p>
+                                        <p class="text-2xl font-black text-green-600">
+                                            Rp {{ number_format($subtotal, 0, ',', '.') }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <div class="bg-gray-50 rounded-lg p-8 text-center border-2 border-dashed border-gray-300">
+                            <i class="fas fa-shopping-cart text-6xl text-gray-300 mb-4 block"></i>
+                            <p class="text-gray-600 font-semibold mb-1">Cart is empty</p>
+                            <p class="text-sm text-gray-500">Search and add products to get started</p>
+                        </div>
+                    @endif
                 </div>
 
+                <!-- RIGHT COLUMN: Summary, Discount & Notes (1 col) -->
+                <div class="space-y-5">
+                    <!-- Payment Summary Card - ENHANCED -->
+                    @if ($items)
+                        <div
+                            class="bg-gradient-to-br from-gray-900 to-gray-800 text-white rounded-lg shadow-2xl p-5 space-y-4 sticky top-5">
+                            <h3 class="font-bold text-lg flex items-center gap-2 uppercase tracking-wide">
+                                <i class="fas fa-calculator text-yellow-400 text-xl"></i>Summary
+                            </h3>
 
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Quantity</label>
-                        <input type="number" wire:model="quantity" placeholder="0"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Action</label>
-                        <button type="button" wire:click="addItem"
-                            class="w-full bg-green-100 text-green-700 px-4 py-2 rounded-lg hover:bg-green-200 transition font-semibold">
-                            <i class="fas fa-plus mr-2"></i> Add
-                        </button>
-                    </div>
+                            <!-- Breakdown -->
+                            <div class="space-y-2 text-sm border-b border-gray-700 pb-4">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-300">Subtotal</span>
+                                    <span class="font-bold text-gray-100">Rp
+                                        {{ number_format($subtotal, 0, ',', '.') }}</span>
+                                </div>
+
+                                @if ($discount_type !== 'none' && $discountAmount > 0)
+                                    <div class="flex justify-between text-red-400">
+                                        <span>Discount
+                                            @if ($discount_type === 'percentage')
+                                                ({{ $discount_value }}%)
+                                            @endif
+                                        </span>
+                                        <span class="font-bold">- Rp
+                                            {{ number_format($discountAmount, 0, ',', '.') }}</span>
+                                    </div>
+                                @endif
+                            </div>
+
+                            <!-- Total -->
+                            <div class="bg-gradient-to-r from-green-600 to-green-500 rounded-lg p-4 text-center">
+                                <p class="text-green-100 text-xs font-bold mb-1 uppercase">TOTAL PAYMENT</p>
+                                <p class="text-4xl font-black text-white">
+                                    Rp {{ number_format($totalAmount, 0, ',', '.') }}
+                                </p>
+                            </div>
+
+                            <!-- Quick Stats -->
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <div class="bg-gray-700 rounded p-2 text-center">
+                                    <p class="text-gray-400">Items</p>
+                                    <p class="text-xl font-black text-blue-400">{{ collect($items)->sum('quantity') }}
+                                    </p>
+                                </div>
+                                <div class="bg-gray-700 rounded p-2 text-center">
+                                    <p class="text-gray-400">Products</p>
+                                    <p class="text-xl font-black text-purple-400">{{ count($items) }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
+                    <!-- Discount Section - Only show when items exist -->
+                    @if ($items)
+                        <div class="bg-white rounded-lg shadow p-5 border-l-4 border-yellow-500">
+                            <h4 class="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide">
+                                <i class="fas fa-tag text-yellow-600 mr-1"></i>Discount
+                            </h4>
+
+                            <div class="space-y-3">
+                                <!-- Discount Type -->
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Type</label>
+                                    <select wire:model.live="discount_type"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 font-medium">
+                                        <option value="none">None</option>
+                                        <option value="percentage">Percentage (%)</option>
+                                        <option value="fixed">Fixed Amount (Rp)</option>
+                                    </select>
+                                </div>
+
+                                <!-- Discount Value -->
+                                @if ($discount_type !== 'none')
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-700 mb-1">
+                                            Value
+                                        </label>
+                                        <input type="number" wire:model.live="discount_value" placeholder="0"
+                                            min="0" @if ($discount_type === 'percentage') max="100" @endif
+                                            step="0.01"
+                                            class="w-full px-3 py-2 border-2 border-yellow-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 font-bold bg-yellow-50">
+                                    </div>
+
+                                    <!-- Discount Display -->
+                                    <div class="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-3 text-center">
+                                        <p class="text-xs text-gray-700 font-semibold mb-1">DISCOUNT</p>
+                                        <p class="text-2xl font-black text-yellow-600">
+                                            Rp {{ number_format($discountAmount, 0, ',', '.') }}
+                                        </p>
+                                    </div>
+                                @endif
+
+                                <!-- Quick Discount Buttons -->
+                                <div class="grid grid-cols-2 gap-2 text-xs">
+                                    <button type="button"
+                                        wire:click="$set('discount_type', 'percentage'); $set('discount_value', 5)"
+                                        class="px-2 py-2 bg-gray-100 hover:bg-gray-200 rounded font-semibold transition">
+                                        5%
+                                    </button>
+                                    <button type="button"
+                                        wire:click="$set('discount_type', 'percentage'); $set('discount_value', 10)"
+                                        class="px-2 py-2 bg-gray-100 hover:bg-gray-200 rounded font-semibold transition">
+                                        10%
+                                    </button>
+                                    <button type="button"
+                                        wire:click="$set('discount_type', 'percentage'); $set('discount_value', 15)"
+                                        class="px-2 py-2 bg-gray-100 hover:bg-gray-200 rounded font-semibold transition">
+                                        15%
+                                    </button>
+                                    <button type="button"
+                                        wire:click="$set('discount_type', 'none'); $set('discount_value', 0)"
+                                        class="px-2 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded font-semibold transition">
+                                        Clear
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notes Section -->
+                        <div class="bg-white rounded-lg shadow p-5 border-l-4 border-blue-500">
+                            <label class="block text-sm font-bold text-gray-900 mb-2 uppercase tracking-wide">
+                                <i class="fas fa-sticky-note text-blue-600 mr-1"></i>Notes
+                            </label>
+                            <textarea wire:model="notes" placeholder="Add notes... (optional)" rows="3"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none shadow-sm"></textarea>
+                            <p class="text-xs text-gray-600 mt-2">Max 500 characters</p>
+                        </div>
+                    @else
+                        <!-- Empty State for Right Column -->
+                        <div class="bg-blue-50 rounded-lg p-5 border-l-4 border-blue-500 text-center">
+                            <i class="fas fa-info-circle text-3xl text-blue-300 mb-2 block"></i>
+                            <p class="text-blue-700 font-semibold text-sm">Add items to cart</p>
+                            <p class="text-blue-600 text-xs mt-1">Discount & summary will appear here</p>
+                        </div>
+                    @endif
                 </div>
-
-                @error('items')
-                    <span class="text-red-600 text-sm block"><i
-                            class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</span>
-                @enderror
             </div>
 
-            <!-- Items Table -->
+            <!-- Action Buttons - Fixed at bottom -->
             @if ($items)
-                <div class="border rounded-lg overflow-hidden">
-                    <table class="w-full">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-4 py-2 text-left text-sm font-semibold">Product</th>
-                                <th class="px-4 py-2 text-center text-sm font-semibold">Qty</th>
-                                <th class="px-4 py-2 text-right text-sm font-semibold">Price</th>
-                                <th class="px-4 py-2 text-right text-sm font-semibold">Subtotal</th>
-                                <th class="px-4 py-2 text-center text-sm font-semibold">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($items as $index => $item)
-                                <tr class="border-t">
-                                    <td class="px-4 py-2">{{ $item['product_name'] }}</td>
-                                    <td class="px-4 py-2 text-center">
-                                        <input type="number"
-                                            wire:change="updateQuantity({{ $index }}, $event.target.value)"
-                                            value="{{ $item['quantity'] }}"
-                                            class="w-16 px-2 py-1 border border-gray-300 rounded text-center focus:outline-none focus:ring-2 focus:ring-green-500">
-                                    </td>
-                                    <td class="px-4 py-2 text-right">${{ number_format($item['price'], 2) }}</td>
-                                    <td class="px-4 py-2 text-right font-semibold">
-                                        ${{ number_format($item['quantity'] * $item['price'], 2) }}</td>
-                                    <td class="px-4 py-2 text-center">
-                                        <button type="button" wire:click="removeItem({{ $index }})"
-                                            class="text-red-600 hover:text-red-800">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            @endforeach
-                            <tr class="bg-green-50 font-semibold border-t-2 border-green-200">
-                                <td colspan="3" class="px-4 py-2 text-right">Total:</td>
-                                <td class="px-4 py-2 text-right text-green-900">
-                                    ${{ number_format(collect($items)->sum(fn($i) => $i['quantity'] * $i['price']), 2) }}
-                                </td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div
+                    class="grid grid-cols-1 md:grid-cols-2 gap-4 sticky bottom-0 bg-white p-5 rounded-lg shadow-lg border-t-2 border-green-500">
+                    <button type="submit"
+                        class="bg-gradient-to-r from-green-500 via-green-600 to-emerald-600 hover:from-green-600 hover:via-green-700 hover:to-emerald-700 text-white px-6 py-4 rounded-lg font-bold text-lg flex items-center justify-center gap-2 shadow-lg transition transform hover:scale-105 active:scale-95">
+                        <i class="fas fa-check-circle text-xl"></i> Complete Sale
+                    </button>
+                    <button type="button" wire:click="cancel"
+                        class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-4 rounded-lg font-bold text-lg flex items-center justify-center gap-2 shadow-lg transition transform hover:scale-105 active:scale-95">
+                        <i class="fas fa-times-circle text-xl"></i> Cancel
+                    </button>
+                </div>
+            @else
+                <div class="text-center py-8 bg-gray-100 rounded-lg border-2 border-dashed border-gray-300">
+                    <i class="fas fa-shopping-cart text-5xl text-gray-400 mb-3 block"></i>
+                    <p class="text-gray-600 font-semibold">Ready to create a sale?</p>
+                    <p class="text-gray-500 text-sm">Search and add products above to get started</p>
                 </div>
             @endif
-        </div>
+        </form>
+    </div>
 
-        <!-- Buttons -->
-        <div class="flex gap-3 pt-4">
-            <button type="submit"
-                class="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-green-700 transition font-semibold flex items-center justify-center gap-2 shadow">
-                <i class="fas fa-check"></i> Complete Sale
-            </button>
-            <button type="button" wire:click="cancel"
-                class="flex-1 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition font-semibold flex items-center justify-center gap-2">
-                <i class="fas fa-times"></i> Cancel
-            </button>
-        </div>
-    </form>
+    <!-- Keyboard Shortcuts Info (Optional - hide on mobile) -->
+    <div
+        class="hidden md:block fixed bottom-5 right-5 bg-gray-900 text-white rounded-lg p-3 shadow-lg text-xs max-w-xs">
+        <p class="font-bold mb-2">⌨️ Keyboard Shortcuts</p>
+        <ul class="space-y-1 text-gray-300">
+            <li><kbd class="bg-gray-700 px-2 py-1 rounded text-xs">Enter</kbd> Add product to cart</li>
+            <li><kbd class="bg-gray-700 px-2 py-1 rounded text-xs">Ctrl</kbd>+<kbd
+                    class="bg-gray-700 px-2 py-1 rounded text-xs">S</kbd> Save Sale</li>
+        </ul>
+    </div>
+
+    <style>
+        /* Smooth animations */
+        * {
+            transition: all 0.2s ease;
+        }
+
+        /* Remove number input spinner -->
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input[type="number"] {
+        -moz-appearance: textfield;
+    }
+
+    /* Sticky positioning for right column */
+        @media (min-width: 1024px) {
+            .sticky {
+                position: sticky;
+                top: 1.25rem;
+            }
+        }
+
+        /* Focus styles for accessibility */
+        input:focus,
+        select:focus,
+        textarea:focus,
+        button:focus-visible {
+            outline: none;
+        }
+    </style>
+
 </div>

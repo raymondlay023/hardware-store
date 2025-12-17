@@ -3,6 +3,7 @@
 use App\Livewire\Dashboard\DashboardView;
 use App\Livewire\Products\ProductList;
 use App\Livewire\Purchases\PurchaseList;
+use App\Livewire\Sales\CreateSale;
 use App\Livewire\Sales\SaleList;
 use App\Livewire\Sales\SalesReport;
 use App\Livewire\Suppliers\SupplierList;
@@ -31,10 +32,13 @@ Route::middleware(['auth'])->group(function () {
 
     // Sales - accessible by all roles (admin, manager, cashier)
     Route::get('/sales', SaleList::class)->name('sales.index');
+    Route::get('/sales/create', CreateSale::class)->name('sales.create');
 
     Route::middleware('role:admin,manager')->group(function () {
         Route::get('/sales-report', SalesReport::class)->name('sales-report');
     });
+
+    Route::get('/sales/{saleId}/receipt', \App\Livewire\Sales\PrintReceipt::class)->name('sales.receipt');
 });
 
 Route::view('/', 'welcome');

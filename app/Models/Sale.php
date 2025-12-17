@@ -3,18 +3,61 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Sale extends Model
 {
-    protected $fillable = ['customer_name', 'date', 'total_amount'];
-
-    protected $casts = [
-        'date' => 'datetime',
-        'total_amount' => 'decimal:2',
+    protected $fillable = [
+        'customer_name',
+        'date',
+        'total_amount',
+        'discount_type',
+        'discount_value',
+        'payment_method',
+        'notes',
+        'created_by',
     ];
 
-    public function saleItems()
+    protected $casts = [
+        'date' => 'date',
+        'total_amount' => 'decimal:2',
+        'discount_value' => 'decimal:2',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function saleItems(): HasMany
     {
         return $this->hasMany(SaleItem::class);
+    }
+
+    /**
+     * Calculate final amount after discount
+     */
+    public function getFinalAmount(): float
+    {
+        $amount = $this->total_amount;
+
+        if ($this->discount_type === 'percentage') {
+            return $amount - ($amount * $this->discount_value / 100);
+        } elseif ($this->discount_type === 'fixed') {
+            return $amount - $this->discount_value;
+        }
+
+        return $amount;
+    }
+
+    /**
+     * Get formatted final amount
+     */
+    public function getFormattedFinalAmount(): string
+    {
+        return 'Rp ' . number_format($this->getFinalAmount(), 0, ',', '.');
     }
 }
