@@ -6,12 +6,35 @@ use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\Sale;
 use App\Models\Supplier;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class DashboardView extends Component
 {
     public function render()
     {
+        $user = Auth::user();
+        
+        // If cashier/staff, show cashier dashboard
+        if ($user->roles()->whereIn('name', ['cashier', 'staff'])->exists()) {
+            $todaysSales = Sale::whereDate('date', today())
+                ->latest('created_at')
+                ->get();
+
+            return view('livewire.dashboard.cashier-dashboard', [
+                'stats' => [
+                    'sales_count' => $todaysSales->count(),
+                    'total_revenue' => $todaysSales->sum('total_amount'),
+                    'total_items' => $todaysSales->sum(fn($sale) => $sale->saleItems->sum('quantity')),
+                    'avg_transaction' => $todaysSales->count() > 0 
+                        ? $todaysSales->sum('total_amount') / $todaysSales->count() 
+                        : 0,
+                ],
+                'todaysSales' => $todaysSales,
+                'userName' => $user->name,
+            ]);
+        }
+
         // Key metrics
         $totalProducts = Product::count();
         $totalSuppliers = Supplier::count();

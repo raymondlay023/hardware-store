@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth'])->group(function () {
     // Dashboard - accessible by admin and manager only
     Route::middleware('role:admin,manager')->group(function () {
-        Route::get('/dashboard', DashboardView::class)->name('dashboard');
     });
+    Route::get('/dashboard', DashboardView::class)->name('dashboard');
 
     // Products - accessible by admin and manager
     Route::middleware('role:admin,manager')->group(function () {

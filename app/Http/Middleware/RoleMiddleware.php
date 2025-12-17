@@ -26,6 +26,6 @@ class RoleMiddleware
             return $next($request);
         }
 
-        return redirect('/dashboard')->with('error', 'You do not have permission to access this page.');
+        return redirect('/')->with('error', 'You do not have permission to access this page.');
     }
 }
