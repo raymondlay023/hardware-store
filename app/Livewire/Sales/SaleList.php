@@ -20,6 +20,25 @@ class SaleList extends Component
 
     public $dateTo = '';
 
+    public $selectedSaleForQr = null;
+
+    public $expandedSale = null;
+
+    public function toggleSaleDetails($saleId)
+    {
+        $this->expandedSale = $this->expandedSale === $saleId ? null : $saleId;
+    }
+
+    public function showQrCode($saleId)
+    {
+        $this->selectedSaleForQr = Sale::find($saleId);
+    }
+
+    public function closeQrModal()
+    {
+        $this->selectedSaleForQr = null;
+    }
+
     public function updatedSearch()
     {
         $this->resetPage();
