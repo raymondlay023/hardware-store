@@ -71,7 +71,7 @@
             <i class="fas fa-lightning-bolt text-yellow-500 mr-2"></i>Quick Actions
         </h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <a href="{{ route('sales.index') }}" class="p-4 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition flex items-center gap-3">
+            <a href="{{ route('sales.create') }}" class="p-4 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition flex items-center gap-3">
                 <i class="fas fa-plus-circle text-2xl text-blue-600"></i>
                 <div>
                     <p class="font-semibold text-gray-900">Create Sale</p>

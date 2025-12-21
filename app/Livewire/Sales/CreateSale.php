@@ -39,12 +39,53 @@ class CreateSale extends Component
 
     public $showProductSearch = false;
 
+    public $customerSuggestions = [];
+
     public function mount()
     {
         $this->date = now()->format('Y-m-d');
         $this->payment_method = 'cash';
         $this->discount_type = 'none';
         $this->discount_value = 0;
+    }
+
+    public function updatedCustomerName()
+    {
+        if (strlen($this->customer_name) >= 2) {
+            // Get recent unique customer names from sales
+            $this->customerSuggestions = Sale::select('customer_name')
+                ->where('customer_name', 'like', '%'.$this->customer_name.'%')
+                ->distinct()
+                ->limit(5)
+                ->pluck('customer_name')
+                ->toArray();
+        } else {
+            $this->customerSuggestions = [];
+        }
+    }
+
+    public function setToday()
+    {
+        $this->date = now()->format('Y-m-d');
+    }
+
+    public function applyQuickDiscount($percentage)
+    {
+        $this->discount_type = 'percentage';
+        $this->discount_value = $percentage;
+    }
+
+    public function clearDiscount()
+    {
+        $this->discount_type = 'none';
+        $this->discount_value = 0;
+    }
+
+    public function handleKeyboardShortcut($key)
+    {
+        if ($key === 'save' && ! empty($this->items)) {
+            $this->save();
+        }
     }
 
     public function resetForm()
@@ -157,7 +198,7 @@ class CreateSale extends Component
 
                 $this->items[$existingIndex]['quantity'] = $newQuantity;
                 $this->dispatch('notification',
-                    message: "✓ {$product->name} quantity updated to {$newQuantity}",
+                    message: "{$product->name} quantity updated to {$newQuantity}",
                     type: 'success'
                 );
             } else {
@@ -169,7 +210,7 @@ class CreateSale extends Component
                     'quantity' => $quantityToAdd,
                 ];
                 $this->dispatch('notification',
-                    message: "✓ {$product->name} added to cart",
+                    message: "{$product->name} added to cart",
                     type: 'success'
                 );
             }
