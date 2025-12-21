@@ -1,135 +1,367 @@
+@push('head')
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+@endpush
 <div>
-    <!-- Page Header -->
-    <div class="mb-8">
-        <h1 class="text-4xl font-bold text-gray-900 mb-2">Dashboard</h1>
-        <p class="text-gray-600">Overview of your hardware store inventory and sales</p>
+    <!-- Page Header with Cache Clear Button -->
+    <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Dashboard</h1>
+            <p class="text-gray-600 text-sm sm:text-base">Overview of your hardware store inventory and sales</p>
+        </div>
+
+        <!-- Cache Clear Button (Admin/Manager only) -->
+        @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
+            <button wire:click="clearCache"
+                class="w-full sm:w-auto px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition text-sm font-semibold flex items-center justify-center gap-2"
+                title="Clear dashboard cache for fresh data">
+                <i class="fas fa-sync-alt"></i>
+                <span>Refresh Cache</span>
+            </button>
+        @endif
     </div>
 
-    <!-- Key Metrics Grid -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <!-- Date Range Filter -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+        <div class="flex flex-col lg:flex-row flex-wrap items-start lg:items-center gap-3">
+            <div class="flex items-center gap-2 w-full lg:w-auto">
+                <i class="fas fa-calendar text-gray-400"></i>
+                <span class="text-sm font-semibold text-gray-700">Period:</span>
+            </div>
+
+            <!-- Quick Filter Buttons -->
+            <div class="flex flex-wrap gap-2 w-full lg:w-auto lg:flex-1">
+                <button wire:click="$set('dateRange', 'today')"
+                    class="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg font-semibold text-xs sm:text-sm transition
+                        {{ $dateRange === 'today' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                    Today
+                </button>
+
+                <button wire:click="$set('dateRange', 'yesterday')"
+                    class="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg font-semibold text-xs sm:text-sm transition
+                        {{ $dateRange === 'yesterday' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                    Yesterday
+                </button>
+
+                <button wire:click="$set('dateRange', 'week')"
+                    class="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg font-semibold text-xs sm:text-sm transition
+                        {{ $dateRange === 'week' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                    This Week
+                </button>
+
+                <button wire:click="$set('dateRange', 'month')"
+                    class="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg font-semibold text-xs sm:text-sm transition
+                        {{ $dateRange === 'month' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                    This Month
+                </button>
+
+                <button wire:click="$set('dateRange', 'last_month')"
+                    class="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg font-semibold text-xs sm:text-sm transition hidden sm:block
+                        {{ $dateRange === 'last_month' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                    Last Month
+                </button>
+
+                <button wire:click="$set('dateRange', 'year')"
+                    class="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg font-semibold text-xs sm:text-sm transition
+                        {{ $dateRange === 'year' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                    This Year
+                </button>
+
+                <button wire:click="$set('dateRange', 'all')"
+                    class="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg font-semibold text-xs sm:text-sm transition hidden sm:block
+                        {{ $dateRange === 'all' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                    All Time
+                </button>
+
+                <button wire:click="$toggle('showCustomDatePicker')"
+                    class="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg font-semibold text-xs sm:text-sm transition
+                        {{ $dateRange === 'custom' ? 'bg-purple-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                    <i class="fas fa-sliders-h mr-1"></i> Custom
+                </button>
+            </div>
+
+            <!-- Selected Range Display -->
+            <div class="w-full lg:w-auto flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-lg">
+                <i class="fas fa-info-circle text-blue-600"></i>
+                <span class="text-xs sm:text-sm font-semibold text-blue-900">{{ $dateRangeLabel }}</span>
+            </div>
+        </div>
+
+        <!-- Custom Date Picker -->
+        @if ($showCustomDatePicker)
+            <div class="mt-4 pt-4 border-t border-gray-200">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-end gap-4">
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
+                        <input type="date" wire:model="customDateFrom"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">To Date</label>
+                        <input type="date" wire:model="customDateTo"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <div class="w-full sm:w-auto">
+                        <button wire:click="applyCustomDateRange"
+                            class="w-full px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition">
+                            <i class="fas fa-check mr-2"></i>Apply
+                        </button>
+                    </div>
+                </div>
+            </div>
+        @endif
+    </div>
+
+    <!-- Key Metrics Grid - RESPONSIVE -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-8">
         <!-- Total Products -->
         <div
-            class="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-6 shadow-sm hover:shadow-md transition">
+            class="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-blue-600 text-sm font-semibold">Total Products</p>
-                    <p class="text-3xl font-bold text-blue-900 mt-2">{{ $totalProducts }}</p>
+                    <p class="text-blue-600 text-xs sm:text-sm font-semibold">Total Products</p>
+                    <p class="text-2xl sm:text-3xl font-bold text-blue-900 mt-1 sm:mt-2">{{ $totalProducts }}</p>
                 </div>
-                <i class="fas fa-box text-4xl text-blue-200"></i>
+                <i class="fas fa-box text-3xl sm:text-4xl text-blue-200"></i>
             </div>
         </div>
 
         <!-- Total Suppliers -->
         <div
-            class="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-6 shadow-sm hover:shadow-md transition">
+            class="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-purple-600 text-sm font-semibold">Suppliers</p>
-                    <p class="text-3xl font-bold text-purple-900 mt-2">{{ $totalSuppliers }}</p>
+                    <p class="text-purple-600 text-xs sm:text-sm font-semibold">Suppliers</p>
+                    <p class="text-2xl sm:text-3xl font-bold text-purple-900 mt-1 sm:mt-2">{{ $totalSuppliers }}</p>
                 </div>
-                <i class="fas fa-truck text-4xl text-purple-200"></i>
+                <i class="fas fa-truck text-3xl sm:text-4xl text-purple-200"></i>
             </div>
         </div>
 
         <!-- Inventory Value -->
         <div
-            class="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-6 shadow-sm hover:shadow-md transition">
+            class="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition">
             <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-green-600 text-sm font-semibold">Inventory Value</p>
-                    <p class="text-3xl font-bold text-green-900 mt-2">${{ number_format($inventoryValue, 0) }}</p>
+                <div class="min-w-0 flex-1">
+                    <p class="text-green-600 text-xs sm:text-sm font-semibold">Inventory Value</p>
+                    <p class="text-xl sm:text-2xl lg:text-3xl font-bold text-green-900 mt-1 sm:mt-2 truncate">
+                        Rp {{ number_format($inventoryValue / 1000000, 1) }}M
+                    </p>
                 </div>
-                <i class="fas fa-warehouse text-4xl text-green-200"></i>
+                <i class="fas fa-warehouse text-3xl sm:text-4xl text-green-200 flex-shrink-0"></i>
             </div>
         </div>
 
         <!-- Low Stock Alert -->
         <div
-            class="bg-gradient-to-br from-red-50 to-red-100 border border-red-200 rounded-lg p-6 shadow-sm hover:shadow-md transition">
+            class="bg-gradient-to-br from-red-50 to-red-100 border border-red-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-red-600 text-sm font-semibold">Low Stock Items</p>
-                    <p class="text-3xl font-bold text-red-900 mt-2">{{ $lowStockCount }}</p>
+                    <p class="text-red-600 text-xs sm:text-sm font-semibold">Low Stock Items</p>
+                    <p class="text-2xl sm:text-3xl font-bold text-red-900 mt-1 sm:mt-2">{{ $lowStockCount }}</p>
                     @if ($criticalStockCount > 0)
                         <p class="text-xs text-red-600 mt-1">{{ $criticalStockCount }} critical</p>
                     @endif
                 </div>
-                <i class="fas fa-exclamation-triangle text-4xl text-red-200"></i>
+                <i class="fas fa-exclamation-triangle text-3xl sm:text-4xl text-red-200"></i>
+            </div>
+        </div>
+
+        <!-- Stock Turnover -->
+        <div
+            class="bg-gradient-to-br from-teal-50 to-teal-100 border border-teal-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-teal-600 text-xs sm:text-sm font-semibold">Stock Turnover</p>
+                    <p class="text-2xl sm:text-3xl font-bold text-teal-900 mt-1 sm:mt-2">
+                        {{ number_format($turnoverRate, 1) }}x</p>
+                    <p class="text-xs text-teal-600 mt-1">Last 30 days</p>
+                </div>
+                <i class="fas fa-sync-alt text-3xl sm:text-4xl text-teal-200"></i>
             </div>
         </div>
     </div>
 
-    <!-- Revenue Metrics -->
-    <div class="grid grid-cols-3 gap-4 mb-8">
-        <!-- Today's Revenue -->
-        <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-gray-900">Today's Sales</h3>
-                <i class="fas fa-calendar-check text-2xl text-green-500"></i>
+    <!-- Quick Actions - RESPONSIVE -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-8">
+        <a href="{{ route('sales.create') }}"
+            class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white p-3 sm:p-4 rounded-lg shadow-sm hover:shadow-md transition text-center group">
+            <i
+                class="fas fa-cash-register text-2xl sm:text-3xl mb-1 sm:mb-2 block group-hover:scale-110 transition"></i>
+            <p class="font-semibold text-xs sm:text-sm">New Sale</p>
+        </a>
+
+        <a href="{{ route('purchases.index') }}"
+            class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white p-3 sm:p-4 rounded-lg shadow-sm hover:shadow-md transition text-center group">
+            <i
+                class="fas fa-shopping-cart text-2xl sm:text-3xl mb-1 sm:mb-2 block group-hover:scale-110 transition"></i>
+            <p class="font-semibold text-xs sm:text-sm">New Purchase</p>
+        </a>
+
+        <a href="{{ route('products.index') }}"
+            class="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white p-3 sm:p-4 rounded-lg shadow-sm hover:shadow-md transition text-center group">
+            <i class="fas fa-box-open text-2xl sm:text-3xl mb-1 sm:mb-2 block group-hover:scale-110 transition"></i>
+            <p class="font-semibold text-xs sm:text-sm">Manage Inventory</p>
+        </a>
+
+        <a href="{{ route('sales.index') }}"
+            class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white p-3 sm:p-4 rounded-lg shadow-sm hover:shadow-md transition text-center group">
+            <i class="fas fa-chart-bar text-2xl sm:text-3xl mb-1 sm:mb-2 block group-hover:scale-110 transition"></i>
+            <p class="font-semibold text-xs sm:text-sm">View Reports</p>
+        </a>
+    </div>
+
+    <!-- Revenue Metrics - RESPONSIVE -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <!-- Today's Sales -->
+        <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-3 sm:mb-4">
+                <h3 class="text-base sm:text-lg font-semibold text-gray-900">Today's Sales</h3>
+                <i class="fas fa-calendar-check text-xl sm:text-2xl text-green-500"></i>
             </div>
-            <p class="text-3xl font-bold text-gray-900">${{ number_format($todayRevenue, 2) }}</p>
-            <p class="text-sm text-gray-500 mt-2">{{ now()->format('l, F j, Y') }}</p>
+            <p class="text-2xl sm:text-3xl font-bold text-gray-900 truncate">Rp
+                {{ number_format($todayRevenue / 1000, 0) }}k</p>
+
+            @if ($yesterdayRevenue > 0)
+                <div class="flex items-center gap-2 mt-2">
+                    @if ($revenueChange >= 0)
+                        <span class="text-green-600 text-xs sm:text-sm font-semibold flex items-center gap-1">
+                            <i class="fas fa-arrow-up"></i> {{ number_format(abs($revenueChange), 1) }}%
+                        </span>
+                    @else
+                        <span class="text-red-600 text-xs sm:text-sm font-semibold flex items-center gap-1">
+                            <i class="fas fa-arrow-down"></i> {{ number_format(abs($revenueChange), 1) }}%
+                        </span>
+                    @endif
+                    <span class="text-gray-500 text-xs">vs yesterday</span>
+                </div>
+            @endif
+
+            <p class="text-xs sm:text-sm text-gray-500 mt-2 hidden sm:block">{{ now()->format('l, F j, Y') }}</p>
         </div>
 
         <!-- This Month Revenue -->
-        <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-gray-900">This Month</h3>
-                <i class="fas fa-calendar-alt text-2xl text-blue-500"></i>
+        <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-3 sm:mb-4">
+                <h3 class="text-base sm:text-lg font-semibold text-gray-900">This Month</h3>
+                <i class="fas fa-calendar-alt text-xl sm:text-2xl text-blue-500"></i>
             </div>
-            <p class="text-3xl font-bold text-gray-900">${{ number_format($thisMonthRevenue, 2) }}</p>
-            <p class="text-sm text-gray-500 mt-2">{{ now()->format('F Y') }}</p>
+            <p class="text-2xl sm:text-3xl font-bold text-gray-900 truncate">Rp
+                {{ number_format($thisMonthRevenue / 1000, 0) }}k</p>
+
+            @if ($lastMonthRevenue > 0)
+                <div class="flex items-center gap-2 mt-2">
+                    @if ($monthlyChange >= 0)
+                        <span class="text-green-600 text-xs sm:text-sm font-semibold flex items-center gap-1">
+                            <i class="fas fa-arrow-up"></i> {{ number_format(abs($monthlyChange), 1) }}%
+                        </span>
+                    @else
+                        <span class="text-red-600 text-xs sm:text-sm font-semibold flex items-center gap-1">
+                            <i class="fas fa-arrow-down"></i> {{ number_format(abs($monthlyChange), 1) }}%
+                        </span>
+                    @endif
+                    <span class="text-gray-500 text-xs">vs last month</span>
+                </div>
+            @endif
+
+            <p class="text-xs sm:text-sm text-gray-500 mt-2">{{ now()->format('F Y') }}</p>
         </div>
 
-        <!-- Total Revenue -->
-        <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-gray-900">Total Revenue</h3>
-                <i class="fas fa-chart-line text-2xl text-purple-500"></i>
+        <!-- Selected Period Revenue -->
+        <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-3 sm:mb-4">
+                <h3 class="text-base sm:text-lg font-semibold text-gray-900">Selected Period</h3>
+                <i class="fas fa-chart-line text-xl sm:text-2xl text-purple-500"></i>
             </div>
-            <p class="text-3xl font-bold text-gray-900">${{ number_format($totalRevenue, 2) }}</p>
-            <p class="text-sm text-gray-500 mt-2">All time</p>
+            <p class="text-2xl sm:text-3xl font-bold text-gray-900 truncate">Rp
+                {{ number_format($totalRevenue / 1000, 0) }}k</p>
+            <div class="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-1 mt-2">
+                <p class="text-xs sm:text-sm text-gray-500">{{ $totalTransactions }} trans.</p>
+                <p class="text-xs sm:text-sm font-semibold text-purple-600 truncate">
+                    Avg: Rp {{ number_format($avgTransaction / 1000, 0) }}k
+                </p>
+            </div>
+        </div>
+
+        <!-- Payment Methods -->
+        <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm">
+            <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
+                <i class="fas fa-wallet text-blue-500"></i>
+                <span class="truncate">Payment Methods</span>
+            </h3>
+
+            <div class="space-y-2 sm:space-y-3">
+                @foreach ($paymentMethodStats as $payment)
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2 min-w-0 flex-1">
+                            <i
+                                class="fas fa-{{ $payment->payment_method === 'cash' ? 'money-bill' : 'credit-card' }} text-gray-400 flex-shrink-0"></i>
+                            <span
+                                class="text-xs sm:text-sm font-medium capitalize truncate">{{ $payment->payment_method }}</span>
+                        </div>
+                        <div class="text-right ml-2">
+                            <p class="font-semibold text-gray-900 text-xs sm:text-sm truncate">
+                                Rp {{ number_format($payment->total / 1000, 0) }}k
+                            </p>
+                            <p class="text-xs text-gray-500">{{ $payment->count }}x</p>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
         </div>
     </div>
 
-    <!-- Main Content Grid -->
-    <div class="grid grid-cols-3 gap-8 mb-8">
+    <!-- Main Content Grid - RESPONSIVE -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 mb-6 sm:mb-8">
         <!-- Low Stock Products -->
-        <div class="col-span-2">
+        <div class="lg:col-span-2">
             <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-                <div class="px-6 py-4 bg-gradient-to-r from-red-50 to-orange-50 border-b border-gray-200">
-                    <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <div
+                    class="px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-red-50 to-orange-50 border-b border-gray-200">
+                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 flex items-center gap-2">
                         <i class="fas fa-exclamation-circle text-orange-500"></i>
                         Low Stock Alert
                     </h3>
                 </div>
 
                 @if ($lowStockProducts->count() > 0)
-                    <div class="divide-y">
+                    <div class="divide-y max-h-96 overflow-y-auto">
                         @foreach ($lowStockProducts as $product)
-                            <div class="px-6 py-4 hover:bg-gray-50 transition">
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <p class="font-semibold text-gray-900">{{ $product->name }}</p>
-                                        <p class="text-sm text-gray-600">{{ $product->category }}</p>
+                            <div class="px-4 sm:px-6 py-3 sm:py-4 hover:bg-gray-50 transition">
+                                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                                    <div class="flex-1 min-w-0 w-full sm:w-auto">
+                                        <p class="font-semibold text-gray-900 text-sm sm:text-base truncate">
+                                            {{ $product->name }}</p>
+                                        <p class="text-xs sm:text-sm text-gray-600 truncate">{{ $product->category }}
+                                        </p>
                                     </div>
-                                    <div class="text-right">
+                                    <div
+                                        class="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
                                         <span
-                                            class="px-3 py-1 rounded-full text-sm font-semibold
+                                            class="px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-semibold flex-shrink-0
                                             @if ($product->current_stock < 5) bg-red-100 text-red-800
-                                            @else
-                                                bg-yellow-100 text-yellow-800 @endif">
+                                            @else bg-yellow-100 text-yellow-800 @endif">
                                             {{ $product->current_stock }} {{ $product->unit }}
                                         </span>
+
+                                        <a href="{{ route('purchases.create') }}?product={{ $product->id }}"
+                                            class="px-2 sm:px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded font-semibold transition whitespace-nowrap"
+                                            title="Reorder">
+                                            <i class="fas fa-plus mr-1"></i><span
+                                                class="hidden sm:inline">Reorder</span>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
                         @endforeach
                     </div>
                 @else
-                    <div class="px-6 py-12 text-center">
-                        <i class="fas fa-check-circle text-4xl text-green-300 mb-3 block"></i>
-                        <p class="text-gray-500">All products have healthy stock levels</p>
+                    <div class="px-4 sm:px-6 py-8 sm:py-12 text-center">
+                        <i class="fas fa-check-circle text-3xl sm:text-4xl text-green-300 mb-2 sm:mb-3 block"></i>
+                        <p class="text-gray-500 text-sm sm:text-base">All products have healthy stock levels</p>
                     </div>
                 @endif
             </div>
@@ -138,21 +370,22 @@
         <!-- Pending Purchases -->
         <div>
             <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-                <div class="px-6 py-4 bg-gradient-to-r from-orange-50 to-yellow-50 border-b border-gray-200">
-                    <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <div
+                    class="px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-orange-50 to-yellow-50 border-b border-gray-200">
+                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 flex items-center gap-2">
                         <i class="fas fa-clock text-orange-500"></i>
                         Pending Orders
                     </h3>
                 </div>
 
-                <div class="p-6">
+                <div class="p-4 sm:p-6">
                     <div class="text-center">
-                        <p class="text-4xl font-bold text-orange-600">{{ $pendingPurchases }}</p>
-                        <p class="text-sm text-gray-600 mt-2">Purchase orders awaiting receipt</p>
+                        <p class="text-3xl sm:text-4xl font-bold text-orange-600">{{ $pendingPurchases }}</p>
+                        <p class="text-xs sm:text-sm text-gray-600 mt-2">Purchase orders awaiting receipt</p>
 
                         @if ($pendingPurchases > 0)
                             <a href="{{ route('purchases.index') }}"
-                                class="inline-block mt-4 px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition text-sm font-semibold">
+                                class="inline-block mt-3 sm:mt-4 px-3 sm:px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition text-xs sm:text-sm font-semibold">
                                 View Orders
                             </a>
                         @endif
@@ -162,26 +395,31 @@
         </div>
     </div>
 
-    <!-- Recent Sales and Top Products -->
-    <div class="grid grid-cols-2 gap-8">
+    <!-- Recent Sales and Top Products - RESPONSIVE -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-6 sm:mb-8">
         <!-- Recent Sales -->
         <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-            <div class="px-6 py-4 bg-gradient-to-r from-green-50 to-emerald-50 border-b border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <div
+                class="px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-green-50 to-emerald-50 border-b border-gray-200">
+                <h3 class="text-base sm:text-lg font-semibold text-gray-900 flex flex-wrap items-center gap-2">
                     <i class="fas fa-receipt text-green-500"></i>
-                    Recent Sales
+                    <span>Recent Sales</span>
+                    <span class="text-xs sm:text-sm font-normal text-gray-500">({{ $dateRangeLabel }})</span>
                 </h3>
             </div>
 
             @if ($recentSales->count() > 0)
-                <div class="divide-y max-h-96 overflow-y-auto">
+                <div class="divide-y max-h-80 sm:max-h-96 overflow-y-auto">
                     @foreach ($recentSales as $sale)
-                        <div class="px-6 py-4 hover:bg-gray-50 transition">
+                        <div class="px-4 sm:px-6 py-3 sm:py-4 hover:bg-gray-50 transition">
                             <div class="flex items-center justify-between mb-2">
-                                <p class="font-semibold text-gray-900">{{ $sale->customer_name }}</p>
-                                <p class="font-bold text-green-600">${{ number_format($sale->total_amount, 2) }}</p>
+                                <p class="font-semibold text-gray-900 text-sm sm:text-base truncate flex-1 mr-2">
+                                    {{ $sale->customer_name }}</p>
+                                <p class="font-bold text-green-600 text-sm sm:text-base whitespace-nowrap">
+                                    Rp {{ number_format($sale->total_amount / 1000, 0) }}k
+                                </p>
                             </div>
-                            <div class="flex items-center justify-between text-sm">
+                            <div class="flex items-center justify-between text-xs sm:text-sm">
                                 <p class="text-gray-600">{{ $sale->saleItems->count() }}
                                     item{{ $sale->saleItems->count() !== 1 ? 's' : '' }}</p>
                                 <p class="text-gray-500">{{ $sale->date->format('M d, Y') }}</p>
@@ -190,75 +428,238 @@
                     @endforeach
                 </div>
             @else
-                <div class="px-6 py-12 text-center">
-                    <i class="fas fa-inbox text-4xl text-gray-300 mb-3 block"></i>
-                    <p class="text-gray-500">No sales yet</p>
+                <div class="px-4 sm:px-6 py-8 sm:py-12 text-center">
+                    <i class="fas fa-inbox text-3xl sm:text-4xl text-gray-300 mb-2 sm:mb-3 block"></i>
+                    <p class="text-gray-500 text-sm sm:text-base">No sales in this period</p>
                 </div>
             @endif
         </div>
 
         <!-- Top Selling Products -->
         <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-            <div class="px-6 py-4 bg-gradient-to-r from-purple-50 to-pink-50 border-b border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <div class="px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-purple-50 to-pink-50 border-b border-gray-200">
+                <h3 class="text-base sm:text-lg font-semibold text-gray-900 flex flex-wrap items-center gap-2">
                     <i class="fas fa-star text-purple-500"></i>
-                    Top Sellers
+                    <span>Top Sellers</span>
+                    <span class="text-xs sm:text-sm font-normal text-gray-500">({{ $dateRangeLabel }})</span>
                 </h3>
             </div>
 
             @if ($topProducts->count() > 0)
-                <div class="divide-y max-h-96 overflow-y-auto">
+                <div class="divide-y max-h-80 sm:max-h-96 overflow-y-auto">
                     @foreach ($topProducts as $product)
-                        <div class="px-6 py-4 hover:bg-gray-50 transition">
+                        <div class="px-4 sm:px-6 py-3 sm:py-4 hover:bg-gray-50 transition">
                             <div class="flex items-center justify-between mb-2">
-                                <p class="font-semibold text-gray-900">{{ $product['name'] }}</p>
-                                <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs font-semibold">
+                                <p class="font-semibold text-gray-900 text-sm sm:text-base truncate flex-1 mr-2">
+                                    {{ $product['name'] }}</p>
+                                <span
+                                    class="px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs font-semibold flex-shrink-0">
                                     #{{ $loop->iteration }}
                                 </span>
                             </div>
-                            <div class="flex items-center justify-between text-sm">
+                            <div class="flex items-center justify-between text-xs sm:text-sm">
                                 <p class="text-gray-600">{{ $product['quantity_sold'] }} sold</p>
-                                <p class="font-semibold text-gray-900">${{ number_format($product['revenue'], 2) }}</p>
+                                <p class="font-semibold text-gray-900 whitespace-nowrap">
+                                    Rp {{ number_format($product['revenue'] / 1000, 0) }}k
+                                </p>
                             </div>
                         </div>
                     @endforeach
                 </div>
             @else
-                <div class="px-6 py-12 text-center">
-                    <i class="fas fa-inbox text-4xl text-gray-300 mb-3 block"></i>
-                    <p class="text-gray-500">No sales data yet</p>
+                <div class="px-4 sm:px-6 py-8 sm:py-12 text-center">
+                    <i class="fas fa-inbox text-3xl sm:text-4xl text-gray-300 mb-2 sm:mb-3 block"></i>
+                    <p class="text-gray-500 text-sm sm:text-base">No sales data in this period</p>
                 </div>
             @endif
         </div>
     </div>
 
-    <!-- Daily Revenue Chart Data (for future enhancement) -->
+    <!-- Enhanced Revenue Chart -->
     @if (count($dailyRevenue) > 0)
         <div class="mt-8 bg-white border border-gray-200 rounded-lg shadow-sm p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <i class="fas fa-chart-bar text-blue-500"></i>
-                Sales This Week
-            </h3>
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                        <i class="fas fa-chart-line text-blue-500"></i>
+                        Sales Trend
+                    </h3>
+                    <p class="text-sm text-gray-500 mt-1">{{ $dateRangeLabel }}</p>
+                </div>
 
-            <div class="grid grid-cols-7 gap-2">
-                @php
-                    $maxRevenue = max(array_values($dailyRevenue)) ?: 1;
-                @endphp
-                @foreach ($dailyRevenue as $date => $revenue)
-                    <div class="text-center">
-                        <div class="bg-gradient-to-t from-blue-500 to-blue-400 rounded-t flex items-end justify-center relative group"
-                            style="height: {{ max(40, ($revenue / $maxRevenue) * 150) }}px">
-                            <span class="text-white text-xs font-bold absolute -top-6">
-                                @if ($revenue > 0)
-                                    ${{ number_format($revenue, 0) }}
-                                @endif
-                            </span>
-                        </div>
-                        <p class="text-xs text-gray-600 mt-2">{{ \Carbon\Carbon::parse($date)->format('M d') }}</p>
-                    </div>
-                @endforeach
+                <!-- Chart Type Toggle -->
+                <div class="flex gap-2">
+                    <button onclick="updateChartType('line')" id="chartTypeLineBtn"
+                        class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm font-semibold transition hover:bg-blue-700">
+                        <i class="fas fa-chart-line mr-1"></i> Line
+                    </button>
+                    <button onclick="updateChartType('bar')" id="chartTypeBarBtn"
+                        class="px-3 py-1.5 bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold transition hover:bg-gray-300">
+                        <i class="fas fa-chart-bar mr-1"></i> Bar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chart Container -->
+            <div class="relative" style="height: 300px;">
+                <canvas id="revenueChart"></canvas>
+            </div>
+
+            <!-- Chart Stats Summary -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-gray-200">
+                <div class="text-center">
+                    <p class="text-sm text-gray-600">Total Revenue</p>
+                    <p class="text-xl font-bold text-gray-900">Rp
+                        {{ number_format(array_sum($dailyRevenue), 0, ',', '.') }}</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-sm text-gray-600">Average Daily</p>
+                    <p class="text-xl font-bold text-blue-600">Rp
+                        {{ number_format(array_sum($dailyRevenue) / count($dailyRevenue), 0, ',', '.') }}</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-sm text-gray-600">Peak Day</p>
+                    <p class="text-xl font-bold text-green-600">Rp
+                        {{ number_format(max($dailyRevenue), 0, ',', '.') }}</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-sm text-gray-600">Lowest Day</p>
+                    <p class="text-xl font-bold text-orange-600">Rp
+                        {{ number_format(min($dailyRevenue), 0, ',', '.') }}</p>
+                </div>
             </div>
         </div>
+
+        @push('scripts')
+            <script>
+                let revenueChart;
+                let currentChartType = 'line';
+
+                // Chart data from Laravel
+                const chartLabels = @json(array_keys($dailyRevenue));
+                const chartData = @json(array_values($dailyRevenue));
+
+                // Format dates for display
+                const formattedLabels = chartLabels.map(date => {
+                    const d = new Date(date);
+                    return d.toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                });
+
+                // Initialize chart
+                function initChart() {
+                    const ctx = document.getElementById('revenueChart').getContext('2d');
+
+                    revenueChart = new Chart(ctx, {
+                        type: currentChartType,
+                        data: {
+                            labels: formattedLabels,
+                            datasets: [{
+                                label: 'Revenue (Rp)',
+                                data: chartData,
+                                backgroundColor: currentChartType === 'line' ?
+                                    'rgba(59, 130, 246, 0.1)' :
+                                    'rgba(59, 130, 246, 0.8)',
+                                borderColor: 'rgb(59, 130, 246)',
+                                borderWidth: 2,
+                                tension: 0.4,
+                                fill: true,
+                                pointRadius: 4,
+                                pointHoverRadius: 6,
+                                pointBackgroundColor: 'rgb(59, 130, 246)',
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 2,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                tooltip: {
+                                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                    padding: 12,
+                                    titleColor: '#fff',
+                                    bodyColor: '#fff',
+                                    cornerRadius: 8,
+                                    displayColors: false,
+                                    callbacks: {
+                                        label: function(context) {
+                                            let label = context.dataset.label || '';
+                                            if (label) {
+                                                label += ': ';
+                                            }
+                                            label += 'Rp ' + context.parsed.y.toLocaleString('id-ID');
+                                            return label;
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: {
+                                        color: 'rgba(0, 0, 0, 0.05)',
+                                    },
+                                    ticks: {
+                                        callback: function(value) {
+                                            if (value >= 1000000) {
+                                                return 'Rp ' + (value / 1000000).toFixed(1) + 'M';
+                                            } else if (value >= 1000) {
+                                                return 'Rp ' + (value / 1000).toFixed(0) + 'k';
+                                            }
+                                            return 'Rp ' + value.toLocaleString('id-ID');
+                                        }
+                                    }
+                                },
+                                x: {
+                                    grid: {
+                                        display: false
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // Update chart type
+                function updateChartType(type) {
+                    currentChartType = type;
+
+                    // Update button styles
+                    document.getElementById('chartTypeLineBtn').className = type === 'line' ?
+                        'px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm font-semibold transition' :
+                        'px-3 py-1.5 bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold transition hover:bg-gray-300';
+
+                    document.getElementById('chartTypeBarBtn').className = type === 'bar' ?
+                        'px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm font-semibold transition' :
+                        'px-3 py-1.5 bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold transition hover:bg-gray-300';
+
+                    // Destroy and recreate chart
+                    if (revenueChart) {
+                        revenueChart.destroy();
+                    }
+                    initChart();
+                }
+
+                // Initialize on page load
+                document.addEventListener('DOMContentLoaded', function() {
+                    initChart();
+                });
+
+                // Reinitialize chart when Livewire updates
+                document.addEventListener('livewire:navigated', function() {
+                    if (revenueChart) {
+                        revenueChart.destroy();
+                    }
+                    initChart();
+                });
+            </script>
+        @endpush
     @endif
 
 </div>
