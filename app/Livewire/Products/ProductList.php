@@ -20,6 +20,29 @@ class ProductList extends Component
 
     public $filterStockLevel = 'all'; // all, low, critical
 
+    public $showQuickAdd = false;
+
+    #[On('quick-product-created')]
+    public function quickProductCreated()
+    {
+        $this->showQuickAdd = false;
+        $this->resetPage();
+    }
+
+    #[On('close-quick-add')]
+    public function closeQuickAdd()
+    {
+        $this->showQuickAdd = false;
+    }
+
+    public $showBulkImport = false;
+
+    public function importProducts($file)
+    {
+        // Will implement CSV import in next step
+        $this->dispatch('notification', message: 'Bulk import coming soon!');
+    }
+
     public function updatedSearch()
     {
         $this->resetPage();

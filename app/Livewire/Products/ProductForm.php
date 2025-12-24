@@ -64,35 +64,26 @@ class ProductForm extends Component
     {
         $this->validate();
 
+        $data = [
+            'name' => $this->name,
+            'category' => $this->category,
+            'unit' => $this->unit,
+            'price' => $this->price,
+            'supplier_id' => $this->supplier_id ?: null,
+            'low_stock_threshold' => $this->low_stock_threshold,
+            'critical_stock_threshold' => $this->critical_stock_threshold,
+            'auto_reorder_enabled' => $this->auto_reorder_enabled,
+            'reorder_quantity' => $this->reorder_quantity ?: null, // Fix: Convert empty string to null
+        ];
+
         if ($this->isEditing) {
             $product = Product::find($this->productId);
-            $product->update([
-                'name' => $this->name,
-                'category' => $this->category,
-                'unit' => $this->unit,
-                'price' => $this->price,
-                'supplier_id' => $this->supplier_id ?: null,
-                'low_stock_threshold' => $this->low_stock_threshold,
-                'critical_stock_threshold' => $this->critical_stock_threshold,
-                'auto_reorder_enabled' => $this->auto_reorder_enabled,
-                'reorder_quantity' => $this->reorder_quantity,
-            ]);
+            $product->update($data);
 
             $this->dispatch('notification', message: 'Product updated successfully!', type: 'success');
             $this->dispatch('product-updated');
         } else {
-            Product::create([
-                'name' => $this->name,
-                'category' => $this->category,
-                'unit' => $this->unit,
-                'price' => $this->price,
-                'supplier_id' => $this->supplier_id ?: null,
-                'current_stock' => 0,
-                'low_stock_threshold' => $this->low_stock_threshold,
-                'critical_stock_threshold' => $this->critical_stock_threshold,
-                'auto_reorder_enabled' => $this->auto_reorder_enabled,
-                'reorder_quantity' => $this->reorder_quantity,
-            ]);
+            Product::create(array_merge($data, ['current_stock' => 0]));
 
             $this->dispatch('notification', message: 'Product created successfully!', type: 'success');
             $this->dispatch('product-created');

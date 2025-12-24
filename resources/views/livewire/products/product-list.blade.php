@@ -6,10 +6,24 @@
                 <h1 class="text-4xl font-bold text-gray-900 mb-2">Product Inventory</h1>
                 <p class="text-gray-600">Manage your construction materials and supplies</p>
             </div>
-            <button wire:click="$toggle('showCreateForm')"
-                class="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-lg hover:from-green-600 hover:to-green-700 transition shadow-lg flex items-center gap-2">
-                <i class="fas fa-plus"></i> Add New Product
-            </button>
+            <div class="flex gap-3">
+                <!-- Quick Add Button (Highlighted) -->
+                <button wire:click="$toggle('showQuickAdd')"
+                    class="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-lg hover:from-green-600 hover:to-green-700 transition shadow-lg flex items-center gap-2 border-2 border-green-400">
+                    <i class="fas fa-bolt"></i> Quick Add
+                </button>
+
+                <!-- Full Form Button -->
+                <button wire:click="$toggle('showCreateForm')"
+                    class="bg-white border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50 transition flex items-center gap-2">
+                    <i class="fas fa-plus"></i> Full Form
+                </button>
+
+                <button wire:click="$toggle('showBulkImport')"
+                    class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-3 rounded-lg transition flex items-center gap-2">
+                    <i class="fas fa-file-import"></i> Bulk Import
+                </button>
+            </div>
         </div>
     </div>
 
@@ -27,6 +41,30 @@
             <option value="critical">Critical Stock</option>
         </select>
     </div>
+
+    <!-- Quick Add Modal -->
+    @if ($showQuickAdd)
+        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-lg">
+                <div
+                    class="sticky top-0 bg-gradient-to-r from-green-500 to-green-600 px-6 py-3 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fas fa-bolt"></i> Quick Add Product
+                        </h2>
+                        <p class="text-green-100 text-xs">Fast entry • Essential fields only</p>
+                    </div>
+                    <button wire:click="$set('showQuickAdd', false)" class="text-white hover:text-gray-200 transition">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <div class="p-6">
+                    <livewire:products.quick-add-product :key="'quick-add-' . time()" />
+                </div>
+            </div>
+        </div>
+    @endif
 
     <!-- Create Form Modal -->
     @if ($showCreateForm)
@@ -95,24 +133,37 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-gray-600">{{ ucfirst($product->unit) }}</td>
-                            <td class="px-6 py-4 font-semibold text-gray-900">${{ number_format($product->price, 2) }}
+                            <td class="px-6 py-4 font-semibold text-gray-900">
+                                Rp {{ number_format($product->price, 0, ',', '.') }}
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-2">
+                                    @php
+                                        $isCritical = $product->current_stock < $product->critical_stock_threshold;
+                                        $isLow =
+                                            $product->current_stock < $product->low_stock_threshold && !$isCritical;
+                                        $isGood = !$isCritical && !$isLow;
+                                    @endphp
+
                                     <span
-                                        class="px-3 py-1 rounded-full text-sm font-semibold
-                                        @if ($product->current_stock < 5) bg-red-100 text-red-800
-                                        @elseif($product->current_stock < 10)
-                                            bg-yellow-100 text-yellow-800
+                                        class="px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1
+                                                @if ($isCritical) bg-red-100 text-red-800
+                                                @elseif($isLow) bg-yellow-100 text-yellow-800
+                                                @else bg-green-100 text-green-800 @endif">
+
+                                        @if ($isCritical)
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                        @elseif($isLow)
+                                            <i class="fas fa-exclamation-circle"></i>
                                         @else
-                                            bg-green-100 text-green-800 @endif">
+                                            <i class="fas fa-check-circle"></i>
+                                        @endif
+
                                         {{ $product->current_stock }} {{ $product->unit }}
                                     </span>
-                                    @if ($product->current_stock < 10)
-                                        <i class="fas fa-exclamation-circle text-orange-500"></i>
-                                    @endif
                                 </div>
                             </td>
+
                             <td class="px-6 py-4 text-gray-600">
                                 {{ $product->supplier->name ?? '—' }}
                             </td>
