@@ -47,7 +47,7 @@ class QuickAddProduct extends Component
             'reorder_quantity' => null,
         ]);
 
-        $this->dispatch('notification', message: '✓ Product added! Add another or close.', type: 'success');
+        $this->dispatch('notification', message: 'Product added! Add another or close.', type: 'success');
         $this->dispatch('quick-product-created');
 
         // Reset only input fields, keep modal open for rapid entry

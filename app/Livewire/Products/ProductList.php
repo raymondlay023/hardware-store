@@ -22,6 +22,21 @@ class ProductList extends Component
 
     public $showQuickAdd = false;
 
+    public $showBulkImport = false;
+
+    #[On('products-imported')]
+    public function productsImported()
+    {
+        $this->showBulkImport = false;
+        $this->resetPage();
+    }
+
+    #[On('close-bulk-import')]
+    public function closeBulkImport()
+    {
+        $this->showBulkImport = false;
+    }
+
     #[On('quick-product-created')]
     public function quickProductCreated()
     {
@@ -33,14 +48,6 @@ class ProductList extends Component
     public function closeQuickAdd()
     {
         $this->showQuickAdd = false;
-    }
-
-    public $showBulkImport = false;
-
-    public function importProducts($file)
-    {
-        // Will implement CSV import in next step
-        $this->dispatch('notification', message: 'Bulk import coming soon!');
     }
 
     public function updatedSearch()
@@ -87,7 +94,7 @@ class ProductList extends Component
     {
         $product = Product::find($productId);
 
-        if (! $product || ! $product->auto_reorder_enabled || ! $product->supplier_id) {
+        if (!$product || !$product->auto_reorder_enabled || !$product->supplier_id) {
             $this->dispatch('notification', message: 'Auto-reorder not enabled or no supplier set');
 
             return;
@@ -115,8 +122,7 @@ class ProductList extends Component
         $query = Product::query();
 
         if ($this->search) {
-            $query->where('name', 'like', '%'.$this->search.'%')
-                ->orWhere('category', 'like', '%'.$this->search.'%');
+            $query->where('name', 'like', '%' . $this->search . '%')->orWhere('category', 'like', '%' . $this->search . '%');
         }
 
         // Filter by stock level

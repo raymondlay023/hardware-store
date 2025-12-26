@@ -13,7 +13,16 @@
                     <i class="fas fa-bolt"></i> Quick Add
                 </button>
 
-                <!-- Full Form Button (Dedicated Page) -->
+                <!-- Bulk Import Button -->
+                <button wire:click="$toggle('showBulkImport')"
+                    class="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-5 py-3 rounded-lg hover:from-purple-600 hover:to-purple-700 transition shadow-lg flex items-center gap-2">
+                    <i class="fas fa-file-import"></i>
+                    <div class="text-left">
+                        <div class="font-bold text-sm">Bulk Import</div>
+                    </div>
+                </button>
+
+                <!-- Full Form Button -->
                 <a href="{{ route('products.create') }}"
                     class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-5 py-3 rounded-lg hover:from-blue-600 hover:to-blue-700 transition shadow-lg flex items-center gap-2">
                     <i class="fas fa-plus-circle"></i>
@@ -21,11 +30,6 @@
                         <div class="font-bold text-sm">New Product</div>
                     </div>
                 </a>
-
-                <button wire:click="$toggle('showBulkImport')"
-                    class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-3 rounded-lg transition flex items-center gap-2">
-                    <i class="fas fa-file-import"></i> Bulk Import
-                </button>
             </div>
         </div>
     </div>
@@ -108,6 +112,32 @@
             </div>
         </div>
     @endif
+
+    <!-- Bulk Import Modal -->
+    @if ($showBulkImport)
+        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                <div
+                    class="sticky top-0 bg-gradient-to-r from-purple-500 to-purple-600 px-6 py-4 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                            <i class="fas fa-file-import"></i> Bulk Import Products
+                        </h2>
+                        <p class="text-purple-100 text-sm">Import multiple products from CSV file</p>
+                    </div>
+                    <button wire:click="$set('showBulkImport', false)"
+                        class="text-white hover:text-gray-200 transition">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <div class="p-6">
+                    <livewire:products.bulk-import :key="'bulk-import-' . time()" />
+                </div>
+            </div>
+        </div>
+    @endif
+
 
     <!-- Products Table -->
     <div class="bg-white rounded-lg shadow overflow-hidden">
