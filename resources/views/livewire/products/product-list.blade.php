@@ -13,11 +13,14 @@
                     <i class="fas fa-bolt"></i> Quick Add
                 </button>
 
-                <!-- Full Form Button -->
-                <button wire:click="$toggle('showCreateForm')"
-                    class="bg-white border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50 transition flex items-center gap-2">
-                    <i class="fas fa-plus"></i> Full Form
-                </button>
+                <!-- Full Form Button (Dedicated Page) -->
+                <a href="{{ route('products.create') }}"
+                    class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-5 py-3 rounded-lg hover:from-blue-600 hover:to-blue-700 transition shadow-lg flex items-center gap-2">
+                    <i class="fas fa-plus-circle"></i>
+                    <div class="text-left">
+                        <div class="font-bold text-sm">New Product</div>
+                    </div>
+                </a>
 
                 <button wire:click="$toggle('showBulkImport')"
                     class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-3 rounded-lg transition flex items-center gap-2">

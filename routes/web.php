@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\Dashboard\DashboardView;
+use App\Livewire\Products\CreateProductPage;
 use App\Livewire\Products\ProductList;
 use App\Livewire\Purchases\PurchaseList;
 use App\Livewire\Sales\CreateSale;
@@ -18,6 +19,7 @@ Route::middleware(['auth'])->group(function () {
     // Products - accessible by admin and manager
     Route::middleware('role:admin,manager')->group(function () {
         Route::get('/products', ProductList::class)->name('products.index');
+        Route::get('/products/create', CreateProductPage::class)->name('products.create');
     });
 
     // Suppliers - accessible by admin and manager

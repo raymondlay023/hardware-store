@@ -87,6 +87,11 @@ class ProductForm extends Component
 
             $this->dispatch('notification', message: 'Product created successfully!', type: 'success');
             $this->dispatch('product-created');
+
+            if (request()->routeIs('products.create')) {
+                session()->flash('message', 'Product created successfully!');
+                return redirect()->route('products.index');
+            }
         }
 
         $this->reset();
@@ -95,10 +100,17 @@ class ProductForm extends Component
     public function cancel()
     {
         $this->reset();
+
         if ($this->isEditing) {
             $this->dispatch('product-updated');
         } else {
+            // Check if we're on full page or modal
             $this->dispatch('close-create-form');
+
+            // For full page, redirect back
+            if (request()->routeIs('products.create')) {
+                return redirect()->route('products.index');
+            }
         }
     }
 
