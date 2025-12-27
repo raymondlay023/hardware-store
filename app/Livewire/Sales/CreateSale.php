@@ -516,11 +516,14 @@ class CreateSale extends Component
             }
 
             return Product::where('name', 'like', '%'.$this->productSearch.'%')
+                ->orWhere('brand', 'like', '%'.$this->productSearch.'%')
                 ->orWhere('category', 'like', '%'.$this->productSearch.'%')
-                // Removed SKU search here
+                ->orWhereHas('aliases', function ($query) {
+                    $query->where('alias', 'like', '%'.$this->productSearch.'%');
+                })
                 ->where('current_stock', '>', 0)
                 ->limit(8)
-                ->get(['id', 'name', 'category', 'price', 'current_stock']) // Removed 'sku' from select
+                ->get(['id', 'name', 'category', 'price', 'current_stock'])
                 ->toArray();
         } catch (\Exception $e) {
             Log::error('Product search error: '.$e->getMessage());

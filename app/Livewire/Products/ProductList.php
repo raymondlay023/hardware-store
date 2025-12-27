@@ -122,7 +122,12 @@ class ProductList extends Component
         $query = Product::query();
 
         if ($this->search) {
-            $query->where('name', 'like', '%' . $this->search . '%')->orWhere('category', 'like', '%' . $this->search . '%');
+            $query->where('name', 'like', '%' . $this->search . '%')
+                ->orWhere('brand', 'like', '%'.$this->search.'%')
+                ->orWhere('category', 'like', '%' . $this->search . '%')
+                ->orWhereHas('aliases', function ($query) {
+                    $query->where('alias', 'like', '%'.$this->search.'%');
+                });
         }
 
         // Filter by stock level

@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
     protected $fillable = [
-        'name', 'category', 'unit', 'price', 'current_stock', 'supplier_id',
+        'name', 'brand', 'category', 'unit', 'price', 'current_stock', 'supplier_id',
         'barcode', 'low_stock_threshold', 'critical_stock_threshold',
-        'auto_reorder_enabled', 'reorder_quantity',
+        'auto_reorder_enabled', 'reorder_quantity'
     ];
 
     public function isLowStock()
@@ -35,5 +36,10 @@ class Product extends Model
     public function saleItems()
     {
         return $this->hasMany(SaleItem::class);
+    }
+
+    public function aliases(): HasMany
+    {
+        return $this->hasMany(ProductAlias::class);
     }
 }

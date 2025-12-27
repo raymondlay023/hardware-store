@@ -158,8 +158,50 @@
                     @forelse($products as $product)
                         <tr class="hover:bg-gray-50 transition">
                             <td class="px-6 py-4">
-                                <div class="font-medium text-gray-900">{{ $product->name }}</div>
+                                <div>
+                                    <!-- Product Name with Brand -->
+                                    <div class="font-medium text-gray-900">
+                                        {{ $product->name }}
+                                        @if ($product->brand)
+                                            <span class="ml-2 text-sm font-normal text-gray-600">
+                                                <i class="fas fa-certificate text-blue-400"></i>
+                                                {{ $product->brand }}
+                                            </span>
+                                        @endif
+                                    </div>
+
+                                    @if ($product->aliases && $product->aliases->count() > 0)
+                                        <div class="text-xs text-gray-500 mt-1 flex items-start gap-1 group relative">
+                                            <i class="fas fa-tag text-blue-400 mt-0.5 flex-shrink-0"></i>
+                                            <span class="line-clamp-1 cursor-help">
+                                                {{ $product->aliases->take(3)->pluck('alias')->implode(', ') }}
+                                                @if ($product->aliases->count() > 3)
+                                                    <span
+                                                        class="text-blue-600 font-medium">+{{ $product->aliases->count() - 3 }}
+                                                        more</span>
+                                                @endif
+                                            </span>
+
+                                            <!-- Tooltip with all aliases -->
+                                            @if ($product->aliases->count() > 3)
+                                                <div
+                                                    class="hidden group-hover:block absolute left-0 top-6 bg-gray-800 text-white text-xs rounded-lg py-2 px-3 z-10 shadow-lg w-64">
+                                                    <p class="font-semibold mb-1">All alternative names:</p>
+                                                    <p>{{ $product->aliases->pluck('alias')->implode(', ') }}</p>
+                                                    <div
+                                                        class="absolute -top-1 left-4 w-2 h-2 bg-gray-800 transform rotate-45">
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <div class="text-xs text-gray-400 mt-1 italic">
+                                            <i class="fas fa-info-circle"></i> No aliases
+                                        </div>
+                                    @endif
+                                </div>
                             </td>
+
                             <td class="px-6 py-4">
                                 <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
                                     {{ $product->category }}
