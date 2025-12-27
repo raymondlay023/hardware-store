@@ -10,15 +10,19 @@
                     <li>Download the Excel template below</li>
                     <li>Fill in your product data (keep the purple header row unchanged)</li>
                     <li>Remove the sample data rows (rows 2-4) before uploading</li>
+                    <li><strong>NEW:</strong> Add brand names and aliases (comma-separated) for better search</li>
                     <li>Save the file and upload it here</li>
                     <li>Click Import to add products to your inventory</li>
                 </ol>
                 <div class="mt-3 bg-purple-100 rounded p-2 text-xs text-purple-900">
-                    <strong>💡 Pro Tip:</strong> Keep the template file and reuse it for future imports. Just add new
-                    rows!
+                    <strong>💡 Pro Tips:</strong>
+                    <ul class="list-disc list-inside mt-1 space-y-1">
+                        <li>Keep the template file and reuse it for future imports</li>
+                        <li>Use <strong>aliases</strong> for alternative names: "Wall paint, Cat dinding, Avian white"</li>
+                        <li>Separate multiple aliases with commas in the same cell</li>
+                    </ul>
                 </div>
             </div>
-
 
             <!-- Download Template Button -->
             <div class="text-center py-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
@@ -28,7 +32,6 @@
                 </button>
                 <p class="text-xs text-gray-600 mt-2">Template includes sample data and formatting</p>
             </div>
-
 
             <!-- File Upload -->
             <div>
@@ -61,7 +64,6 @@
                     <i class="fas fa-info-circle mr-1"></i>Supported formats: CSV, Excel (.csv, .xlsx, .xls) | Max: 2MB
                 </p>
 
-
                 <!-- Loading Indicator -->
                 <div wire:loading wire:target="file" class="mt-2">
                     <div class="flex items-center gap-2 text-blue-600">
@@ -71,16 +73,47 @@
                 </div>
             </div>
 
-            <!-- Column Reference -->
+            <!-- Column Reference - UPDATED -->
             <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h4 class="font-bold text-blue-900 mb-2 text-sm">Required Columns:</h4>
-                <div class="grid grid-cols-2 gap-2 text-xs text-blue-800">
-                    <div><span class="font-semibold">name</span> - Product name</div>
-                    <div><span class="font-semibold">category</span> - Product category</div>
-                    <div><span class="font-semibold">unit</span> - piece, bag, box, meter, kg</div>
-                    <div><span class="font-semibold">price</span> - Price in Rupiah</div>
-                    <div><span class="font-semibold">stock</span> - Initial stock (optional)</div>
-                    <div><span class="font-semibold">supplier</span> - Supplier name (optional)</div>
+                <h4 class="font-bold text-blue-900 mb-3 text-sm flex items-center gap-2">
+                    <i class="fas fa-table"></i> Template Columns Guide
+                </h4>
+                
+                <!-- Required Fields -->
+                <div class="mb-3">
+                    <p class="text-xs font-semibold text-blue-900 mb-2">✅ Required Columns:</p>
+                    <div class="grid grid-cols-2 gap-2 text-xs text-blue-800">
+                        <div><code class="bg-blue-100 px-1 rounded">name</code> - Product name</div>
+                        <div><code class="bg-blue-100 px-1 rounded">category</code> - Product category</div>
+                        <div><code class="bg-blue-100 px-1 rounded">unit</code> - piece, bag, box, meter, kg</div>
+                        <div><code class="bg-blue-100 px-1 rounded">price</code> - Price in Rupiah</div>
+                    </div>
+                </div>
+
+                <!-- Optional Fields - NEW SECTION -->
+                <div>
+                    <p class="text-xs font-semibold text-blue-900 mb-2">⚙️ Optional Columns:</p>
+                    <div class="grid grid-cols-2 gap-2 text-xs text-blue-800">
+                        <div><code class="bg-blue-100 px-1 rounded">brand</code> - Brand/manufacturer name <span class="text-green-600 font-bold">NEW!</span></div>
+                        <div><code class="bg-blue-100 px-1 rounded">stock</code> - Initial stock quantity</div>
+                        <div><code class="bg-blue-100 px-1 rounded">supplier</code> - Supplier name</div>
+                        <div><code class="bg-blue-100 px-1 rounded">aliases</code> - Alt. names (comma-separated) <span class="text-green-600 font-bold">NEW!</span></div>
+                        <div><code class="bg-blue-100 px-1 rounded">low_stock_threshold</code> - Low stock alert level</div>
+                        <div><code class="bg-blue-100 px-1 rounded">critical_stock_threshold</code> - Critical alert</div>
+                        <div><code class="bg-blue-100 px-1 rounded">auto_reorder</code> - Enable auto-reorder (true/false)</div>
+                        <div><code class="bg-blue-100 px-1 rounded">reorder_quantity</code> - Auto-reorder quantity</div>
+                    </div>
+                </div>
+
+                <!-- Aliases Example -->
+                <div class="mt-3 bg-green-50 border border-green-200 rounded p-2">
+                    <p class="text-xs font-semibold text-green-900 mb-1">
+                        <i class="fas fa-lightbulb"></i> Aliases Example:
+                    </p>
+                    <code class="text-xs text-green-800 bg-white px-2 py-1 rounded block">
+                        "Wall paint, Cat dinding, Avian white"
+                    </code>
+                    <p class="text-xs text-green-700 mt-1">Separate multiple names with commas</p>
                 </div>
             </div>
 

@@ -12,11 +12,17 @@ class BulkImport extends Component
     use WithFileUploads;
 
     public $file;
+
     public $importing = false;
+
     public $importComplete = false;
+
     public $importedCount = 0;
+
     public $errors = [];
+
     public $failures = [];
+
     public $fileError = null; // Custom error property
 
     public function updatedFile()
@@ -47,8 +53,9 @@ class BulkImport extends Component
         $this->failures = [];
 
         // Validate file
-        if (!$this->file) {
+        if (! $this->file) {
             $this->fileError = 'Please select a file to import';
+
             return;
         }
 
@@ -58,6 +65,7 @@ class BulkImport extends Component
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             $this->fileError = $e->validator->errors()->first('file');
+
             return;
         }
 
@@ -65,7 +73,7 @@ class BulkImport extends Component
         $this->importComplete = false;
 
         try {
-            $import = new ProductsImport();
+            $import = new ProductsImport;
             Excel::import($import, $this->file->getRealPath());
 
             $this->importedCount = $import->importedCount;
@@ -73,22 +81,22 @@ class BulkImport extends Component
             $this->failures = $import->failures;
 
             if (count($this->errors) === 0 && count($this->failures) === 0) {
-                $this->dispatch('notification', 
-                    message: "Successfully imported {$this->importedCount} products!", 
+                $this->dispatch('notification',
+                    message: "Successfully imported {$this->importedCount} products!",
                     type: 'success'
                 );
                 $this->dispatch('products-imported');
                 $this->importComplete = true;
             } else {
-                $this->dispatch('notification', 
-                    message: "Import completed with {count($this->failures)} errors. Check details below.", 
+                $this->dispatch('notification',
+                    message: "Import completed with {count($this->failures)} errors. Check details below.",
                     type: 'warning'
                 );
             }
         } catch (\Exception $e) {
             $this->errors[] = $e->getMessage();
-            $this->dispatch('notification', 
-                message: 'Import failed: ' . $e->getMessage(), 
+            $this->dispatch('notification',
+                message: 'Import failed: '.$e->getMessage(),
                 type: 'error'
             );
         } finally {
@@ -97,29 +105,79 @@ class BulkImport extends Component
     }
 
     public function downloadTemplate()
-{
-    $fileName = 'product_import_template.xlsx';
-    
-    $data = [
-        // Headers
-        ['name', 'category', 'unit', 'price', 'stock', 'supplier', 'low_stock_threshold', 'critical_stock_threshold', 'auto_reorder', 'reorder_quantity'],
-        
-        // Sample Data Row 1
-        ['Cement Bag 50kg', 'Cement', 'bag', 90000, 100, 'PT Semen Indonesia', 20, 10, 'true', 50],
-        
-        // Sample Data Row 2
-        ['Steel Rebar 10mm', 'Steel', 'piece', 45000, 200, 'PT Krakatau Steel', 30, 15, 'false', ''],
-        
-        // Sample Data Row 3
-        ['Red Brick', 'Bricks', 'piece', 1500, 5000, '', 500, 200, 'false', ''],
-    ];
+    {
+        $fileName = 'product_import_template.xlsx';
 
-    return \Maatwebsite\Excel\Facades\Excel::download(
-        new \App\Exports\ProductTemplateExport($data), 
-        $fileName
-    );
-}
+        $data = [
+            [
+                'name',
+                'brand',
+                'category',
+                'unit',
+                'price',
+                'stock',
+                'supplier',
+                'aliases',
+                'low_stock_threshold',
+                'critical_stock_threshold',
+                'auto_reorder',
+                'reorder_quantity',
+            ],
 
+            // Sample Data Row 1
+            [
+                'Cat Tembok 5kg',
+                'Avian',
+                'Paint',
+                'bag',
+                85000,
+                100,
+                'PT Cat Indonesia',
+                'Wall paint, Cat dinding, Avian white',
+                20,
+                10,
+                1, // true
+                50,
+            ],
+
+            // Sample Data Row 2
+            [
+                'Semen 50kg',
+                'Tiga Roda',
+                'Cement',
+                'bag',
+                90000,
+                200,
+                'PT Semen Indonesia',
+                'Cement, Portland cement, Semen TR',
+                30,
+                15,
+                0, // false
+                '',
+            ],
+
+            // Sample Data Row 3
+            [
+                'Paku 3 inch',
+                '',
+                'Hardware',
+                'piece',
+                500,
+                5000,
+                '',
+                'Nail, Paku besi, Steel nail',
+                500,
+                200,
+                0, // false
+                '',
+            ],
+        ];
+
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\ProductTemplateExport($data),
+            $fileName
+        );
+    }
 
     public function resetImport()
     {

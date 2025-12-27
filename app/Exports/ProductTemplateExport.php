@@ -56,15 +56,17 @@ class ProductTemplateExport implements FromArray, WithStyles, WithColumnWidths, 
     {
         return [
             'A' => 25, // name
-            'B' => 15, // category
-            'C' => 10, // unit
-            'D' => 12, // price
-            'E' => 10, // stock
-            'F' => 20, // supplier
-            'G' => 20, // low_stock_threshold
-            'H' => 22, // critical_stock_threshold
-            'I' => 15, // auto_reorder
-            'J' => 18, // reorder_quantity
+            'B' => 18, // brand (NEW)
+            'C' => 15, // category
+            'D' => 10, // unit
+            'E' => 12, // price
+            'F' => 10, // stock
+            'G' => 20, // supplier
+            'H' => 30, // aliases (NEW)
+            'I' => 20, // low_stock_threshold
+            'J' => 22, // critical_stock_threshold
+            'K' => 15, // auto_reorder
+            'L' => 18, // reorder_quantity
         ];
     }
 }
