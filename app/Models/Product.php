@@ -13,9 +13,15 @@ class Product extends Model
     use Auditable;
 
     protected $fillable = [
-        'name', 'brand', 'category', 'unit', 'price', 'current_stock', 'supplier_id',
-        'barcode', 'low_stock_threshold', 'critical_stock_threshold',
-        'auto_reorder_enabled', 'reorder_quantity'
+        'name', 'brand', 'category', 'category_id', 'unit', 'price', 'cost', 'markup_percentage',
+        'current_stock', 'supplier_id', 'barcode', 'low_stock_threshold',
+        'critical_stock_threshold', 'auto_reorder_enabled', 'reorder_quantity'
+    ];
+
+    protected $casts = [
+        'price' => 'decimal:2',
+        'cost' => 'decimal:2',
+        'markup_percentage' => 'decimal:2',
     ];
 
     public function isLowStock()
@@ -46,6 +52,11 @@ class Product extends Model
     public function aliases(): HasMany
     {
         return $this->hasMany(ProductAlias::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 
     public function stockMovements()
@@ -80,5 +91,35 @@ class Product extends Model
             'user_id' => Auth::id() ?? 1, // Fallback for seeds/tests
             'notes' => $notes,
         ]);
+    }
+
+    /**
+     * Calculate profit margin (price - cost)
+     */
+    public function getProfitMargin(): float
+    {
+        return $this->price - $this->cost;
+    }
+
+    /**
+     * Calculate profit margin percentage
+     */
+    public function getProfitMarginPercentage(): float
+    {
+        if ($this->cost == 0) {
+            return 0;
+        }
+        return (($this->price - $this->cost) / $this->cost) * 100;
+    }
+
+    /**
+     * Calculate selling price from cost and markup
+     */
+    public function calculatePriceFromMarkup(): float
+    {
+        if ($this->markup_percentage) {
+            return $this->cost * (1 + ($this->markup_percentage / 100));
+        }
+        return $this->cost;
     }
 }

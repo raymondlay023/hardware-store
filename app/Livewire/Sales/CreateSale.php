@@ -3,6 +3,7 @@
 namespace App\Livewire\Sales;
 
 use App\Models\Product;
+use App\Models\Customer;
 use App\Models\Sale;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -12,7 +13,10 @@ use Livewire\Component;
 
 class CreateSale extends Component
 {
-    #[Validate('required|string|max:255')]
+    #[Validate('nullable|exists:customers,id')]
+    public $customer_id = null;
+
+    #[Validate('required_without:customer_id|string|max:255')]
     public $customer_name = '';
 
     #[Validate('required|date')]
@@ -450,6 +454,7 @@ class CreateSale extends Component
 
             try {
                 $sale = Sale::create([
+                    'customer_id' => $this->customer_id,
                     'customer_name' => $this->customer_name,
                     'date' => $this->date,
                     'total_amount' => $subtotal,

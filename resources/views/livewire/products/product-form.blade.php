@@ -73,7 +73,41 @@
                     <i class="fas fa-exclamation-circle"></i>{{ $message }}
                 </span>
             @else
-                <p class="text-xs text-gray-500 mt-1">Use Rupiah currency format</p>
+                <p class="text-xs text-gray-500 mt-1">Selling price to customers</p>
+            @enderror
+        </div>
+
+        <!-- Cost -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                <i class="fas fa-dollar-sign mr-2 text-green-600"></i>Cost (Rp)
+            </label>
+            <input type="number" step="0.01" wire:model.blur="cost" placeholder="0"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm
+        @error('cost') border-red-500 @enderror">
+            @error('cost')
+                <span class="text-red-600 text-sm mt-1 block flex items-center gap-1">
+                    <i class="fas fa-exclamation-circle"></i>{{ $message }}
+                </span>
+            @else
+                <p class="text-xs text-gray-500 mt-1">Purchase cost from supplier (for profit calculations)</p>
+            @enderror
+        </div>
+
+        <!-- Markup Percentage -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                <i class="fas fa-percentage mr-2 text-purple-600"></i>Markup Percentage (%)
+            </label>
+            <input type="number" step="0.01" wire:model.blur="markup_percentage" placeholder="e.g., 20"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm
+        @error('markup_percentage') border-red-500 @enderror">
+            @error('markup_percentage')
+                <span class="text-red-600 text-sm mt-1 block flex items-center gap-1">
+                    <i class="fas fa-exclamation-circle"></i>{{ $message }}
+                </span>
+            @else
+                <p class="text-xs text-gray-500 mt-1">Optional: markup percentage over cost (helps with automatic pricing)</p>
             @enderror
         </div>
 

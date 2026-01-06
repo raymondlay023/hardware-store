@@ -29,6 +29,12 @@ class ProductForm extends Component
     #[Validate('required|numeric|min:0')]
     public $price = '';
 
+    #[Validate('nullable|numeric|min:0')]
+    public $cost = 0;
+
+    #[Validate('nullable|numeric|min:0|max:999.99')]
+    public $markup_percentage = '';
+
     #[Validate('nullable|exists:suppliers,id')]
     public $supplier_id = '';
 
@@ -58,6 +64,8 @@ class ProductForm extends Component
                 $this->category = $product->category;
                 $this->unit = $product->unit;
                 $this->price = $product->price;
+                $this->cost = $product->cost;
+                $this->markup_percentage = $product->markup_percentage;
                 $this->supplier_id = $product->supplier_id;
                 $this->low_stock_threshold = $product->low_stock_threshold;
                 $this->critical_stock_threshold = $product->critical_stock_threshold;
@@ -98,6 +106,8 @@ class ProductForm extends Component
             'category' => $this->category,
             'unit' => $this->unit,
             'price' => $this->price,
+            'cost' => $this->cost ?: 0,
+            'markup_percentage' => $this->markup_percentage ?: null,
             'supplier_id' => $this->supplier_id ?: null,
             'low_stock_threshold' => $this->low_stock_threshold,
             'critical_stock_threshold' => $this->critical_stock_threshold,

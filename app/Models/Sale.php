@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Sale extends Model
 {
     protected $fillable = [
+        'customer_id',
         'customer_name',
         'date',
         'total_amount',
@@ -35,6 +36,19 @@ class Sale extends Model
     public function saleItems(): HasMany
     {
         return $this->hasMany(SaleItem::class);
+    }
+
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class);
+    }
+
+    /**
+     * Get customer name (from relationship or fallback to customer_name field)
+     */
+    public function getCustomerNameAttribute($value)
+    {
+        return $this->customer ? $this->customer->name : $value;
     }
 
     /**
