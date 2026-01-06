@@ -1,3 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+    
+    body {
+        @apply bg-slate-50 text-slate-900 antialiased;
+    }
+    
+    * {
+        @apply transition-colors duration-200;
+    }
+}
+
+@layer components {
+    /* Premium Card Component */
+    .card {
+        @apply bg-white rounded-xl shadow-sm border border-slate-200 p-6;
+    }
+    
+    .card-hover {
+        @apply card hover:shadow-md hover:border-slate-300 transition-all duration-200;
+    }
+    
+    /* Premium Button Styles */
+    .btn-primary {
+        @apply bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg font-medium shadow-sm hover:shadow transition-all duration-200;
+    }
+    
+    .btn-secondary {
+        @apply bg-slate-200 hover:bg-slate-300 text-slate-900 px-4 py-2 rounded-lg font-medium transition-all duration-200;
+    }
+    
+    /* Premium Input Styles */
+    .input-premium {
+        @apply border-slate-300 focus:border-primary-500 focus:ring-primary-500 rounded-lg shadow-sm;
+    }
+    
+    /* Stats Card */
+    .stat-card {
+        @apply card-hover flex flex-col space-y-2;
+    }
+    
+    .stat-value {
+        @apply text-3xl font-bold text-slate-900;
+    }
+    
+    .stat-label {
+        @apply text-sm font-medium text-slate-500 uppercase tracking-wide;
+    }
+}
+
