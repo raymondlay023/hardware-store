@@ -5,6 +5,9 @@ namespace App\Livewire\Sales;
 use App\Models\Product;
 use App\Models\Customer;
 use App\Models\Sale;
+use App\Services\SaleService;
+use App\Exceptions\InsufficientStockException;
+use App\Exceptions\BusinessLogicException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -362,148 +365,76 @@ class CreateSale extends Component
         }
     }
 
-    public function save()
+    public function saveSale()
     {
-        try {
-            // Validate customer name and date
-            $this->validate([
-                'customer_name' => 'required|string|max:255',
-                'date' => 'required|date',
-                'payment_method' => 'required|in:cash,card,check,transfer',
-                'discount_type' => 'in:none,percentage,fixed',
-                'notes' => 'nullable|string|max:500',
-            ]);
+        try {            $this->validate();
 
             // Validate items exist
             if (empty($this->items)) {
                 $this->dispatch('notification',
-                    message: 'Please add at least one item to the cart',
+                    message: 'Please add at least one product to the sale',
                     type: 'error'
                 );
-
                 return;
             }
 
-            // Validate each item
-            foreach ($this->items as $item) {
-                if (! isset($item['product_id']) || ! isset($item['quantity']) || ! isset($item['price'])) {
-                    $this->dispatch('notification',
-                        message: 'Invalid item data in cart',
-                        type: 'error'
-                    );
+            // Prepare sale data
+            $saleData = [
+                'customer_id' => $this->customer_id,
+                'customer_name' => $this->customer_name,
+                'date' => $this->date,
+                'payment_method' => $this->payment_method,
+                'discount_type' => $this->discount_type,
+                'discount_value' => $this->discount_value,
+                'notes' => $this->notes,
+            ];
 
-                    return;
-                }
+            // Prepare items (convert to service format)
+            $items = collect($this->items)->map(function ($item) {
+                return [
+                    'product_id' => $item['product_id'],
+                    'quantity' => $item['quantity'],
+                    'price' => $item['price'],
+                ];
+            })->toArray();
 
-                // Check product still exists and has stock
-                $product = Product::find($item['product_id']);
-                if (! $product) {
-                    $this->dispatch('notification',
-                        message: "Product {$item['product_name']} no longer exists",
-                        type: 'error'
-                    );
+            // Delegate to service
+            $saleService = app(SaleService::class);
+            $sale = $saleService->createSale($saleData, $items);
 
-                    return;
-                }
+            // Reset form and show success
+            $this->resetForm();
+            $totalAmount = $sale->total_amount - $sale->discount_value;
 
-                if ($product->current_stock < $item['quantity']) {
-                    $this->dispatch('notification',
-                        message: "Not enough stock for {$product->name}. Available: {$product->current_stock}",
-                        type: 'error'
-                    );
+            $this->dispatch('notification',
+                message: '✓ Sale completed successfully! Total: Rp ' . number_format($totalAmount, 0, ',', '.'),
+                type: 'success'
+            );
 
-                    return;
-                }
-            }
+            // Redirect to receipt printing page
+            return redirect()->route('sales.receipt', $sale->id);
 
-            // Validate discount
-            $subtotal = $this->getSubtotal();
-            $discountAmount = $this->getDiscountAmount();
-
-            if ($discountAmount >= $subtotal && $subtotal > 0) {
-                $this->dispatch('notification',
-                    message: 'Discount cannot be equal to or greater than subtotal',
-                    type: 'error'
-                );
-
-                return;
-            }
-
-            $totalAmount = $this->getTotalAmount();
-
-            if ($totalAmount < 0) {
-                $this->dispatch('notification',
-                    message: 'Invalid calculation: total amount is negative',
-                    type: 'error'
-                );
-
-                return;
-            }
-
-            if ($totalAmount == 0 && $subtotal > 0) {
-                $this->dispatch('notification',
-                    message: 'Sale total cannot be zero',
-                    type: 'error'
-                );
-
-                return;
-            }
-
-            // Create the sale within a transaction
-            DB::beginTransaction();
-
-            try {
-                $sale = Sale::create([
-                    'customer_id' => $this->customer_id,
-                    'customer_name' => $this->customer_name,
-                    'date' => $this->date,
-                    'total_amount' => $subtotal,
-                    'discount_type' => $this->discount_type,
-                    'discount_value' => $this->discount_type !== 'none' ? max(0, min($discountAmount, $subtotal)) : 0,
-                    'payment_method' => $this->payment_method,
-                    'notes' => $this->notes ?: null,
-                    'created_by' => Auth::id(),
-                ]);
-
-                // Add sale items
-                foreach ($this->items as $item) {
-                    $sale->saleItems()->create([
-                        'product_id' => $item['product_id'],
-                        'quantity' => $item['quantity'],
-                        'unit_price' => $item['price'],
-                    ]);
-
-                    // Decrement stock
-                    Product::find($item['product_id'])->decrement('current_stock', $item['quantity']);
-                }
-
-                DB::commit();
-
-                $this->resetForm();
-                $totalAmount = $sale->total_amount - $sale->discount_value;
-
-                $this->dispatch('notification',
-                    message: '✓ Sale completed successfully! Total: Rp '.number_format($totalAmount, 0, ',', '.'),
-                    type: 'success'
-                );
-
-                // Redirect to receipt printing page
-                return redirect()->route('sales.receipt', $sale->id);
-            } catch (\Exception $e) {
-                DB::rollBack();
-                throw $e;
-            }
+        } catch (InsufficientStockException $e) {
+            $this->dispatch('notification',
+                message: $e->getMessage(),
+                type: 'error'
+            );
+        } catch (BusinessLogicException $e) {
+            $this->dispatch('notification',
+                message: $e->getMessage(),
+                type: 'error'
+            );
         } catch (\Illuminate\Validation\ValidationException $e) {
             $this->dispatch('notification',
-                message: 'Validation error: '.implode(', ', array_map(fn ($errors) => implode(', ', $errors), $e->errors())),
+                message: 'Validation error: ' . implode(', ', array_map(fn($errors) => implode(', ', $errors), $e->errors())),
                 type: 'error'
             );
         } catch (\Exception $e) {
             $this->dispatch('notification',
-                message: 'Error creating sale: '.$e->getMessage(),
+                message: 'Error creating sale: ' . $e->getMessage(),
                 type: 'error'
             );
-            Log::error('Sale creation error: '.$e->getMessage());
+            Log::error('Sale creation error: ' . $e->getMessage());
         }
     }
 

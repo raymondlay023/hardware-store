@@ -5,6 +5,7 @@ namespace App\Livewire\Products;
 use App\Models\Product;
 use App\Models\ProductAlias;
 use App\Models\Supplier;
+use App\Services\ProductService;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
@@ -115,28 +116,16 @@ class ProductForm extends Component
             'reorder_quantity' => $this->reorder_quantity ?: null,
         ];
 
+        $productService = app(ProductService::class);
+
         if ($this->isEditing) {
-            $product = Product::find($this->productId);
-            $product->update($data);
-
-            $product->aliases()->delete();
-
+            $product = $productService->updateProduct($this->productId, $data, $this->aliases);
             $this->dispatch('notification', message: 'Product updated successfully!', type: 'success');
             $this->dispatch('product-updated');
         } else {
-            $product = Product::create(array_merge($data, ['current_stock' => 0]));
-
+            $product = $productService->createProduct($data, $this->aliases);
             $this->dispatch('notification', message: 'Product created successfully!', type: 'success');
             $this->dispatch('product-created');
-        }
-        
-        $filteredAliases = array_filter($this->aliases, fn ($alias) => ! empty(trim($alias)));
-
-        foreach ($filteredAliases as $alias) {
-            ProductAlias::create([
-                'product_id' => $product->id,
-                'alias' => trim($alias),
-            ]);
         }
 
         if ($this->isEditing) {
