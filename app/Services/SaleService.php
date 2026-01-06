@@ -4,8 +4,8 @@ namespace App\Services;
 
 use App\Models\Sale;
 use App\Models\SaleItem;
-use App\Models\Product;
-use App\Models\Customer;
+use App\Repositories\ProductRepository;
+use App\Repositories\SaleRepository;
 use App\Exceptions\InsufficientStockException;
 use App\Exceptions\BusinessLogicException;
 use Illuminate\Support\Facades\DB;
@@ -13,6 +13,16 @@ use Illuminate\Support\Facades\Auth;
 
 class SaleService
 {
+    protected ProductRepository $productRepository;
+    protected SaleRepository $saleRepository;
+
+    public function __construct(
+        ProductRepository $productRepository,
+        SaleRepository $saleRepository
+    ) {
+        $this->productRepository = $productRepository;
+        $this->saleRepository = $saleRepository;
+    }
     /**
      * Create a new sale with items
      *
@@ -77,7 +87,7 @@ class SaleService
     protected function validateStockAvailability(array $items): void
     {
         foreach ($items as $item) {
-            $product = Product::findOrFail($item['product_id']);
+            $product = $this->productRepository->findOrFail($item['product_id']);
 
             if ($product->current_stock < $item['quantity']) {
                 throw new InsufficientStockException(
@@ -174,7 +184,6 @@ class SaleService
      */
     public function getSaleDetails(int $saleId): Sale
     {
-        return Sale::with(['saleItems.product', 'customer', 'user'])
-            ->findOrFail($saleId);
+        return $this->saleRepository->findWithDetails($saleId);
     }
 }

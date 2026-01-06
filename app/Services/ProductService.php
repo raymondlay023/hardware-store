@@ -3,13 +3,19 @@
 namespace App\Services;
 
 use App\Models\Product;
-use App\Models\ProductAlias;
+use App\Repositories\ProductRepository;
 use App\Exceptions\BusinessLogicException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
 
 class ProductService
 {
+    protected ProductRepository $productRepository;
+
+    public function __construct(ProductRepository $productRepository)
+    {
+        $this->productRepository = $productRepository;
+    }
     /**
      * Create a new product
      *
@@ -86,14 +92,7 @@ class ProductService
      */
     public function searchProducts(string $query, int $limit = 10): Collection
     {
-        return Product::where('name', 'like', "%{$query}%")
-            ->orWhere('brand', 'like', "%{$query}%")
-            ->orWhere('category', 'like', "%{$query}%")
-            ->orWhereHas('aliases', function ($q) use ($query) {
-                $q->where('alias', 'like', "%{$query}%");
-            })
-            ->limit($limit)
-            ->get();
+        return $this->productRepository->searchByNameOrAlias($query, $limit);
     }
 
     /**
@@ -104,15 +103,7 @@ class ProductService
      */
     public function getLowStockProducts(?int $threshold = null): Collection
     {
-        $query = Product::query();
-
-        if ($threshold) {
-            $query->where('current_stock', '<', $threshold);
-        } else {
-            $query->whereRaw('current_stock < low_stock_threshold');
-        }
-
-        return $query->orderBy('current_stock', 'asc')->get();
+        return $this->productRepository->getLowStock($threshold);
     }
 
     /**
