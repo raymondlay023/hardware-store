@@ -6,6 +6,7 @@ use App\Models\Sale;
 use App\Models\SaleItem;
 use App\Repositories\ProductRepository;
 use App\Repositories\SaleRepository;
+use App\Events\SaleCompleted;
 use App\Exceptions\InsufficientStockException;
 use App\Exceptions\BusinessLogicException;
 use Illuminate\Support\Facades\DB;
@@ -73,6 +74,9 @@ class SaleService
             if ($sale->customer_id) {
                 $this->updateCustomerStats($sale);
             }
+
+            // Dispatch event after successful sale creation
+            SaleCompleted::dispatch($sale);
 
             return $sale->load('saleItems.product', 'customer');
         });
