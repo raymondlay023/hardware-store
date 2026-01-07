@@ -3,19 +3,34 @@
 namespace Database\Seeders;
 
 use App\Models\Role;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class RoleSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        Role::create(['name' => 'admin']);
-        Role::create(['name' => 'manager']);
-        Role::create(['name' => 'cashier']);
-        Role::create(['name' => 'advanced_user']);
+        $roles = [
+            [
+                'name' => 'admin',
+                'description' => 'Full system access - Can manage everything including users and settings',
+            ],
+            [
+                'name' => 'manager',
+                'description' => 'Management access - Can manage products, purchases, sales, and view reports',
+            ],
+            [
+                'name' => 'cashier',
+                'description' => 'Sales access - Can create sales and manage customers only',
+            ],
+        ];
+
+        foreach ($roles as $role) {
+            Role::updateOrCreate(
+                ['name' => $role['name']],
+                ['description' => $role['description']]
+            );
+        }
+
+        echo "✅ Created 3 roles: admin, manager, cashier\n";
     }
 }

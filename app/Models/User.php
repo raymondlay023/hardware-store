@@ -50,4 +50,36 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Role::class, 'role_user');
     }
+
+    /**
+     * Check if user has any of the given roles
+     */
+    public function hasRole(...$roles): bool
+    {
+        return $this->roles()->whereIn('name', $roles)->exists();
+    }
+
+    /**
+     * Check if user is admin
+     */
+    public function isAdmin(): bool
+    {
+        return $this->hasRole('admin');
+    }
+
+    /**
+     * Check if user is manager
+     */
+    public function isManager(): bool
+    {
+        return $this->hasRole('manager');
+    }
+
+    /**
+     * Check if user is cashier
+     */
+    public function isCashier(): bool
+    {
+        return $this->hasRole('cashier');
+    }
 }

@@ -1,59 +1,339 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# BangunanPro - Sistem ERP Toko Bangunan
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+![BangunanPro Logo](C:/Users/raymo/.gemini/antigravity/brain/d073fad1-b9ac-4786-b90d-aa13b6ed84fd/bangunanpro_final_logo_1767716903092.png)
 
-## About Laravel
+**Sistem manajemen toko bangunan profesional berbasis web dengan arsitektur modern.**
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+[![Laravel](https://img.shields.io/badge/Laravel-11.x-FF2D20?logo=laravel)](https://laravel.com)
+[![Livewire](https://img.shields.io/badge/Livewire-3.x-4E56A6?logo=livewire)](https://livewire.laravel.com)
+[![TailwindCSS](https://img.shields.io/badge/Tailwind-3.x-38B2AC?logo=tailwind-css)](https://tailwindcss.com)
+[![Alpine.js](https://img.shields.io/badge/Alpine.js-3.x-8BC0D0?logo=alpine.js)](https://alpinejs.dev)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🎯 Fitur Utama
 
-## Learning Laravel
+### 📊 **Dashboard & Analitik**
+- Real-time sales metrics
+- Profit margin tracking
+- Inventory valuation
+- Low stock alerts
+- Customer analytics
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 🛒 **Manajemen Penjualan**
+- Point of Sale (POS) system
+- Multi-item cart
+- Discount management (percentage/fixed)
+- Customer tracking
+- Receipt printing
+- Sale history & reports
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 📦 **Manajemen Stok**
+- Real-time inventory tracking
+- Stock movement history
+- Low stock alerts
+- Automatic reorder suggestions
+- Bulk stock adjustments
+- Physical inventory counting
 
-## Laravel Sponsors
+### 🏗️ **Manajemen Produk**
+- Product CRUD operations
+- Price history tracking
+- Cost & markup management
+- Product categories
+- Product aliases
+- Barcode support
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 🤝 **Manajemen Pelanggan**
+- Customer database
+- Purchase history
+- Credit limit management
+- Customer segmentation (retail/wholesale/contractor)
+- Customer analytics
 
-### Premium Partners
+### 🏭 **Manajemen Supplier**
+- Supplier database
+- Purchase order management
+- Outstanding balance tracking
+- Credit terms management
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 👥 **Multi-User & Roles**
+- Role-based access control (Admin, Manager, Cashier)
+- User activity logging
+- Audit trails
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 🏗️ Arsitektur Modern
 
-## Code of Conduct
+Dibangun dengan pola arsitektur profesional:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```
+┌─────────────┐
+│   Livewire  │  ← UI Layer (Presentation)
+│ Components  │
+└──────┬──────┘
+       │
+┌──────▼──────┐
+│  Services   │  ← Business Logic Layer
+│  Layer      │
+└──────┬──────┘
+       │
+┌──────▼──────┐
+│ Repository  │  ← Data Access Layer
+│  Pattern    │
+└──────┬──────┘
+       │
+┌──────▼──────┐
+│   Models    │  ← Database Layer
+└─────────────┘
+```
 
-## Security Vulnerabilities
+**Keuntungan:**
+- ✅ Highly testable
+- ✅ Reusable business logic  
+- ✅ Clean separation of concerns
+- ✅ Easy to maintain and scale
+- ✅ Type-safe with custom exceptions
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## 🚀 Quick Start
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Prerequisites
+
+- PHP >= 8.2
+- Composer
+- Node.js & NPM
+- MySQL/MariaDB
+- Git
+
+### Installation
+
+1. **Clone repository**
+```bash
+git clone <your-repo-url> bangunanpro
+cd bangunanpro
+```
+
+2. **Install dependencies**
+```bash
+composer install
+npm install
+```
+
+3. **Environment setup**
+```bash
+copy .env.example .env
+php artisan key:generate
+```
+
+4. **Configure database** 
+Edit `.env` file:
+```env
+APP_NAME="BangunanPro"
+APP_URL=http://localhost:8000
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=bangunanpro
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+5. **Run migrations & seeders**
+```bash
+php artisan migrate --seed
+```
+
+6. **Build assets**
+```bash
+npm run build
+# or for development
+npm run dev
+```
+
+7. **Start development server**
+```bash
+php artisan serve
+```
+
+8. **Access the application**
+- URL: `http://localhost:8000`
+- Admin Email: `admin@bangunanpro.com`
+- Password: `password`
+
+---
+
+## 🔐 Default Users
+
+After running seeders, you'll have these test accounts:
+
+| Role | Email | Password | Access Level |
+|------|-------|----------|--------------|
+| **Admin** | admin@bangunanpro.com | password | Full access |
+| **Manager** | budi@bangunanpro.com | password | Sales, inventory, reports |
+| **Cashier** | siti@bangunanpro.com | password | POS, basic sales |
+
+---
+
+## 📁 Project Structure
+
+```
+bangunanpro/
+├── app/
+│   ├── Events/              # Domain events
+│   ├── Exceptions/          # Custom exceptions
+│   ├── Livewire/            # UI components
+│   ├── Models/              # Eloquent models
+│   ├── Observers/           # Model observers
+│   ├── Repositories/        # Data access layer
+│   └── Services/            # Business logic layer
+├── database/
+│   ├── migrations/          # Database schema
+│   └── seeders/             # Sample data
+├── resources/
+│   ├── views/
+│   │   ├── components/      # Blade components
+│   │   └── livewire/        # Livewire views
+│   └── css/                 # Tailwind styles
+└── public/                  # Assets
+```
+
+---
+
+## 🧪 Testing
+
+Run the test suite:
+
+```bash
+php artisan test
+```
+
+Run specific test suites:
+```bash
+# Unit tests
+php artisan test --testsuite=Unit
+
+# Feature tests
+php artisan test --testsuite=Feature
+```
+
+---
+
+## 📝 Key Technologies
+
+- **Backend**: Laravel 11.x
+- **Frontend**: Livewire 3.x, Alpine.js 3.x, TailwindCSS 3.x
+- **Database**: MySQL 8.x
+- **Authentication**: Laravel Breeze
+- **Real-time**: Livewire reactive components
+- **Icons**: Font Awesome 6.x
+
+---
+
+## 🎨 Customization
+
+### Changing App Name
+Update `.env`:
+```env
+APP_NAME="Your Store Name"
+```
+
+### Theme Colors
+Edit `tailwind.config.js`:
+```js
+colors: {
+  primary: '#1565C0',
+  secondary: '#FF9800',
+}
+```
+
+### Logo
+Replace logo in `resources/views/layouts/app.blade.php`
+
+---
+
+## 📊 Database Schema
+
+### Key Tables
+- `users` - User authentication & roles
+- `products` - Product catalog with pricing
+- `categories` - Product categories
+- `suppliers` - Supplier management
+- `customers` - Customer database
+- `sales` - Sale transactions
+- `sale_items` - Sale line items
+- `purchases` - Purchase orders
+- `stock_movements` - Inventory tracking
+- `product_price_history` - Price change tracking
+
+---
+
+## 🔒 Security
+
+- CSRF protection enabled
+- SQL injection prevention (Eloquent ORM)
+- XSS protection (Blade templating)
+- Password hashing (bcrypt)
+- Role-based authorization
+- Environment variable protection
+
+---
+
+## 🐛 Troubleshooting
+
+**Migration errors:**
+```bash
+php artisan migrate:fresh --seed
+```
+
+**Asset build issues:**
+```bash
+npm run build
+```
+
+**Cache clear:**
+```bash
+php artisan config:clear
+php artisan cache:clear
+php artisan view:clear
+```
+
+---
+
+## 📈 Roadmap
+
+- [ ] Multi-warehouse support
+- [ ] Barcode scanner integration
+- [ ] Export to PDF/Excel
+- [ ] WhatsApp notifications
+- [ ] Mobile app (PWA)
+- [ ] Multi-currency support
+- [ ] Advanced reporting
+
+---
+
+## 🤝 Contributing
+
+Contributions welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) first.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+## 💬 Support
+
+For support and questions:
+- 📧 Email: support@bangunanpro.com
+- 📱 WhatsApp: +62 xxx-xxxx-xxxx
+- 📚 Documentation: [docs.bangunanpro.com](https://docs.bangunanpro.com)
+
+---
+
+**Built with ❤️ for Indonesian hardware stores**
