@@ -8,11 +8,12 @@
 
 @php
 $variantClasses = [
-    'primary' => 'bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700',
-    'secondary' => 'bg-gray-200 text-gray-800 hover:bg-gray-300',
-    'success' => 'bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700',
-    'danger' => 'bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700',
-    'warning' => 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-white hover:from-yellow-600 hover:to-yellow-700',
+    'primary' => 'bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-200',
+    'secondary' => 'bg-gray-100 text-gray-700 hover:bg-gray-200 focus:ring-gray-100',
+    'success' => 'bg-success-600 text-white hover:bg-success-700 focus:ring-success-200',
+    'danger' => 'bg-danger-600 text-white hover:bg-danger-700 focus:ring-danger-200',
+    'warning' => 'bg-warning-600 text-white hover:bg-warning-700 focus:ring-warning-200',
+    'outline' => 'border-2 border-primary-600 text-primary-600 hover:bg-primary-50 focus:ring-primary-200',
 ];
 
 $sizeClasses = [
@@ -26,7 +27,7 @@ $classes = $variantClasses[$variant] . ' ' . $sizeClasses[$size];
 
 <button 
     type="{{ $type }}"
-    {{ $attributes->merge(['class' => "$classes rounded-lg transition font-semibold flex items-center justify-center gap-2 shadow disabled:opacity-50 disabled:cursor-not-allowed"]) }}
+    {{ $attributes->merge(['class' => "$classes rounded-lg transition-colors duration-200 font-medium flex items-center justify-center gap-2 focus:outline-none focus:ring-4 disabled:opacity-50 disabled:cursor-not-allowed"]) }}
     {{ $loading ? 'disabled' : '' }}
 >
     @if($loading)

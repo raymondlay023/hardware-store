@@ -7,29 +7,35 @@
                 <p class="text-gray-600">Manage your construction materials and supplies</p>
             </div>
             <div class="flex gap-3">
-                <!-- Quick Add Button (Highlighted) -->
-                <button wire:click="$toggle('showQuickAdd')"
-                    class="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-lg hover:from-green-600 hover:to-green-700 transition shadow-lg flex items-center gap-2 border-2 border-green-400">
-                    <i class="fas fa-bolt"></i> Quick Add
-                </button>
+                @can('create', App\Models\Product::class)
+                    <!-- Quick Add Button (Highlighted) -->
+                    <button wire:click="$toggle('showQuickAdd')"
+                        class="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-lg hover:from-green-600 hover:to-green-700 transition shadow-lg flex items-center gap-2 border-2 border-green-400">
+                        <i class="fas fa-bolt"></i> Quick Add
+                    </button>
+                @endcan
 
-                <!-- Bulk Import Button -->
-                <button wire:click="$toggle('showBulkImport')"
-                    class="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-5 py-3 rounded-lg hover:from-purple-600 hover:to-purple-700 transition shadow-lg flex items-center gap-2">
-                    <i class="fas fa-file-import"></i>
-                    <div class="text-left">
-                        <div class="font-bold text-sm">Bulk Import</div>
-                    </div>
-                </button>
+                @if(auth()->user()->hasPermission('products.import'))
+                    <!-- Bulk Import Button -->
+                    <button wire:click="$toggle('showBulkImport')"
+                        class="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-5 py-3 rounded-lg hover:from-purple-600 hover:to-purple-700 transition shadow-lg flex items-center gap-2">
+                        <i class="fas fa-file-import"></i>
+                        <div class="text-left">
+                            <div class="font-bold text-sm">Bulk Import</div>
+                        </div>
+                    </button>
+                @endif
 
-                <!-- Full Form Button -->
-                <a href="{{ route('products.create') }}"
-                    class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-5 py-3 rounded-lg hover:from-blue-600 hover:to-blue-700 transition shadow-lg flex items-center gap-2">
-                    <i class="fas fa-plus-circle"></i>
-                    <div class="text-left">
-                        <div class="font-bold text-sm">New Product</div>
-                    </div>
-                </a>
+                @can('create', App\Models\Product::class)
+                    <!-- Full Form Button -->
+                    <a href="{{ route('products.create') }}"
+                        class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-5 py-3 rounded-lg hover:from-blue-600 hover:to-blue-700 transition shadow-lg flex items-center gap-2">
+                        <i class="fas fa-plus-circle"></i>
+                        <div class="text-left">
+                            <div class="font-bold text-sm">New Product</div>
+                        </div>
+                    </a>
+                @endcan
             </div>
         </div>
     </div>
@@ -244,10 +250,13 @@
                             </td>
                             <td class="px-6 py-4 text-center">
                                 <div class="flex gap-2 justify-center">
-                                    <button wire:click="editProduct({{ $product->id }})"
-                                        class="p-2 text-blue-600 hover:bg-blue-50 rounded transition" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
+                                    @can('update', $product)
+                                        <button wire:click="editProduct({{ $product->id }})"
+                                            class="p-2 text-blue-600 hover:bg-blue-50 rounded transition" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    @endcan
+                                    
                                     @if ($product->isLowStock() && $product->auto_reorder_enabled && $product->supplier_id)
                                         <button wire:click="autoReorder({{ $product->id }})"
                                             class="p-2 text-green-600 hover:bg-green-50 rounded transition"
@@ -255,11 +264,14 @@
                                             <i class="fas fa-redo"></i>
                                         </button>
                                     @endif
-                                    <button wire:click="deleteProduct({{ $product->id }})"
-                                        wire:confirm="Are you sure you want to delete this product?"
-                                        class="p-2 text-red-600 hover:bg-red-50 rounded transition" title="Delete">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                    
+                                    @can('delete', $product)
+                                        <button wire:click="deleteProduct({{ $product->id }})"
+                                            wire:confirm="Are you sure you want to delete this product?"
+                                            class="p-2 text-red-600 hover:bg-red-50 rounded transition" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    @endcan
                                 </div>
                             </td>
                         </tr>

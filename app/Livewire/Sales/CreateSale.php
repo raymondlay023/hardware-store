@@ -8,6 +8,7 @@ use App\Models\Sale;
 use App\Services\SaleService;
 use App\Exceptions\InsufficientStockException;
 use App\Exceptions\BusinessLogicException;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -16,6 +17,7 @@ use Livewire\Component;
 
 class CreateSale extends Component
 {
+    use AuthorizesRequests;
     #[Validate('nullable|exists:customers,id')]
     public $customer_id = null;
 
@@ -50,10 +52,18 @@ class CreateSale extends Component
 
     public function mount()
     {
-        $this->date = now()->format('Y-m-d');
+        // Check if user can create sales
+        $this->authorize('create', Sale::class);
+        
+        $this->date = now()->format('Y-m-d'); // Assuming 'date' is the correct property, not 'sale_date'
         $this->payment_method = 'cash';
         $this->discount_type = 'none';
         $this->discount_value = 0;
+        // The instruction also included:
+        // $this->customer_phone = ''; // This property does not exist in the original code
+        // $this->customer_name = ''; // This is already initialized as ''
+        // $this->items = []; // This is already initialized as []
+        // Keeping original initializations for existing properties and adding only the authorization.
     }
 
     public function updatedCustomerName()

@@ -4,13 +4,14 @@ namespace App\Livewire\Products;
 
 use App\Models\Product;
 use App\Models\Purchase;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class ProductList extends Component
 {
-    use WithPagination;
+    use WithPagination, AuthorizesRequests;
 
     public $search = '';
 
@@ -23,6 +24,12 @@ class ProductList extends Component
     public $showQuickAdd = false;
 
     public $showBulkImport = false;
+
+    public function mount()
+    {
+        // Check if user can view products
+        $this->authorize('viewAny', Product::class);
+    }
 
     #[On('products-imported')]
     public function productsImported()
@@ -81,12 +88,18 @@ class ProductList extends Component
 
     public function editProduct($id)
     {
+        $product = Product::findOrFail($id);
+        $this->authorize('update', $product);
+        
         $this->editingProductId = $id;
     }
 
     public function deleteProduct($id)
     {
-        Product::find($id)->delete();
+        $product = Product::findOrFail($id);
+        $this->authorize('delete', $product);
+        
+        $product->delete();
         $this->dispatch('notification', message: 'Product deleted successfully');
     }
 
