@@ -3,16 +3,24 @@
 namespace App\Livewire\Suppliers;
 
 use App\Models\Supplier;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class SupplierList extends Component
 {
-    use WithPagination;
+    use WithPagination, AuthorizesRequests;
 
     public $search = '';
     public $showCreateForm = false;
+
+    public $editingSupplierId = null;
+
+    public function mount()
+    {
+        $this->authorize('viewAny', Supplier::class);
+    }
 
     public function updatedSearch()
     {

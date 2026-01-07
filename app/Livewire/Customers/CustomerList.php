@@ -3,15 +3,24 @@
 namespace App\Livewire\Customers;
 
 use App\Models\Customer;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class CustomerList extends Component
 {
-    use WithPagination;
+    use WithPagination, AuthorizesRequests;
 
     public $search = '';
-    public $filterType = 'all';
+    public $filterType = 'all'; // all, retail, wholesale, contractor
+
+    public $showCreateForm = false;
+
+    public function mount()
+    {
+        $this->authorize('viewAny', Customer::class);
+    }
 
     public function updatingSearch()
     {
