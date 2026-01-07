@@ -1,0 +1,45 @@
+# Development Dockerfile - simpler setup for local development
+FROM php:8.2-fpm-alpine
+
+# Install system dependencies and build tools
+RUN apk add --no-cache \
+    git \
+    curl \
+    libpng-dev \
+    libzip-dev \
+    zlib-dev \
+    freetype-dev \
+    libjpeg-turbo-dev \
+    libwebp-dev \
+    zip \
+    unzip \
+    mysql-client \
+    nodejs \
+    npm
+
+# Install PHP extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install pdo pdo_mysql zip gd bcmath
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Set working directory
+WORKDIR /var/www/html
+
+# Copy application files
+COPY . .
+
+# Install dependencies (will be overridden by volume mount in development)
+# This ensures the container can run standalone if needed
+RUN composer install --no-interaction --prefer-dist || true
+
+# Set permissions
+RUN mkdir -p storage/logs bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
+
+# Expose PHP-FPM port
+EXPOSE 9000
+
+CMD ["php-fpm"]
