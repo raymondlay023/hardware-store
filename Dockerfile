@@ -44,21 +44,27 @@ RUN npm run build
 # Final production image
 FROM php:8.2-fpm-alpine
 
-# Install runtime dependencies
+# Install runtime AND build dependencies
 RUN apk add --no-cache \
     nginx \
     supervisor \
     mysql-client \
     libpng \
+    libpng-dev \
     libzip \
+    libzip-dev \
     zlib \
+    zlib-dev \
     freetype \
+    freetype-dev \
     libjpeg-turbo \
-    libwebp
+    libjpeg-turbo-dev \
+    libwebp \
+    libwebp-dev
 
 # Install PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-install pdo pdo_mysql gd bcmath
+    && docker-php-ext-install pdo pdo_mysql zip gd bcmath
 
 WORKDIR /var/www/html
 
