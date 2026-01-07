@@ -7,6 +7,10 @@ RUN apk add --no-cache \
     curl \
     libpng-dev \
     libzip-dev \
+    zlib-dev \
+    freetype-dev \
+    libjpeg-turbo-dev \
+    libwebp-dev \
     zip \
     unzip \
     nginx \
@@ -14,7 +18,8 @@ RUN apk add --no-cache \
     mysql-client
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo pdo_mysql zip gd bcmath
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install pdo pdo_mysql zip gd bcmath
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -45,10 +50,15 @@ RUN apk add --no-cache \
     supervisor \
     mysql-client \
     libpng \
-    libzip
+    libzip \
+    zlib \
+    freetype \
+    libjpeg-turbo \
+    libwebp
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo pdo_mysql gd bcmath
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install pdo pdo_mysql gd bcmath
 
 WORKDIR /var/www/html
 
