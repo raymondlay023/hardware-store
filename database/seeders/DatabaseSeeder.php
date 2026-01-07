@@ -27,6 +27,9 @@ class DatabaseSeeder extends Seeder
         // Seed roles first
         $this->call(RoleSeeder::class);
 
+        // Seed permissions and assign to roles
+        $this->call(PermissionSeeder::class);
+
         // Get role IDs
         $adminRole = \App\Models\Role::where('name', 'admin')->first();
         $managerRole = \App\Models\Role::where('name', 'manager')->first();

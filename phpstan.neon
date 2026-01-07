@@ -1,0 +1,34 @@
+includes:
+    - vendor/nunomaduro/larastan/extension.neon
+
+parameters:
+    paths:
+        - app
+        - config
+        - database
+        - routes
+        
+    # Level 0 is the loosest and level 9 is the strictest.
+    # Start with level 4-5 for existing projects
+    level: 5
+    
+    # Ignore errors in these paths
+    excludePaths:
+        - app/Console/Kernel.php
+        - app/Exceptions/Handler.php
+        - database/migrations/*
+        - vendor
+        
+    ignoreErrors:
+        # Ignore missing type hints in existing code (can be fixed gradually)
+        - '#Property .* has no type specified#'
+        - '#Method .* has no return type specified#'
+        
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+    
+    # Laravel-specific configurations
+    strictRules:
+        # Enable these as your code quality improves
+        # disallowedLooseComparison: true
+        # booleansInConditions: true

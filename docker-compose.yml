@@ -1,0 +1,107 @@
+version: '3.8'
+
+services:
+  # Application service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bangunanpro_app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - bangunanpro
+    depends_on:
+      - mysql
+      - redis
+
+  # Web server
+  nginx:
+    image: nginx:alpine
+    container_name: bangunanpro_nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - bangunanpro
+    depends_on:
+      - app
+
+  # MySQL database
+  mysql:
+    image: mysql:8.0
+    container_name: bangunanpro_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-bangunanpro}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_USER: ${DB_USERNAME:-bangunan}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - bangunanpro
+
+  # Redis cache
+  redis:
+    image: redis:alpine
+    container_name: bangunanpro_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - bangunanpro
+
+  # Queue worker
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bangunanpro_queue
+    restart: unless-stopped
+    command: php artisan queue:work --tries=3 --max-time=3600
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - bangunanpro
+    depends_on:
+      - mysql
+      - redis
+
+  # Scheduler (cron)
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bangunanpro_scheduler
+    restart: unless-stopped
+    command: >
+      sh -c "while true; do
+        php artisan schedule:run --verbose --no-interaction &
+        sleep 60
+      done"
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - bangunanpro
+    depends_on:
+      - mysql
+      - redis
+
+networks:
+  bangunanpro:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local
