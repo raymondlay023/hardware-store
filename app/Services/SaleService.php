@@ -112,7 +112,7 @@ class SaleService
      */
     protected function addSaleItem(Sale $sale, array $item): SaleItem
     {
-        $product = Product::findOrFail($item['product_id']);
+        $product = $this->productRepository->findOrFail($item['product_id']);
 
         // Create sale item
         $saleItem = $sale->saleItems()->create([

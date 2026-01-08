@@ -375,9 +375,10 @@ class CreateSale extends Component
         }
     }
 
-    public function saveSale()
+    public function save()
     {
-        try {            $this->validate();
+        try {            
+            $this->validate();
 
             // Validate items exist
             if (empty($this->items)) {

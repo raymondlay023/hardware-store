@@ -12,39 +12,39 @@
         </x-slot>
     </x-page-header>
 
-        <!-- Statistics Cards -->
-        <div class="grid grid-cols-3 gap-4">
-            <div class="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-6 shadow-sm">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-blue-600 text-sm font-semibold">Total Sales</p>
-                        <p class="text-3xl font-bold text-blue-900 mt-2">Rp {{ number_format($totalSales, 2) }}</p>
-                    </div>
-                    <i class="fas fa-chart-line text-4xl text-blue-200"></i>
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-3 gap-4 mb-4">
+        <div class="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-6 shadow-sm">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-blue-600 text-sm font-semibold">Total Sales</p>
+                    <p class="text-3xl font-bold text-blue-900 mt-2">Rp {{ number_format($totalSales, 2) }}</p>
                 </div>
-            </div>
-
-            <div class="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-6 shadow-sm">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-green-600 text-sm font-semibold">Today's Sales</p>
-                        <p class="text-3xl font-bold text-green-900 mt-2">Rp {{ number_format($todaysSales, 2) }}</p>
-                    </div>
-                    <i class="fas fa-calendar-check text-4xl text-green-200"></i>
-                </div>
-            </div>
-
-            <div
-                class="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-6 shadow-sm">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-purple-600 text-sm font-semibold">Transactions</p>
-                        <p class="text-3xl font-bold text-purple-900 mt-2">{{ $totalTransactions }}</p>
-                    </div>
-                    <i class="fas fa-receipt text-4xl text-purple-200"></i>
-                </div>
+                <i class="fas fa-chart-line text-4xl text-blue-200"></i>
             </div>
         </div>
+
+        <div class="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-6 shadow-sm">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-green-600 text-sm font-semibold">Today's Sales</p>
+                    <p class="text-3xl font-bold text-green-900 mt-2">Rp {{ number_format($todaysSales, 2) }}</p>
+                </div>
+                <i class="fas fa-calendar-check text-4xl text-green-200"></i>
+            </div>
+        </div>
+
+        <div
+            class="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-6 shadow-sm">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-purple-600 text-sm font-semibold">Transactions</p>
+                    <p class="text-3xl font-bold text-purple-900 mt-2">{{ $totalTransactions }}</p>
+                </div>
+                <i class="fas fa-receipt text-4xl text-purple-200"></i>
+            </div>
+        </div>
+    </div>
 
     <!-- Search and Filters -->
     <x-filter-bar>

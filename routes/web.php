@@ -10,6 +10,9 @@ use App\Livewire\Sales\SalesReport;
 use App\Livewire\Suppliers\SupplierList;
 use Illuminate\Support\Facades\Route;
 
+// Public Health Check Route
+Route::get('/health', [App\Http\Controllers\HealthCheckController::class, 'check'])->name('health.check');
+
 Route::middleware(['auth'])->group(function () {
     // Dashboard - accessible by admin and manager only
     Route::middleware('role:admin,manager')->group(function () {
@@ -40,6 +43,11 @@ Route::middleware(['auth'])->group(function () {
     // Sales - accessible by all roles (admin, manager, cashier)
     Route::get('/sales', SaleList::class)->name('sales.index');
     Route::get('/sales/create', CreateSale::class)->name('sales.create');
+
+    // Health Check Routes (protected by role)
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/health/status', [App\Http\Controllers\HealthCheckController::class, 'status'])->name('health.status');
+    });
 
     Route::middleware('role:admin,manager')->group(function () {
         Route::get('/sales-report', SalesReport::class)->name('sales-report');
