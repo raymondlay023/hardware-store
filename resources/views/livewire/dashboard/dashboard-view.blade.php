@@ -4,23 +4,23 @@
 
 @endpush
 <div>
-    <!-- Page Header with Cache Clear Button -->
-    <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Dashboard</h1>
-            <p class="text-gray-600 text-sm sm:text-base">Overview of your hardware store inventory and sales</p>
-        </div>
-
-        <!-- Cache Clear Button (Admin/Manager only) -->
-        @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
-            <button wire:click="clearCache"
-                class="w-full sm:w-auto px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition text-sm font-semibold flex items-center justify-center gap-2"
-                title="Clear dashboard cache for fresh data">
-                <i class="fas fa-sync-alt"></i>
-                <span>Refresh Cache</span>
-            </button>
-        @endif
-    </div>
+    <!-- Page Header -->
+    <x-page-header 
+        title="Dashboard" 
+        description="Overview of your hardware store inventory and sales"
+        icon="fa-chart-line">
+        <x-slot name="actions">
+            <!-- Cache Clear Button (Admin/Manager only) -->
+            @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
+                <button wire:click="clearCache"
+                    class="w-full sm:w-auto px-4 py-2.5 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition text-sm font-semibold flex items-center justify-center gap-2 shadow-sm"
+                    title="Clear dashboard cache for fresh data">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Refresh Cache</span>
+                </button>
+            @endif
+        </x-slot>
+    </x-page-header>
 
     <!-- Date Range Filter -->
     <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">

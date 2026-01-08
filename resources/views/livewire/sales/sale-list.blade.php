@@ -1,16 +1,16 @@
 <div>
-    <!-- Page Header with Stats -->
-    <div class="mb-8">
-        <div class="flex justify-between items-center mb-6">
-            <div>
-                <h1 class="text-4xl font-bold text-gray-900 mb-2">Sales</h1>
-                <p class="text-gray-600">Track customer sales and inventory movements</p>
-            </div>
+    <!-- Page Header -->
+    <x-page-header 
+        title="Sales" 
+        description="Track customer sales and inventory movements"
+        icon="fa-cash-register">
+        <x-slot name="actions">
             <a href="{{ route('sales.create') }}"
-                class="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-lg hover:from-green-600 hover:to-green-700 transition shadow-lg flex items-center gap-2">
+                class="bg-gradient-to-r from-success-500 to-success-600 text-white px-6 py-3 rounded-lg hover:from-success-600 hover:to-success-700 transition shadow-lg flex items-center gap-2">
                 <i class="fas fa-plus"></i> Record Sale
             </a>
-        </div>
+        </x-slot>
+    </x-page-header>
 
         <!-- Statistics Cards -->
         <div class="grid grid-cols-3 gap-4">
@@ -45,20 +45,20 @@
                 </div>
             </div>
         </div>
-    </div>
 
     <!-- Search and Filters -->
-    <div class="mb-6 flex gap-4">
-        <div class="flex-1 relative">
-            <i class="fas fa-search absolute left-4 top-3 text-gray-400"></i>
+    <x-filter-bar>
+        <x-slot name="search">
             <input type="text" wire:model.live="search" placeholder="Search by customer name..."
-                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm">
-        </div>
-        <input type="date" wire:model.live="dateFrom"
-            class="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm">
-        <input type="date" wire:model.live="dateTo"
-            class="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm">
-    </div>
+                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-success-500 focus:border-transparent shadow-sm">
+        </x-slot>
+        <x-slot name="filters">
+            <input type="date" wire:model.live="dateFrom"
+                class="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-success-500 focus:border-transparent shadow-sm">
+            <input type="date" wire:model.live="dateTo"
+                class="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-success-500 focus:border-transparent shadow-sm">
+        </x-slot>
+    </x-filter-bar>
 
     <!-- Create Form Modal -->
     @if ($showCreateForm)
@@ -219,10 +219,11 @@
                         @endif
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-12 text-center">
-                                <i class="fas fa-inbox text-4xl text-gray-300 mb-3 block"></i>
-                                <p class="text-gray-500 text-lg">No sales found</p>
-                                <p class="text-gray-400">Record your first sale to get started</p>
+                            <td colspan="6">
+                                <x-empty-state 
+                                    icon="fa-receipt"
+                                    title="No sales found"
+                                    description="Record your first sale to get started" />
                             </td>
                         </tr>
                     @endforelse

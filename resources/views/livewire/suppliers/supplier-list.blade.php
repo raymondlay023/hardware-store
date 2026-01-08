@@ -1,30 +1,28 @@
 <div>
     <!-- Page Header -->
-    <div class="mb-8">
-        <div class="flex justify-between items-center">
-            <div>
-                <h1 class="text-4xl font-bold text-gray-900 mb-2">Suppliers</h1>
-                <p class="text-gray-600">Manage your suppliers and payment terms</p>
-            </div>
+    <x-page-header 
+        title="Suppliers" 
+        description="Manage your suppliers and payment terms"
+        icon="fa-truck">
+        <x-slot name="actions">
             <button 
                 wire:click="$toggle('showCreateForm')"
                 class="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-6 py-3 rounded-lg hover:from-purple-600 hover:to-purple-700 transition shadow-lg flex items-center gap-2">
                 <i class="fas fa-plus"></i> Add New Supplier
             </button>
-        </div>
-    </div>
+        </x-slot>
+    </x-page-header>
 
     <!-- Search and Filter -->
-    <div class="mb-6">
-        <div class="relative">
-            <i class="fas fa-search absolute left-4 top-3 text-gray-400"></i>
+    <x-filter-bar>
+        <x-slot name="search">
             <input 
                 type="text" 
                 wire:model.live="search" 
                 placeholder="Search by supplier name or contact..."
                 class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm">
-        </div>
-    </div>
+        </x-slot>
+    </x-filter-bar>
 
     <!-- Create Form Modal -->
     @if($showCreateForm)
@@ -104,10 +102,11 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center">
-                                <i class="fas fa-inbox text-4xl text-gray-300 mb-3 block"></i>
-                                <p class="text-gray-500 text-lg">No suppliers found</p>
-                                <p class="text-gray-400">Try adjusting your search or add a new supplier</p>
+                            <td colspan="5">
+                                <x-empty-state 
+                                    icon="fa-truck"
+                                    title="No suppliers found"
+                                    description="Try adjusting your search or add a new supplier" />
                             </td>
                         </tr>
                     @endforelse

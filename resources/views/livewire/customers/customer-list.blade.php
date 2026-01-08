@@ -1,12 +1,10 @@
 <div class="p-6">
-    <!-- Header -->
-    <div class="mb-6">
-        <h2 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <i class="fas fa-users text-blue-600"></i>
-            Customers
-        </h2>
-        <p class="text-sm text-gray-600 mt-1">Manage your customer database</p>
-    </div>
+    <!-- Page Header -->
+    <x-page-header 
+        title="Customers" 
+        description="Manage your customer database"
+        icon="fa-users">
+    </x-page-header>
 
     <!-- Filters -->
     <div class="mb-6 flex flex-col sm:flex-row gap-4">
@@ -95,11 +93,11 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-12 text-center">
-                            <div class="text-gray-400">
-                                <i class="fas fa-users text-4xl mb-4"></i>
-                                <p class="text-sm">No customers found</p>
-                            </div>
+                        <td colspan="5">
+                            <x-empty-state 
+                                icon="fa-user-friends"
+                                title="No customers found"
+                                description="Start adding customers to track purchases" />
                         </td>
                     </tr>
                 @endforelse

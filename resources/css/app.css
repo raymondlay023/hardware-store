@@ -29,17 +29,58 @@
     }
     
     /* Premium Button Styles */
+    .btn {
+        @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2;
+    }
+    
     .btn-primary {
-        @apply bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg font-medium shadow-sm hover:shadow transition-all duration-200;
+        @apply btn bg-primary-600 hover:bg-primary-700 text-white shadow-sm hover:shadow;
     }
     
     .btn-secondary {
-        @apply bg-slate-200 hover:bg-slate-300 text-slate-900 px-4 py-2 rounded-lg font-medium transition-all duration-200;
+        @apply btn bg-slate-200 hover:bg-slate-300 text-slate-900;
+    }
+    
+    .btn-success {
+        @apply btn bg-success-600 hover:bg-success-700 text-white shadow-sm hover:shadow;
+    }
+    
+    .btn-danger {
+        @apply btn bg-danger-600 hover:bg-danger-700 text-white shadow-sm hover:shadow;
+    }
+    
+    .btn-icon {
+        @apply p-2 rounded hover:bg-gray-100 transition-colors duration-200;
     }
     
     /* Premium Input Styles */
     .input-premium {
         @apply border-slate-300 focus:border-primary-500 focus:ring-primary-500 rounded-lg shadow-sm;
+    }
+    
+    /* Data Table Styles */
+    .data-table {
+        @apply w-full;
+    }
+    
+    .data-table thead {
+        @apply bg-gray-50 border-b border-gray-200;
+    }
+    
+    .data-table th {
+        @apply px-6 py-4 text-left text-sm font-semibold text-gray-900;
+    }
+    
+    .data-table tbody {
+        @apply divide-y divide-gray-200;
+    }
+    
+    .data-table tr {
+        @apply hover:bg-gray-50 transition-colors duration-150;
+    }
+    
+    .data-table td {
+        @apply px-6 py-4;
     }
     
     /* Stats Card */
@@ -54,5 +95,62 @@
     .stat-label {
         @apply text-sm font-medium text-slate-500 uppercase tracking-wide;
     }
+    
+    /* Page Header */
+    .page-title {
+        @apply text-3xl sm:text-4xl font-bold text-gray-900 mb-2;
+    }
+    
+    .page-description {
+        @apply text-gray-600 text-sm sm:text-base;
+    }
+    
+    /* Loading Skeleton */
+    .skeleton {
+        @apply animate-pulse bg-gray-200 rounded;
+    }
+    
+    /* Modal Header Gradients */
+    .modal-header-primary {
+        @apply bg-gradient-to-r from-primary-500 to-primary-600;
+    }
+    
+    .modal-header-success {
+        @apply bg-gradient-to-r from-success-500 to-success-600;
+    }
+    
+    .modal-header-warning {
+        @apply bg-gradient-to-r from-warning-500 to-warning-600;
+    }
+    
+    .modal-header-danger {
+        @apply bg-gradient-to-r from-danger-500 to-danger-600;
+    }
+    
+    /* Badge Variants */
+    .badge {
+        @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold;
+    }
+    
+    .badge-success {
+        @apply badge bg-success-100 text-success-800;
+    }
+    
+    .badge-warning {
+        @apply badge bg-warning-100 text-warning-800;
+    }
+    
+    .badge-danger {
+        @apply badge bg-danger-100 text-danger-800;
+    }
+    
+    .badge-info {
+        @apply badge bg-blue-100 text-blue-800;
+    }
+    
+    .badge-gray {
+        @apply badge bg-gray-100 text-gray-800;
+    }
 }
+
 

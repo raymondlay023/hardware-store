@@ -1,35 +1,35 @@
 <div>
     <!-- Page Header -->
-    <div class="mb-8">
-        <div class="flex justify-between items-center">
-            <div>
-                <h1 class="text-4xl font-bold text-gray-900 mb-2">Purchase Orders</h1>
-                <p class="text-gray-600">Track incoming inventory from suppliers</p>
-            </div>
+    <x-page-header 
+        title="Purchase Orders" 
+        description="Track incoming inventory from suppliers"
+        icon="fa-shopping-cart">
+        <x-slot name="actions">
             <button 
                 wire:click="$toggle('showCreateForm')"
-                class="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-3 rounded-lg hover:from-orange-600 hover:to-orange-700 transition shadow-lg flex items-center gap-2">
+                class="bg-gradient-to-r from-accent-500 to-accent-600 text-white px-6 py-3 rounded-lg hover:from-accent-600 hover:to-accent-700 transition shadow-lg flex items-center gap-2">
                 <i class="fas fa-plus"></i> New Purchase Order
             </button>
-        </div>
-    </div>
+        </x-slot>
+    </x-page-header>
 
     <!-- Search and Filter -->
-    <div class="mb-6 flex gap-4">
-        <div class="flex-1 relative">
-            <i class="fas fa-search absolute left-4 top-3 text-gray-400"></i>
+    <x-filter-bar>
+        <x-slot name="search">
             <input 
                 type="text" 
                 wire:model.live="search" 
                 placeholder="Search by supplier name..."
-                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent shadow-sm">
-        </div>
-        <select wire:model.live="filterStatus" class="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent shadow-sm">
-            <option value="all">All Status</option>
-            <option value="pending">Pending</option>
-            <option value="received">Received</option>
-        </select>
-    </div>
+                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent shadow-sm">
+        </x-slot>
+        <x-slot name="filters">
+            <select wire:model.live="filterStatus" class="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent shadow-sm">
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="received">Received</option>
+            </select>
+        </x-slot>
+    </x-filter-bar>
 
     <!-- Create Form Modal -->
     @if($showCreateForm)
@@ -86,7 +86,7 @@
                                     {{ $purchase->purchaseItems()->count() }} item{{ $purchase->purchaseItems()->count() !== 1 ? 's' : '' }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 font-semibold text-gray-900">${{ number_format($purchase->total_amount, 2) }}</td>
+                            <td class="px-6 py-4 font-semibold text-gray-900">Rp {{ number_format($purchase->total_amount, 0, ',', '.') }}</td>
                             <td class="px-6 py-4">
                                 <span class="px-3 py-1 rounded-full text-sm font-semibold
                                     @if($purchase->status === 'pending')
@@ -122,10 +122,11 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-6 py-12 text-center">
-                                <i class="fas fa-inbox text-4xl text-gray-300 mb-3 block"></i>
-                                <p class="text-gray-500 text-lg">No purchase orders found</p>
-                                <p class="text-gray-400">Create your first purchase order to track incoming inventory</p>
+                            <td colspan="7">
+                                <x-empty-state 
+                                    icon="fa-shopping-cart"
+                                    title="No purchase orders found"
+                                    description="Create your first purchase order to track incoming inventory" />
                             </td>
                         </tr>
                     @endforelse

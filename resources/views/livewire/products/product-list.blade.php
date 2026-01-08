@@ -1,59 +1,50 @@
 <div>
     <!-- Page Header -->
-    <div class="mb-8">
-        <div class="flex justify-between items-center">
-            <div>
-                <h1 class="text-4xl font-bold text-gray-900 mb-2">Product Inventory</h1>
-                <p class="text-gray-600">Manage your construction materials and supplies</p>
-            </div>
-            <div class="flex gap-3">
-                @can('create', App\Models\Product::class)
-                    <!-- Quick Add Button (Highlighted) -->
-                    <button wire:click="$toggle('showQuickAdd')"
-                        class="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-lg hover:from-green-600 hover:to-green-700 transition shadow-lg flex items-center gap-2 border-2 border-green-400">
-                        <i class="fas fa-bolt"></i> Quick Add
-                    </button>
-                @endcan
+    <x-page-header 
+        title="Product Inventory" 
+        description="Manage your construction materials and supplies"
+        icon="fa-box">
+        <x-slot name="actions">
+            @can('create', App\Models\Product::class)
+                <button wire:click="$toggle('showQuickAdd')"
+                    class="bg-gradient-to-r from-success-500 to-success-600 text-white px-6 py-3 rounded-lg hover:from-success-600 hover:to-success-700 transition shadow-lg flex items-center gap-2 border-2 border-success-400">
+                    <i class="fas fa-bolt"></i> Quick Add
+                </button>
+            @endcan
 
-                @if(auth()->user()->hasPermission('products.import'))
-                    <!-- Bulk Import Button -->
-                    <button wire:click="$toggle('showBulkImport')"
-                        class="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-5 py-3 rounded-lg hover:from-purple-600 hover:to-purple-700 transition shadow-lg flex items-center gap-2">
-                        <i class="fas fa-file-import"></i>
-                        <div class="text-left">
-                            <div class="font-bold text-sm">Bulk Import</div>
-                        </div>
-                    </button>
-                @endif
+            @if(auth()->user()->hasPermission('products.import'))
+                <button wire:click="$toggle('showBulkImport')"
+                    class="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-5 py-3 rounded-lg hover:from-purple-600 hover:to-purple-700 transition shadow-lg flex items-center gap-2">
+                    <i class="fas fa-file-import"></i>
+                    <span class="font-semibold text-sm">Bulk Import</span>
+                </button>
+            @endif
 
-                @can('create', App\Models\Product::class)
-                    <!-- Full Form Button -->
-                    <a href="{{ route('products.create') }}"
-                        class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-5 py-3 rounded-lg hover:from-blue-600 hover:to-blue-700 transition shadow-lg flex items-center gap-2">
-                        <i class="fas fa-plus-circle"></i>
-                        <div class="text-left">
-                            <div class="font-bold text-sm">New Product</div>
-                        </div>
-                    </a>
-                @endcan
-            </div>
-        </div>
-    </div>
+            @can('create', App\Models\Product::class)
+                <a href="{{ route('products.create') }}"
+                    class="bg-gradient-to-r from-primary-500 to-primary-600 text-white px-5 py-3 rounded-lg hover:from-primary-600 hover:to-primary-700 transition shadow-lg flex items-center gap-2">
+                    <i class="fas fa-plus-circle"></i>
+                    <span class="font-semibold text-sm">New Product</span>
+                </a>
+            @endcan
+        </x-slot>
+    </x-page-header>
 
     <!-- Search and Filter -->
-    <div class="mb-6 flex gap-6">
-        <div class="flex-1 relative">
-            <i class="fas fa-search absolute left-4 top-3 text-gray-400"></i>
+    <x-filter-bar>
+        <x-slot name="search">
             <input type="text" wire:model.live="search" placeholder="Search by product name or category..."
-                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm">
-        </div>
-        <select wire:model.live="filterStockLevel"
-            class="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm">
-            <option value="all">All Products</option>
-            <option value="low">Low Stock</option>
-            <option value="critical">Critical Stock</option>
-        </select>
-    </div>
+                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent shadow-sm">
+        </x-slot>
+        <x-slot name="filters">
+            <select wire:model.live="filterStockLevel"
+                class="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent shadow-sm">
+                <option value="all">All Products</option>
+                <option value="low">Low Stock</option>
+                <option value="critical">Critical Stock</option>
+            </select>
+        </x-slot>
+    </x-filter-bar>
 
     <!-- Quick Add Modal -->
     @if ($showQuickAdd)
@@ -277,10 +268,11 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-6 py-12 text-center">
-                                <i class="fas fa-inbox text-4xl text-gray-300 mb-3 block"></i>
-                                <p class="text-gray-500 text-lg">No products found</p>
-                                <p class="text-gray-400">Try adjusting your search or add a new product</p>
+                            <td colspan="7">
+                                <x-empty-state 
+                                    icon="fa-box-open"
+                                    title="No products found"
+                                    description="Try adjusting your search or add a new product" />
                             </td>
                         </tr>
                     @endforelse
