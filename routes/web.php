@@ -27,6 +27,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/suppliers', SupplierList::class)->name('suppliers.index');
     });
 
+    // Customers - accessible by admin and manager
+    Route::middleware('role:admin,manager')->group(function () {
+        Route::get('/customers', \App\Livewire\Customers\CustomerList::class)->name('customers.index');
+    });
+
     // Purchases - accessible by admin and manager
     Route::middleware('role:admin,manager')->group(function () {
         Route::get('/purchases', PurchaseList::class)->name('purchases.index');
@@ -38,6 +43,15 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware('role:admin,manager')->group(function () {
         Route::get('/sales-report', SalesReport::class)->name('sales-report');
+    });
+
+    // Reports - accessible by admin and manager
+    Route::middleware('role:admin,manager')->group(function () {
+        Route::get('/reports', \App\Livewire\Reports\ReportsDashboard::class)->name('reports.index');
+        Route::get('/reports/sales', \App\Livewire\Reports\SalesReportView::class)->name('reports.sales');
+        Route::get('/reports/inventory', \App\Livewire\Reports\InventoryReportView::class)->name('reports.inventory');
+        Route::get('/reports/customers', \App\Livewire\Reports\CustomerReportView::class)->name('reports.customers');
+        Route::get('/reports/financial', \App\Livewire\Reports\FinancialReportView::class)->name('reports.financial');
     });
 
     Route::get('/sales/{saleId}/receipt', \App\Livewire\Sales\PrintReceipt::class)->name('sales.receipt');

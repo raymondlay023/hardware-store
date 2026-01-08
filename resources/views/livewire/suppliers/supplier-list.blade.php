@@ -26,17 +26,27 @@
 
     <!-- Create Form Modal -->
     @if($showCreateForm)
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+             role="dialog" 
+             aria-modal="true" 
+             aria-labelledby="supplier-modal-title">
             <div class="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-                <div class="sticky top-0 bg-gradient-to-r from-purple-500 to-purple-600 px-6 py-4 flex justify-between items-center">
-                    <h2 class="text-xl font-bold text-white">Add New Supplier</h2>
-                    <button 
-                        wire:click="$toggle('showCreateForm')"
-                        class="text-white hover:text-gray-200 transition">
+                <!-- Modal Header -->
+                <div class="sticky top-0 bg-gradient-to-r from-purple-500 to-purple-600 px-6 py-4 flex justify-between items-center rounded-t-lg z-10">
+                    <div>
+                        <h2 id="supplier-modal-title" class="text-xl font-bold text-white flex items-center gap-2">
+                            <i class="fas fa-truck"></i> Add New Supplier
+                        </h2>
+                        <p class="text-purple-100 text-sm mt-1">Create a new supplier record</p>
+                    </div>
+                    <button wire:click="$toggle('showCreateForm')"
+                            class="text-white hover:text-gray-200 transition ml-4"
+                            aria-label="Close supplier modal">
                         <i class="fas fa-times text-xl"></i>
                     </button>
                 </div>
                 
+                <!-- Modal Body -->
                 <div class="p-6">
                     <livewire:suppliers.create-supplier />
                 </div>
@@ -58,6 +68,15 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
+                <!-- Loading Skeleton -->
+                <tr wire:loading.class="table-row" wire:loading.class.remove="hidden" wire:target="search" class="hidden">
+                    <td colspan="5" class="p-0">
+                        <x-loading-skeleton type="table" :rows="10" />
+                    </td>
+                </tr>
+                
+                <!-- Actual Data -->
+                <tbody wire:loading.remove wire:target="search">
                     @forelse($suppliers as $supplier)
                         <tr class="hover:bg-gray-50 transition">
                             <td class="px-6 py-4">

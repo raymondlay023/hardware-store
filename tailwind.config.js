@@ -7,6 +7,22 @@ export default {
         "./vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php",
         "./storage/framework/views/*.php",
         "./resources/views/**/*.blade.php",
+        "./resources/**/*.blade.php",
+        "./app/Livewire/**/*.php",
+        "./app/View/Components/**/*.php",
+    ],
+    
+    // Safelist dynamically generated classes
+    safelist: [
+        // Badge variants
+        'badge', 'badge-success', 'badge-warning', 'badge-danger', 'badge-info',
+        // Button variants
+        'btn', 'btn-primary', 'btn-secondary', 'btn-success', 'btn-danger',
+        // Modal header variants
+        'modal-header-primary', 'modal-header-success', 'modal-header-warning',
+        // Status colors that might be dynamic
+        'bg-green-100', 'bg-blue-100', 'bg-yellow-100', 'bg-red-100',
+        'text-green-800', 'text-blue-800', 'text-yellow-800', 'text-red-800',
     ],
 
     theme: {

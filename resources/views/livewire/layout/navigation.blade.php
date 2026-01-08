@@ -15,7 +15,7 @@ new class extends Component {
     }
 }; ?>
 
-<nav x-data="{ open: false }" class="bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg sticky top-0 z-40">
+<nav x-data="{ open: false }" class="bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg sticky top-0 z-40" role="navigation" aria-label="Main navigation">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <!-- Logo and Brand -->
@@ -55,6 +55,22 @@ new class extends Component {
                             </a>
                         @endif
 
+                        <!-- Customers - Admin & Manager only -->
+                        @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
+                            <a href="{{ route('customers.index') }}" wire:navigate
+                                class="hover:text-blue-100 transition flex items-center gap-2 {{ request()->routeIs('customers.*') ? 'border-b-2 border-white pb-1' : '' }}">
+                                <i class="fas fa-users"></i> Customers
+                            </a>
+                        @endif
+
+                        <!-- Reports - Admin & Manager only -->
+                        @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
+                            <a href="{{ route('reports.index') }}" wire:navigate
+                                class="hover:text-blue-100 transition flex items-center gap-2 {{ request()->routeIs('reports.*') ? 'border-b-2 border-white pb-1' : '' }}">
+                                <i class="fas fa-chart-bar"></i> Reports
+                            </a>
+                        @endif
+
                         <!-- Purchases - Admin & Manager only -->
                         @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
                             <a href="{{ route('purchases.index') }}" wire:navigate
@@ -89,7 +105,7 @@ new class extends Component {
                 @auth
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
-                            <button class="flex items-center gap-2 hover:text-blue-100 transition">
+                            <button class="flex items-center gap-2 hover:text-blue-100 transition" aria-label="User menu" aria-expanded="false" aria-haspopup="true">
                                 <i class="fas fa-user-circle text-2xl"></i>
                                 <span class="text-sm font-medium">{{ Auth::user()->name }}</span>
                                 <i class="fas fa-chevron-down text-xs"></i>
@@ -123,7 +139,7 @@ new class extends Component {
                             @endif
 
                             <!-- Logout -->
-                            <button wire:click="logout" class="w-full text-start border-t border-gray-200">
+                            <button wire:click="logout" class="w-full text-start border-t border-gray-200" aria-label="Log out from your account">
                                 <x-dropdown-link>
                                     <i class="fas fa-sign-out-alt me-2 text-red-600"></i> <span class="text-red-600">Log
                                         Out</span>
@@ -145,7 +161,10 @@ new class extends Component {
             <div class="md:hidden flex items-center">
                 @auth
                     <button @click="open = ! open"
-                        class="inline-flex items-center justify-center p-2 rounded-md hover:bg-blue-500 focus:outline-none transition">
+                        class="inline-flex items-center justify-center p-2 rounded-md hover:bg-blue-500 focus:outline-none transition"
+                        aria-label="Toggle mobile menu"
+                        aria-expanded="false"
+                        :aria-expanded="open.toString()">
                         <svg class="h-6 w-6" :class="{ 'hidden': open, 'inline-flex': !open }" stroke="currentColor"
                             fill="none" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -238,7 +257,8 @@ new class extends Component {
                     @endif
 
                     <button wire:click="logout"
-                        class="w-full text-start px-4 py-2 rounded hover:bg-blue-500 transition text-red-200">
+                        class="w-full text-start px-4 py-2 rounded hover:bg-blue-500 transition text-red-200"
+                        aria-label="Log out from your account">
                         <i class="fas fa-sign-out-alt me-2"></i> Log Out
                     </button>
                 </div>

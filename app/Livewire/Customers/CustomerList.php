@@ -14,12 +14,32 @@ class CustomerList extends Component
 
     public $search = '';
     public $filterType = 'all'; // all, retail, wholesale, contractor
-
     public $showCreateForm = false;
+    public $showEditForm = false;
+    public $editingCustomerId = null;
 
     public function mount()
     {
         $this->authorize('viewAny', Customer::class);
+    }
+
+    public function editCustomer($customerId)
+    {
+        $this->editingCustomerId = $customerId;
+        $this->showEditForm = true;
+    }
+
+    public function confirmDelete($customerId)
+    {
+        // For now, just notify - we'll implement proper deletion with confirmation later
+        $customer = Customer::find($customerId);
+        if ($customer) {
+            $customer->delete();
+            $this->dispatch('notify', [
+                'type' => 'success',
+                'message' => 'Customer deleted successfully!'
+            ]);
+        }
     }
 
     public function updatingSearch()

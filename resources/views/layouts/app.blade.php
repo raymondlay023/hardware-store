@@ -22,6 +22,9 @@
     <body class="font-sans antialiased bg-gray-50">
         <div class="min-h-screen">
             
+            <!-- Skip to main content -->
+            <x-skip-link />
+            
             <!-- Toast Notifications -->
             <x-toast-container />
             
@@ -43,7 +46,7 @@
             @endif
 
             <!-- Page Content -->
-            <main>
+            <main id="main-content" role="main" aria-label="Main content">
                 <div class="max-w-7xl mx-auto px-4 py-8">
                     {{ $slot }}
                 </div>

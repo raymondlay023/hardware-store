@@ -93,7 +93,16 @@
                         <th class="px-6 py-4 text-center text-sm font-semibold text-gray-900">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200">
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <!-- Loading Skeleton -->
+                    <tr wire:loading.class="table-row" wire:loading.class.remove="hidden" wire:target="search,dateFrom,dateTo" class="hidden">
+                        <td colspan="6" class="p-0">
+                            <x-loading-skeleton type="table" :rows="10" />
+                        </td>
+                    </tr>
+                    
+                    <!-- Actual Data -->
+                    <tbody wire:loading.remove wire:target="search,dateFrom,dateTo">
                     @forelse($sales as $sale)
                         <tr class="hover:bg-gray-50 transition">
                             <!-- Make row clickable to expand -->

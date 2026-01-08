@@ -2,6 +2,9 @@
     x-data="toastManager()" 
     @notify.window="addToast($event.detail)"
     class="fixed top-4 right-4 z-50 space-y-2"
+    aria-live="polite"
+    aria-atomic="true"
+    role="status"
 >
     <template x-for="toast in toasts" :key="toast.id">
         <div 
@@ -19,6 +22,7 @@
                 'bg-yellow-50 border-l-4 border-yellow-500': toast.type === 'warning',
                 'bg-blue-50 border-l-4 border-blue-500': toast.type === 'info'
             }"
+            role="alert"
         >
             <div class="p-4">
                 <div class="flex items-start">
@@ -28,7 +32,7 @@
                             'fa-exclamation-circle text-red-500': toast.type === 'error',
                             'fa-exclamation-triangle text-yellow-500': toast.type === 'warning',
                             'fa-info-circle text-blue-500': toast.type === 'info'
-                        }"></i>
+                        }" aria-hidden="true"></i>
                     </div>
                     <div class="ml-3 w-0 flex-1">
                         <p class="text-sm font-medium" :class="{
@@ -42,8 +46,9 @@
                         <button 
                             @click="removeToast(toast.id)"
                             class="inline-flex text-gray-400 hover:text-gray-500 focus:outline-none"
+                            aria-label="Close notification"
                         >
-                            <i class="fas fa-times"></i>
+                            <i class="fas fa-times" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
