@@ -60,7 +60,7 @@ class PurchaseList extends Component
 
     public function render()
     {
-        $query = Purchase::with('supplier', 'purchaseItems');
+        $query = Purchase::with('supplier', 'purchaseItems')->withCount('purchaseItems');
 
         if ($this->search) {
             $query->whereHas('supplier', function ($q) {

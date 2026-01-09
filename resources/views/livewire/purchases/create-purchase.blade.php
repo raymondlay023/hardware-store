@@ -50,7 +50,7 @@
                                 class="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10">
                                 @foreach ($products as $product)
                                     <button type="button"
-                                        wire:click="selectProduct({{ $product['id'] }}, '{{ addslashes($product['name']) }}')"
+                                    wire:click="selectProduct({{ $product['id'] }}, '{{ addslashes($product['name']) }}', {{ $product['cost'] ?? 0 }})"
                                         class="block w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700 border-b last:border-b-0">
                                         {{ $product['name'] }}
                                     </button>
@@ -75,8 +75,8 @@
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent shadow-sm">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Unit Cost ($)</label>
-                        <input type="number" step="0.01" wire:model="unit_cost" placeholder="0.00"
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Unit Price (Rp)</label>
+                        <input type="number" step="0.01" wire:model="unit_price" placeholder="0"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent shadow-sm">
                     </div>
                 </div>
@@ -101,7 +101,7 @@
                             <tr>
                                 <th class="px-4 py-2 text-left text-sm font-semibold">Product</th>
                                 <th class="px-4 py-2 text-center text-sm font-semibold">Qty</th>
-                                <th class="px-4 py-2 text-right text-sm font-semibold">Unit Cost</th>
+                                <th class="px-4 py-2 text-right text-sm font-semibold">Unit Price</th>
                                 <th class="px-4 py-2 text-right text-sm font-semibold">Subtotal</th>
                                 <th class="px-4 py-2 text-center text-sm font-semibold">Action</th>
                             </tr>
@@ -111,9 +111,9 @@
                                 <tr class="border-t">
                                     <td class="px-4 py-2">{{ $item['product_name'] }}</td>
                                     <td class="px-4 py-2 text-center">{{ $item['quantity'] }}</td>
-                                    <td class="px-4 py-2 text-right">${{ number_format($item['unit_cost'], 2) }}</td>
+                                    <td class="px-4 py-2 text-right">Rp {{ number_format($item['unit_price'], 0, ',', '.') }}</td>
                                     <td class="px-4 py-2 text-right font-semibold">
-                                        ${{ number_format($item['quantity'] * $item['unit_cost'], 2) }}</td>
+                                        Rp {{ number_format($item['quantity'] * $item['unit_price'], 0, ',', '.') }}</td>
                                     <td class="px-4 py-2 text-center">
                                         <button type="button" wire:click="removeItem({{ $index }})"
                                             class="text-red-600 hover:text-red-800">
@@ -125,7 +125,7 @@
                             <tr class="bg-gray-50 font-semibold">
                                 <td colspan="3" class="px-4 py-2 text-right">Total:</td>
                                 <td class="px-4 py-2 text-right">
-                                    ${{ number_format(collect($items)->sum(fn($i) => $i['quantity'] * $i['unit_cost']), 2) }}
+                                    Rp {{ number_format(collect($items)->sum(fn($i) => $i['quantity'] * $i['unit_price']), 0, ',', '.') }}
                                 </td>
                                 <td></td>
                             </tr>

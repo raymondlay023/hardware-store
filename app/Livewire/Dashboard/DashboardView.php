@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Dashboard;
 
+use App\Models\ActivityLog;
+use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\Sale;
@@ -332,6 +334,49 @@ class DashboardView extends Component
             ->groupBy('payment_method')
             ->get();
 
+        // Recent Activity Feed (from activity_logs)
+        $recentActivity = ActivityLog::with('user')
+            ->orderBy('created_at', 'desc')
+            ->limit(8)
+            ->get()
+            ->map(function ($log) {
+                return [
+                    'action' => $log->action,
+                    'model' => class_basename($log->model_type),
+                    'model_id' => $log->model_id,
+                    'user' => $log->user ? $log->user->name : 'System',
+                    'time' => $log->created_at->diffForHumans(),
+                    'icon' => match($log->action) {
+                        'created' => 'plus-circle',
+                        'updated' => 'edit',
+                        'deleted' => 'trash',
+                        default => 'clock',
+                    },
+                    'color' => match($log->action) {
+                        'created' => 'green',
+                        'updated' => 'blue',
+                        'deleted' => 'red',
+                        default => 'gray',
+                    },
+                ];
+            });
+
+        // Top Customers by revenue
+        $topCustomers = Customer::withCount('sales')
+            ->withSum('sales', 'total_amount')
+            ->orderByDesc('sales_sum_total_amount')
+            ->limit(5)
+            ->get()
+            ->map(function ($customer) {
+                return [
+                    'id' => $customer->id,
+                    'name' => $customer->name,
+                    'type' => $customer->type,
+                    'orders' => $customer->sales_count,
+                    'revenue' => $customer->sales_sum_total_amount ?? 0,
+                ];
+            });
+
         return view('livewire.dashboard.dashboard-view', [
             // Static metrics (cached)
             'totalProducts' => $staticMetrics['totalProducts'],
@@ -367,6 +412,10 @@ class DashboardView extends Component
             'topProducts' => $topProducts,
             'dailyRevenue' => $dailyRevenue,
             'paymentMethodStats' => $paymentMethodStats,
+            
+            // New widgets
+            'recentActivity' => $recentActivity,
+            'topCustomers' => $topCustomers,
             
             // Date range info
             'dateRangeLabel' => $this->getDateRangeLabel(),

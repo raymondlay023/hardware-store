@@ -40,6 +40,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/purchases', PurchaseList::class)->name('purchases.index');
     });
 
+    // Inventory Management - accessible by admin and manager
+    Route::middleware('role:admin,manager')->group(function () {
+        Route::get('/inventory/adjust', \App\Livewire\Inventory\StockAdjustment::class)->name('inventory.adjust');
+        Route::get('/inventory/movements', \App\Livewire\Inventory\MovementHistory::class)->name('inventory.movements');
+    });
+
     // Sales - accessible by all roles (admin, manager, cashier)
     Route::get('/sales', SaleList::class)->name('sales.index');
     Route::get('/sales/create', CreateSale::class)->name('sales.create');
@@ -47,6 +53,7 @@ Route::middleware(['auth'])->group(function () {
     // Health Check Routes (protected by role)
     Route::middleware('role:admin')->group(function () {
         Route::get('/health/status', [App\Http\Controllers\HealthCheckController::class, 'status'])->name('health.status');
+        Route::get('/admin/activity-logs', \App\Livewire\Admin\ActivityLogViewer::class)->name('admin.activity-logs');
     });
 
     Route::middleware('role:admin,manager')->group(function () {
@@ -63,6 +70,13 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::get('/sales/{saleId}/receipt', \App\Livewire\Sales\PrintReceipt::class)->name('sales.receipt');
+
+    // PDF Routes
+    Route::get('/pdf/sale/{sale}/receipt', [\App\Http\Controllers\PdfController::class, 'saleReceipt'])->name('pdf.sale.receipt');
+    Route::get('/pdf/sale/{sale}/receipt/view', [\App\Http\Controllers\PdfController::class, 'viewSaleReceipt'])->name('pdf.sale.receipt.view');
+    Route::get('/pdf/sale/{sale}/invoice', [\App\Http\Controllers\PdfController::class, 'invoice'])->name('pdf.sale.invoice');
+    Route::get('/pdf/purchase/{purchase}/order', [\App\Http\Controllers\PdfController::class, 'purchaseOrder'])->name('pdf.purchase.order');
+    Route::get('/pdf/purchase/{purchase}/order/view', [\App\Http\Controllers\PdfController::class, 'viewPurchaseOrder'])->name('pdf.purchase.order.view');
 });
 
 Route::get('/receipt/{sale}/{token}', function(\App\Models\Sale $sale, $token) {

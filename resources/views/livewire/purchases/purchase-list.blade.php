@@ -103,7 +103,7 @@
                             </td>
                             <td class="px-6 py-4">
                                 <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-                                    {{ $purchase->purchaseItems()->count() }} item{{ $purchase->purchaseItems()->count() !== 1 ? 's' : '' }}
+                                    {{ $purchase->purchase_items_count }} item{{ $purchase->purchase_items_count !== 1 ? 's' : '' }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 font-semibold text-gray-900">Rp {{ number_format($purchase->total_amount, 0, ',', '.') }}</td>

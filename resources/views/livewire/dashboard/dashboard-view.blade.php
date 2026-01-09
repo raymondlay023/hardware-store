@@ -475,6 +475,102 @@
         </div>
     </div>
 
+    <!-- Recent Activity & Top Customers Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-6 sm:mb-8">
+        <!-- Recent Activity Feed -->
+        <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+            <div class="px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-gray-200 flex items-center justify-between">
+                <h3 class="text-base sm:text-lg font-semibold text-gray-900 flex items-center gap-2">
+                    <i class="fas fa-history text-indigo-500"></i>
+                    <span>Recent Activity</span>
+                </h3>
+                <a href="{{ route('admin.activity-logs') }}" class="text-xs sm:text-sm text-indigo-600 hover:text-indigo-800 font-semibold">
+                    View All →
+                </a>
+            </div>
+
+            @if ($recentActivity->count() > 0)
+                <div class="divide-y max-h-80 sm:max-h-96 overflow-y-auto">
+                    @foreach ($recentActivity as $activity)
+                        <div class="px-4 sm:px-6 py-3 hover:bg-gray-50 transition">
+                            <div class="flex items-start gap-3">
+                                <div class="flex-shrink-0 mt-1">
+                                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-{{ $activity['color'] }}-100">
+                                        <i class="fas fa-{{ $activity['icon'] }} text-{{ $activity['color'] }}-600 text-sm"></i>
+                                    </span>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900">
+                                        <span class="capitalize">{{ $activity['action'] }}</span>
+                                        <span class="text-gray-600">{{ $activity['model'] }}</span>
+                                        <span class="text-gray-400">#{{ $activity['model_id'] }}</span>
+                                    </p>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <span class="text-xs text-gray-500">{{ $activity['user'] }}</span>
+                                        <span class="text-xs text-gray-400">•</span>
+                                        <span class="text-xs text-gray-400">{{ $activity['time'] }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="px-4 sm:px-6 py-8 sm:py-12 text-center">
+                    <i class="fas fa-clock text-3xl sm:text-4xl text-gray-300 mb-2 sm:mb-3 block"></i>
+                    <p class="text-gray-500 text-sm sm:text-base">No recent activity recorded</p>
+                </div>
+            @endif
+        </div>
+
+        <!-- Top Customers Widget -->
+        <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+            <div class="px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-amber-50 to-orange-50 border-b border-gray-200 flex items-center justify-between">
+                <h3 class="text-base sm:text-lg font-semibold text-gray-900 flex items-center gap-2">
+                    <i class="fas fa-users text-amber-500"></i>
+                    <span>Top Customers</span>
+                </h3>
+                <a href="{{ route('customers.index') }}" class="text-xs sm:text-sm text-amber-600 hover:text-amber-800 font-semibold">
+                    View All →
+                </a>
+            </div>
+
+            @if ($topCustomers->count() > 0)
+                <div class="divide-y max-h-80 sm:max-h-96 overflow-y-auto">
+                    @foreach ($topCustomers as $index => $customer)
+                        <div class="px-4 sm:px-6 py-3 sm:py-4 hover:bg-gray-50 transition">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3 min-w-0 flex-1">
+                                    <span class="flex-shrink-0 inline-flex items-center justify-center w-8 h-8 rounded-full bg-amber-100 text-amber-800 font-bold text-sm">
+                                        {{ $index + 1 }}
+                                    </span>
+                                    <div class="min-w-0 flex-1">
+                                        <p class="font-semibold text-gray-900 text-sm sm:text-base truncate">
+                                            {{ $customer['name'] }}
+                                        </p>
+                                        <p class="text-xs text-gray-500 capitalize">
+                                            {{ $customer['type'] }} • {{ $customer['orders'] }} orders
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="text-right ml-3">
+                                    <p class="font-bold text-gray-900 text-sm sm:text-base whitespace-nowrap">
+                                        Rp {{ number_format($customer['revenue'] / 1000, 0) }}k
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="px-4 sm:px-6 py-8 sm:py-12 text-center">
+                    <i class="fas fa-users text-3xl sm:text-4xl text-gray-300 mb-2 sm:mb-3 block"></i>
+                    <p class="text-gray-500 text-sm sm:text-base">No customer data yet</p>
+                </div>
+            @endif
+        </div>
+    </div>
+
     <!-- Enhanced Revenue Chart -->
     @if (count($dailyRevenue) > 0)
         <div class="mt-8 bg-white border border-gray-200 rounded-lg shadow-sm p-6">

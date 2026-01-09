@@ -3,8 +3,8 @@
 namespace App\Livewire\Purchases;
 
 use App\Models\Product;
-use App\Models\Purchase;
 use App\Models\Supplier;
+use App\Services\PurchaseService;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
@@ -24,7 +24,14 @@ class CreatePurchase extends Component
 
     public $quantity = '';
 
-    public $unit_cost = '';
+    public $unit_price = '';
+
+    protected PurchaseService $purchaseService;
+
+    public function boot(PurchaseService $purchaseService)
+    {
+        $this->purchaseService = $purchaseService;
+    }
 
     public function clearProduct()
     {
@@ -32,10 +39,14 @@ class CreatePurchase extends Component
         $this->productSearch = '';
     }
 
-    public function selectProduct($productId, $productName)
+    public function selectProduct($productId, $productName, $cost = null)
     {
         $this->selectedProduct = $productId;
         $this->productSearch = $productName;
+        // Pre-fill with product cost if available
+        if ($cost) {
+            $this->unit_price = $cost;
+        }
     }
 
     public function mount()
@@ -45,7 +56,7 @@ class CreatePurchase extends Component
 
     public function addItem()
     {
-        if (! $this->selectedProduct || ! $this->quantity || ! $this->unit_cost) {
+        if (! $this->selectedProduct || ! $this->quantity || ! $this->unit_price) {
             $this->addError('items', 'Please fill all item fields');
 
             return;
@@ -57,12 +68,13 @@ class CreatePurchase extends Component
             'product_id' => $product->id,
             'product_name' => $product->name,
             'quantity' => (int) $this->quantity,
-            'unit_cost' => (float) $this->unit_cost,
+            'unit_price' => (float) $this->unit_price,
         ];
 
         $this->selectedProduct = null;
+        $this->productSearch = '';
         $this->quantity = '';
-        $this->unit_cost = '';
+        $this->unit_price = '';
     }
 
     public function removeItem($index)
@@ -81,27 +93,22 @@ class CreatePurchase extends Component
             return;
         }
 
-        $totalAmount = collect($this->items)->sum(function ($item) {
-            return $item['quantity'] * $item['unit_cost'];
-        });
+        try {
+            $this->purchaseService->createPurchase(
+                [
+                    'supplier_id' => $this->supplier_id,
+                    'date' => $this->date,
+                    'status' => 'pending',
+                ],
+                $this->items
+            );
 
-        $purchase = Purchase::create([
-            'supplier_id' => $this->supplier_id,
-            'date' => $this->date,
-            'total_amount' => $totalAmount,
-            'status' => 'pending',
-        ]);
-
-        foreach ($this->items as $item) {
-            $purchase->purchaseItems()->create([
-                'product_id' => $item['product_id'],
-                'quantity' => $item['quantity'],
-                'unit_cost' => $item['unit_cost'],
-            ]);
+            $this->reset();
+            $this->dispatch('purchase-created');
+            $this->dispatch('notification', message: 'Purchase order created successfully');
+        } catch (\Exception $e) {
+            $this->addError('items', $e->getMessage());
         }
-
-        $this->reset();
-        $this->dispatch('purchase-created');
     }
 
     public function cancel()
@@ -118,7 +125,7 @@ class CreatePurchase extends Component
 
         return Product::where('name', 'like', '%'.$this->productSearch.'%')
             ->limit(5)
-            ->get(['id', 'name'])
+            ->get(['id', 'name', 'cost'])
             ->toArray();
     }
 
@@ -133,3 +140,4 @@ class CreatePurchase extends Component
         ]);
     }
 }
+

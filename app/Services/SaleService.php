@@ -59,7 +59,7 @@ class SaleService
                 'date' => $saleData['date'],
                 'total_amount' => $subtotal,
                 'discount_type' => $saleData['discount_type'] ?? 'none',
-                'discount_value' => $discountAmount,
+                'discount_value' => $saleData['discount_value'] ?? 0, // Store input value, not calculated amount
                 'payment_method' => $saleData['payment_method'],
                 'notes' => $saleData['notes'] ?? null,
                 'created_by' => Auth::id(),

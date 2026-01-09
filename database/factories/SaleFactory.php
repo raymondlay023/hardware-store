@@ -18,32 +18,26 @@ class SaleFactory extends Factory
      */
     public function definition(): array
     {
-        $subtotal = fake()->randomFloat(2, 50000, 5000000);
-        $discountType = fake()->randomElement(['percentage', 'fixed', null]);
-        $discount = 0;
+        $totalAmount = fake()->randomFloat(2, 50000, 5000000);
+        $discountType = fake()->randomElement(['percentage', 'fixed', 'none']);
+        $discountValue = 0;
 
         if ($discountType === 'percentage') {
             $discountValue = fake()->randomFloat(2, 5, 20); // 5-20%
-            $discount = ($subtotal * $discountValue) / 100;
         } elseif ($discountType === 'fixed') {
-            $discount = fake()->randomFloat(2, 10000, 100000);
+            $discountValue = fake()->randomFloat(2, 10000, 100000);
         }
-
-        $tax = 0; // PPN if needed
-        $total = $subtotal - $discount + $tax;
 
         return [
             'customer_id' => Customer::factory(),
-            'user_id' => User::factory(),
-            'subtotal' => round($subtotal, 2),
+            'customer_name' => fake()->name(),
+            'date' => fake()->dateTimeBetween('-6 months', 'now'),
+            'total_amount' => round($totalAmount, 2),
             'discount_type' => $discountType,
-            'discount_value' => $discountType ? round($discountType === 'percentage' ? ($discount / $subtotal) * 100 : $discount, 2) : 0,
-            'discount' => round($discount, 2),
-            'tax' => round($tax, 2),
-            'total' => round($total, 2),
-            'payment_method' => fake()->randomElement(['cash', 'transfer', 'credit']),
+            'discount_value' => round($discountValue, 2),
+            'payment_method' => fake()->randomElement(['cash', 'transfer', 'card', 'check']),
             'notes' => fake()->optional(0.3)->sentence(),
-            'created_at' => fake()->dateTimeBetween('-6 months', 'now'),
+            'created_by' => User::factory(),
         ];
     }
 
@@ -53,10 +47,8 @@ class SaleFactory extends Factory
     public function noDiscount(): static
     {
         return $this->state(fn (array $attributes) => [
-            'discount_type' => null,
+            'discount_type' => 'none',
             'discount_value' => 0,
-            'discount' => 0,
-            'total' => $attributes['subtotal'] + $attributes['tax'],
         ]);
     }
 
@@ -65,15 +57,10 @@ class SaleFactory extends Factory
      */
     public function withPercentageDiscount(float $percentage = 10): static
     {
-        return $this->state(function (array $attributes) use ($percentage) {
-            $discount = ($attributes['subtotal'] * $percentage) / 100;
-            return [
-                'discount_type' => 'percentage',
-                'discount_value' => $percentage,
-                'discount' => round($discount, 2),
-                'total' => round($attributes['subtotal'] - $discount + $attributes['tax'], 2),
-            ];
-        });
+        return $this->state(fn (array $attributes) => [
+            'discount_type' => 'percentage',
+            'discount_value' => $percentage,
+        ]);
     }
 
     /**
@@ -96,3 +83,4 @@ class SaleFactory extends Factory
         ]);
     }
 }
+

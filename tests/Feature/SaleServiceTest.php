@@ -1,11 +1,12 @@
 <?php
 
-namespace Tests\Unit\Services;
+namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Services\SaleService;
 use App\Models\Product;
 use App\Models\Sale;
+use App\Models\User;
 use App\Repositories\ProductRepository;
 use App\Repositories\SaleRepository;
 use App\Exceptions\InsufficientStockException;
@@ -16,11 +17,16 @@ class SaleServiceTest extends TestCase
     use RefreshDatabase;
 
     protected SaleService $saleService;
+    protected User $user;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->saleService = app(SaleService::class);
+        
+        // Create and authenticate a user for created_by field
+        $this->user = User::factory()->create();
+        $this->actingAs($this->user);
     }
 
     /** @test */
@@ -118,6 +124,7 @@ class SaleServiceTest extends TestCase
 
         // Assert
         $this->assertEquals(1000000, $sale->total_amount); // Subtotal
-        $this->assertEquals(100000, $sale->discount_value); // 10% of 1,000,000
+        $this->assertEquals(10, $sale->discount_value); // 10% stored as 10
+        $this->assertEquals(900000, $sale->getFinalAmount()); // 1,000,000 - 10% = 900,000
     }
 }
