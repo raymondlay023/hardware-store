@@ -102,6 +102,9 @@ new class extends Component {
 
             <!-- Desktop User Menu -->
             <div class="hidden md:flex md:items-center md:gap-4">
+                <!-- Language Switcher -->
+                <livewire:language-switcher />
+                
                 @auth
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">

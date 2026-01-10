@@ -4,12 +4,16 @@ namespace App\Listeners;
 
 use App\Events\SaleCompleted;
 use App\Models\User;
+use App\Services\WhatsAppService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Notification;
 
 class SendSaleNotification implements ShouldQueue
 {
+    public function __construct(
+        protected WhatsAppService $whatsAppService
+    ) {}
+
     public function handle(SaleCompleted $event): void
     {
         $sale = $event->sale;
@@ -23,6 +27,9 @@ class SendSaleNotification implements ShouldQueue
 
         // Send database notification to admin/manager users
         $this->notifyAdmins($sale);
+
+        // Send WhatsApp receipt to customer if phone number available
+        $this->sendWhatsAppReceipt($sale);
     }
 
     /**
@@ -38,5 +45,35 @@ class SendSaleNotification implements ShouldQueue
             $admin->notify(new \App\Notifications\SaleCompletedNotification($sale));
         }
     }
-}
 
+    /**
+     * Send WhatsApp receipt to customer
+     */
+    protected function sendWhatsAppReceipt($sale): void
+    {
+        $phone = $sale->customer?->phone;
+
+        if (!$phone) {
+            Log::info("WhatsApp receipt skipped - no customer phone", ['sale_id' => $sale->id]);
+            return;
+        }
+
+        try {
+            $result = $this->whatsAppService->sendSaleReceipt($sale, $phone);
+            
+            if ($result['status'] ?? false) {
+                Log::info("WhatsApp receipt sent", ['sale_id' => $sale->id, 'phone' => $phone]);
+            } else {
+                Log::warning("WhatsApp receipt failed", [
+                    'sale_id' => $sale->id,
+                    'reason' => $result['reason'] ?? 'Unknown'
+                ]);
+            }
+        } catch (\Exception $e) {
+            Log::error("WhatsApp receipt error", [
+                'sale_id' => $sale->id,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+}
