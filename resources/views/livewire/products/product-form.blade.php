@@ -163,11 +163,14 @@
                 @endforeach
             </div>
 
-            <button type="button" wire:click="addAlias"
-                class="mt-3 w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg hover:from-blue-600 hover:to-blue-700 transition font-semibold flex items-center justify-center gap-2 shadow-sm">
-                <i class="fas fa-plus-circle"></i>
-                Add Alternative Name
-            </button>
+            <x-app-button 
+                type="primary" 
+                icon="plus"
+                wire:click="addAlias"
+                size="sm"
+                class="mt-3 w-full">
+                Add
+            </x-app-button>
 
             <!-- Tips -->
             <div class="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
@@ -244,10 +247,13 @@
 
         <!-- Buttons -->
         <div class="flex gap-3 pt-4">
-            <button type="submit"
-                class="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg hover:from-blue-600 hover:to-blue-700 transition font-semibold flex items-center justify-center gap-2 shadow">
-                <i class="fas fa-save"></i> {{ $isEditing ? 'Update' : 'Save' }} Product
-            </button>
+            <x-app-button 
+                type="primary" 
+                icon="save"
+                wire:click="save"
+                class="flex-1">
+                {{ $isEditing ? 'Update Product' : 'Save Product' }}
+            </x-app-button>
             <button type="button" wire:click="cancel"
                 class="flex-1 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition font-semibold flex items-center justify-center gap-2">
                 <i class="fas fa-times"></i> Cancel

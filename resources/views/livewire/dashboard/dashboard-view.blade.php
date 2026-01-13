@@ -27,7 +27,7 @@
         <div class="flex flex-col lg:flex-row flex-wrap items-start lg:items-center gap-3">
             <div class="flex items-center gap-2 w-full lg:w-auto">
                 <i class="fas fa-calendar text-gray-400"></i>
-                <span class="text-sm font-semibold text-gray-700">Period:</span>
+                <span class="text-sm font-semibold text-gray-700">{{ __('Period:') }}</span>
             </div>
 
             <!-- Quick Filter Buttons -->
@@ -35,49 +35,49 @@
                 <button wire:click="$set('dateRange', 'today')"
                     class="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg font-semibold text-xs sm:text-sm transition
                         {{ $dateRange === 'today' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
-                    Today
+                    {{ __('Today') }}
                 </button>
 
                 <button wire:click="$set('dateRange', 'yesterday')"
                     class="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg font-semibold text-xs sm:text-sm transition
                         {{ $dateRange === 'yesterday' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
-                    Yesterday
+                    {{ __('Yesterday') }}
                 </button>
 
                 <button wire:click="$set('dateRange', 'week')"
                     class="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg font-semibold text-xs sm:text-sm transition
                         {{ $dateRange === 'week' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
-                    This Week
+                    {{ __('This Week') }}
                 </button>
 
                 <button wire:click="$set('dateRange', 'month')"
                     class="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg font-semibold text-xs sm:text-sm transition
                         {{ $dateRange === 'month' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
-                    This Month
+                    {{ __('This Month') }}
                 </button>
 
                 <button wire:click="$set('dateRange', 'last_month')"
                     class="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg font-semibold text-xs sm:text-sm transition hidden sm:block
                         {{ $dateRange === 'last_month' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
-                    Last Month
+                    {{ __('Last Month') }}
                 </button>
 
                 <button wire:click="$set('dateRange', 'year')"
                     class="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg font-semibold text-xs sm:text-sm transition
                         {{ $dateRange === 'year' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
-                    This Year
+                    {{ __('This Year') }}
                 </button>
 
                 <button wire:click="$set('dateRange', 'all')"
                     class="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg font-semibold text-xs sm:text-sm transition hidden sm:block
                         {{ $dateRange === 'all' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
-                    All Time
+                    {{ __('All Time') }}
                 </button>
 
                 <button wire:click="$toggle('showCustomDatePicker')"
                     class="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg font-semibold text-xs sm:text-sm transition
                         {{ $dateRange === 'custom' ? 'bg-purple-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
-                    <i class="fas fa-sliders-h mr-1"></i> Custom
+                    <i class="fas fa-sliders-h mr-1"></i> {{ __('Custom') }}
                 </button>
             </div>
 
@@ -93,13 +93,13 @@
             <div class="mt-4 pt-4 border-t border-gray-200">
                 <div class="flex flex-col sm:flex-row items-stretch sm:items-end gap-4">
                     <div class="flex-1">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('From Date') }}</label>
                         <input type="date" wire:model="customDateFrom"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
 
                     <div class="flex-1">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">To Date</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('To Date') }}</label>
                         <input type="date" wire:model="customDateTo"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
@@ -107,7 +107,7 @@
                     <div class="w-full sm:w-auto">
                         <button wire:click="applyCustomDateRange"
                             class="w-full px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition">
-                            <i class="fas fa-check mr-2"></i>Apply
+                            <i class="fas fa-check mr-2"></i>{{ __('Apply') }}
                         </button>
                     </div>
                 </div>
@@ -122,7 +122,7 @@
             class="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-blue-600 text-xs sm:text-sm font-semibold">Total Products</p>
+                    <p class="text-blue-600 text-xs sm:text-sm font-semibold">{{ __('Total Products') }}</p>
                     <p class="text-2xl sm:text-3xl font-bold text-blue-900 mt-1 sm:mt-2">{{ $totalProducts }}</p>
                 </div>
                 <i class="fas fa-box text-3xl sm:text-4xl text-blue-200"></i>
@@ -134,7 +134,7 @@
             class="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-purple-600 text-xs sm:text-sm font-semibold">Suppliers</p>
+                    <p class="text-purple-600 text-xs sm:text-sm font-semibold">{{ __('Suppliers') }}</p>
                     <p class="text-2xl sm:text-3xl font-bold text-purple-900 mt-1 sm:mt-2">{{ $totalSuppliers }}</p>
                 </div>
                 <i class="fas fa-truck text-3xl sm:text-4xl text-purple-200"></i>
@@ -146,7 +146,7 @@
             class="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition">
             <div class="flex items-center justify-between">
                 <div class="min-w-0 flex-1">
-                    <p class="text-green-600 text-xs sm:text-sm font-semibold">Inventory Value</p>
+                    <p class="text-green-600 text-xs sm:text-sm font-semibold">{{ __('Inventory Value') }}</p>
                     <p class="text-xl sm:text-2xl lg:text-3xl font-bold text-green-900 mt-1 sm:mt-2 truncate">
                         Rp {{ number_format($inventoryValue / 1000000, 1) }}M
                     </p>
@@ -160,10 +160,10 @@
             class="bg-gradient-to-br from-red-50 to-red-100 border border-red-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-red-600 text-xs sm:text-sm font-semibold">Low Stock Items</p>
+                    <p class="text-red-600 text-xs sm:text-sm font-semibold">{{ __('Low Stock Items') }}</p>
                     <p class="text-2xl sm:text-3xl font-bold text-red-900 mt-1 sm:mt-2">{{ $lowStockCount }}</p>
                     @if ($criticalStockCount > 0)
-                        <p class="text-xs text-red-600 mt-1">{{ $criticalStockCount }} critical</p>
+                        <p class="text-xs text-red-600 mt-1">{{ $criticalStockCount }} {{ __('critical') }}</p>
                     @endif
                 </div>
                 <i class="fas fa-exclamation-triangle text-3xl sm:text-4xl text-red-200"></i>
@@ -175,7 +175,7 @@
             class="bg-gradient-to-br from-teal-50 to-teal-100 border border-teal-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-teal-600 text-xs sm:text-sm font-semibold">Stock Turnover</p>
+                    <p class="text-teal-600 text-xs sm:text-sm font-semibold">{{ __('Stock Turnover') }}</p>
                     <p class="text-2xl sm:text-3xl font-bold text-teal-900 mt-1 sm:mt-2">
                         {{ number_format($turnoverRate, 1) }}x</p>
                     <p class="text-xs text-teal-600 mt-1">Last 30 days</p>
@@ -219,7 +219,7 @@
         <!-- Today's Sales -->
         <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm">
             <div class="flex items-center justify-between mb-3 sm:mb-4">
-                <h3 class="text-base sm:text-lg font-semibold text-gray-900">Today's Sales</h3>
+                <h3 class="text-base sm:text-lg font-semibold text-gray-900">{{ __('Today\'s Sales') }}</h3>
                 <i class="fas fa-calendar-check text-xl sm:text-2xl text-green-500"></i>
             </div>
             <p class="text-2xl sm:text-3xl font-bold text-gray-900 truncate">Rp
@@ -236,7 +236,7 @@
                             <i class="fas fa-arrow-down"></i> {{ number_format(abs($revenueChange), 1) }}%
                         </span>
                     @endif
-                    <span class="text-gray-500 text-xs">vs yesterday</span>
+                    <span class="text-gray-500 text-xs">{{ __('vs yesterday') }}</span>
                 </div>
             @endif
 
@@ -246,7 +246,7 @@
         <!-- This Month Revenue -->
         <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm">
             <div class="flex items-center justify-between mb-3 sm:mb-4">
-                <h3 class="text-base sm:text-lg font-semibold text-gray-900">This Month</h3>
+                <h3 class="text-base sm:text-lg font-semibold text-gray-900">{{ __('This Month') }}</h3>
                 <i class="fas fa-calendar-alt text-xl sm:text-2xl text-blue-500"></i>
             </div>
             <p class="text-2xl sm:text-3xl font-bold text-gray-900 truncate">Rp
@@ -263,7 +263,7 @@
                             <i class="fas fa-arrow-down"></i> {{ number_format(abs($monthlyChange), 1) }}%
                         </span>
                     @endif
-                    <span class="text-gray-500 text-xs">vs last month</span>
+                    <span class="text-gray-500 text-xs">{{ __('vs last month') }}</span>
                 </div>
             @endif
 
@@ -273,15 +273,15 @@
         <!-- Selected Period Revenue -->
         <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm">
             <div class="flex items-center justify-between mb-3 sm:mb-4">
-                <h3 class="text-base sm:text-lg font-semibold text-gray-900">Selected Period</h3>
+                <h3 class="text-base sm:text-lg font-semibold text-gray-900">{{ __('Selected Period') }}</h3>
                 <i class="fas fa-chart-line text-xl sm:text-2xl text-purple-500"></i>
             </div>
             <p class="text-2xl sm:text-3xl font-bold text-gray-900 truncate">Rp
                 {{ number_format($totalRevenue / 1000, 0) }}k</p>
             <div class="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-1 mt-2">
-                <p class="text-xs sm:text-sm text-gray-500">{{ $totalTransactions }} trans.</p>
+                <p class="text-xs sm:text-sm text-gray-500">{{ $totalTransactions }} {{ __('trans.') }}</p>
                 <p class="text-xs sm:text-sm font-semibold text-purple-600 truncate">
-                    Avg: Rp {{ number_format($avgTransaction / 1000, 0) }}k
+                    {{ __('Avg:') }} Rp {{ number_format($avgTransaction / 1000, 0) }}k
                 </p>
             </div>
         </div>
@@ -290,7 +290,7 @@
         <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm">
             <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
                 <i class="fas fa-wallet text-blue-500"></i>
-                <span class="truncate">Payment Methods</span>
+                <span class="truncate">{{ __('Payment Methods') }}</span>
             </h3>
 
             <div class="space-y-2 sm:space-y-3">
@@ -323,7 +323,7 @@
                     class="px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-red-50 to-orange-50 border-b border-gray-200">
                     <h3 class="text-base sm:text-lg font-semibold text-gray-900 flex items-center gap-2">
                         <i class="fas fa-exclamation-circle text-orange-500"></i>
-                        Low Stock Alert
+                        {{ __('Low Stock Alert') }}
                     </h3>
                 </div>
 
@@ -351,7 +351,7 @@
                                             class="px-2 sm:px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded font-semibold transition whitespace-nowrap"
                                             title="Reorder">
                                             <i class="fas fa-plus mr-1"></i><span
-                                                class="hidden sm:inline">Reorder</span>
+                                                class="hidden sm:inline">{{ __('Reorder') }}</span>
                                         </a>
                                     </div>
                                 </div>
@@ -361,7 +361,7 @@
                 @else
                     <div class="px-4 sm:px-6 py-8 sm:py-12 text-center">
                         <i class="fas fa-check-circle text-3xl sm:text-4xl text-green-300 mb-2 sm:mb-3 block"></i>
-                        <p class="text-gray-500 text-sm sm:text-base">All products have healthy stock levels</p>
+                        <p class="text-gray-500 text-sm sm:text-base">{{ __('All products have healthy stock levels') }}</p>
                     </div>
                 @endif
             </div>
@@ -374,19 +374,19 @@
                     class="px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-orange-50 to-yellow-50 border-b border-gray-200">
                     <h3 class="text-base sm:text-lg font-semibold text-gray-900 flex items-center gap-2">
                         <i class="fas fa-clock text-orange-500"></i>
-                        Pending Orders
+                        {{ __('Pending Orders') }}
                     </h3>
                 </div>
 
                 <div class="p-4 sm:p-6">
                     <div class="text-center">
                         <p class="text-3xl sm:text-4xl font-bold text-orange-600">{{ $pendingPurchases }}</p>
-                        <p class="text-xs sm:text-sm text-gray-600 mt-2">Purchase orders awaiting receipt</p>
+                        <p class="text-xs sm:text-sm text-gray-600 mt-2">{{ __('Purchase orders awaiting receipt') }}</p>
 
                         @if ($pendingPurchases > 0)
                             <a href="{{ route('purchases.index') }}"
                                 class="inline-block mt-3 sm:mt-4 px-3 sm:px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition text-xs sm:text-sm font-semibold">
-                                View Orders
+                                {{ __('View Orders') }}
                             </a>
                         @endif
                     </div>
@@ -403,7 +403,7 @@
                 class="px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-green-50 to-emerald-50 border-b border-gray-200">
                 <h3 class="text-base sm:text-lg font-semibold text-gray-900 flex flex-wrap items-center gap-2">
                     <i class="fas fa-receipt text-green-500"></i>
-                    <span>Recent Sales</span>
+                    <span>{{ __('Recent Sales') }}</span>
                     <span class="text-xs sm:text-sm font-normal text-gray-500">({{ $dateRangeLabel }})</span>
                 </h3>
             </div>
@@ -421,7 +421,7 @@
                             </div>
                             <div class="flex items-center justify-between text-xs sm:text-sm">
                                 <p class="text-gray-600">{{ $sale->saleItems->count() }}
-                                    item{{ $sale->saleItems->count() !== 1 ? 's' : '' }}</p>
+                                    {{ $sale->saleItems->count() !== 1 ? __('items') : __('item') }}</p>
                                 <p class="text-gray-500">{{ $sale->date->format('M d, Y') }}</p>
                             </div>
                         </div>
@@ -430,7 +430,7 @@
             @else
                 <div class="px-4 sm:px-6 py-8 sm:py-12 text-center">
                     <i class="fas fa-inbox text-3xl sm:text-4xl text-gray-300 mb-2 sm:mb-3 block"></i>
-                    <p class="text-gray-500 text-sm sm:text-base">No sales in this period</p>
+                    <p class="text-gray-500 text-sm sm:text-base">{{ __('No sales in this period') }}</p>
                 </div>
             @endif
         </div>
@@ -440,7 +440,7 @@
             <div class="px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-purple-50 to-pink-50 border-b border-gray-200">
                 <h3 class="text-base sm:text-lg font-semibold text-gray-900 flex flex-wrap items-center gap-2">
                     <i class="fas fa-star text-purple-500"></i>
-                    <span>Top Sellers</span>
+                    <span>{{ __('Top Sellers') }}</span>
                     <span class="text-xs sm:text-sm font-normal text-gray-500">({{ $dateRangeLabel }})</span>
                 </h3>
             </div>
@@ -458,7 +458,7 @@
                                 </span>
                             </div>
                             <div class="flex items-center justify-between text-xs sm:text-sm">
-                                <p class="text-gray-600">{{ $product['quantity_sold'] }} sold</p>
+                                <p class="text-gray-600">{{ $product['quantity_sold'] }} {{ __('sold') }}</p>
                                 <p class="font-semibold text-gray-900 whitespace-nowrap">
                                     Rp {{ number_format($product['revenue'] / 1000, 0) }}k
                                 </p>
@@ -469,7 +469,7 @@
             @else
                 <div class="px-4 sm:px-6 py-8 sm:py-12 text-center">
                     <i class="fas fa-inbox text-3xl sm:text-4xl text-gray-300 mb-2 sm:mb-3 block"></i>
-                    <p class="text-gray-500 text-sm sm:text-base">No sales data in this period</p>
+                    <p class="text-gray-500 text-sm sm:text-base">{{ __('No sales data in this period') }}</p>
                 </div>
             @endif
         </div>
@@ -482,10 +482,10 @@
             <div class="px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-gray-200 flex items-center justify-between">
                 <h3 class="text-base sm:text-lg font-semibold text-gray-900 flex items-center gap-2">
                     <i class="fas fa-history text-indigo-500"></i>
-                    <span>Recent Activity</span>
+                    <span>{{ __('Recent Activity') }}</span>
                 </h3>
                 <a href="{{ route('admin.activity-logs') }}" class="text-xs sm:text-sm text-indigo-600 hover:text-indigo-800 font-semibold">
-                    View All →
+                    {{ __('View All') }} →
                 </a>
             </div>
 
@@ -518,7 +518,7 @@
             @else
                 <div class="px-4 sm:px-6 py-8 sm:py-12 text-center">
                     <i class="fas fa-clock text-3xl sm:text-4xl text-gray-300 mb-2 sm:mb-3 block"></i>
-                    <p class="text-gray-500 text-sm sm:text-base">No recent activity recorded</p>
+                    <p class="text-gray-500 text-sm sm:text-base">{{ __('No recent activity recorded') }}</p>
                 </div>
             @endif
         </div>
@@ -528,10 +528,10 @@
             <div class="px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-amber-50 to-orange-50 border-b border-gray-200 flex items-center justify-between">
                 <h3 class="text-base sm:text-lg font-semibold text-gray-900 flex items-center gap-2">
                     <i class="fas fa-users text-amber-500"></i>
-                    <span>Top Customers</span>
+                    <span>{{ __('Top Customers') }}</span>
                 </h3>
                 <a href="{{ route('customers.index') }}" class="text-xs sm:text-sm text-amber-600 hover:text-amber-800 font-semibold">
-                    View All →
+                    {{ __('View All') }} →
                 </a>
             </div>
 
@@ -549,7 +549,7 @@
                                             {{ $customer['name'] }}
                                         </p>
                                         <p class="text-xs text-gray-500 capitalize">
-                                            {{ $customer['type'] }} • {{ $customer['orders'] }} orders
+                                            {{ $customer['type'] }} • {{ $customer['orders'] }} {{ __('orders') }}
                                         </p>
                                     </div>
                                 </div>
@@ -565,7 +565,7 @@
             @else
                 <div class="px-4 sm:px-6 py-8 sm:py-12 text-center">
                     <i class="fas fa-users text-3xl sm:text-4xl text-gray-300 mb-2 sm:mb-3 block"></i>
-                    <p class="text-gray-500 text-sm sm:text-base">No customer data yet</p>
+                    <p class="text-gray-500 text-sm sm:text-base">{{ __('No customer data yet') }}</p>
                 </div>
             @endif
         </div>
@@ -578,7 +578,7 @@
                 <div>
                     <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
                         <i class="fas fa-chart-line text-blue-500"></i>
-                        Sales Trend
+                        {{ __('Sales Trend') }}
                     </h3>
                     <p class="text-sm text-gray-500 mt-1">{{ $dateRangeLabel }}</p>
                 </div>
@@ -587,11 +587,11 @@
                 <div class="flex gap-2">
                     <button onclick="updateChartType('line')" id="chartTypeLineBtn"
                         class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm font-semibold transition hover:bg-blue-700">
-                        <i class="fas fa-chart-line mr-1"></i> Line
+                        <i class="fas fa-chart-line mr-1"></i> {{ __('Line') }}
                     </button>
                     <button onclick="updateChartType('bar')" id="chartTypeBarBtn"
                         class="px-3 py-1.5 bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold transition hover:bg-gray-300">
-                        <i class="fas fa-chart-bar mr-1"></i> Bar
+                        <i class="fas fa-chart-bar mr-1"></i> {{ __('Bar') }}
                     </button>
                 </div>
             </div>
@@ -604,22 +604,22 @@
             <!-- Chart Stats Summary -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-gray-200">
                 <div class="text-center">
-                    <p class="text-sm text-gray-600">Total Revenue</p>
+                    <p class="text-sm text-gray-600">{{ __('Total Revenue') }}</p>
                     <p class="text-xl font-bold text-gray-900">Rp
                         {{ number_format(array_sum($dailyRevenue), 0, ',', '.') }}</p>
                 </div>
                 <div class="text-center">
-                    <p class="text-sm text-gray-600">Average Daily</p>
+                    <p class="text-sm text-gray-600">{{ __('Average Daily') }}</p>
                     <p class="text-xl font-bold text-blue-600">Rp
                         {{ number_format(array_sum($dailyRevenue) / count($dailyRevenue), 0, ',', '.') }}</p>
                 </div>
                 <div class="text-center">
-                    <p class="text-sm text-gray-600">Peak Day</p>
+                    <p class="text-sm text-gray-600">{{ __('Peak Day') }}</p>
                     <p class="text-xl font-bold text-green-600">Rp
                         {{ number_format(max($dailyRevenue), 0, ',', '.') }}</p>
                 </div>
                 <div class="text-center">
-                    <p class="text-sm text-gray-600">Lowest Day</p>
+                    <p class="text-sm text-gray-600">{{ __('Lowest Day') }}</p>
                     <p class="text-xl font-bold text-orange-600">Rp
                         {{ number_format(min($dailyRevenue), 0, ',', '.') }}</p>
                 </div>

@@ -1,31 +1,36 @@
 <div>
     <!-- Page Header -->
     <x-page-header 
-        title="Product Inventory" 
-        description="Manage your construction materials and supplies"
+        :title="__('Product Inventory')" 
+        :description="__('Manage your construction materials and supplies')"
         icon="fa-box">
         <x-slot name="actions">
             @can('create', App\Models\Product::class)
-                <button wire:click="$toggle('showQuickAdd')"
-                    class="bg-gradient-to-r from-success-500 to-success-600 text-white px-6 py-3 rounded-lg hover:from-success-600 hover:to-success-700 transition shadow-lg flex items-center gap-2 border-2 border-success-400">
-                    <i class="fas fa-bolt"></i> Quick Add
-                </button>
+                <x-app-button 
+                    type="success" 
+                    icon="bolt"
+                    wire:click="$toggle('showQuickAdd')"
+                    class="border-2 border-success-400">
+                    {{ __('Quick Add') }}
+                </x-app-button>
             @endcan
 
             @if(auth()->user()->hasPermission('products.import'))
-                <button wire:click="$toggle('showBulkImport')"
-                    class="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-5 py-3 rounded-lg hover:from-purple-600 hover:to-purple-700 transition shadow-lg flex items-center gap-2">
-                    <i class="fas fa-file-import"></i>
-                    <span class="font-semibold text-sm">Bulk Import</span>
-                </button>
+                <x-app-button 
+                    type="primary" 
+                    icon="file-import"
+                    wire:click="$toggle('showBulkImport')">
+                    {{ __('Bulk Import') }}
+                </x-app-button>
             @endif
 
             @can('create', App\Models\Product::class)
-                <a href="{{ route('products.create') }}"
-                    class="bg-gradient-to-r from-primary-500 to-primary-600 text-white px-5 py-3 rounded-lg hover:from-primary-600 hover:to-primary-700 transition shadow-lg flex items-center gap-2">
-                    <i class="fas fa-plus-circle"></i>
-                    <span class="font-semibold text-sm">New Product</span>
-                </a>
+                <x-app-button 
+                    type="primary" 
+                    icon="plus-circle"
+                    :href="route('products.create')">
+                    {{ __('New Product') }}
+                </x-app-button>
             @endcan
         </x-slot>
     </x-page-header>
@@ -33,15 +38,15 @@
     <!-- Search and Filter -->
     <x-filter-bar>
         <x-slot name="search">
-            <input type="text" wire:model.live="search" placeholder="Search by product name or category..."
+            <input type="text" wire:model.live="search" placeholder="{{ __('Search by product name or category...') }}"
                 class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent shadow-sm">
         </x-slot>
         <x-slot name="filters">
             <select wire:model.live="filterStockLevel"
                 class="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent shadow-sm">
-                <option value="all">All Products</option>
-                <option value="low">Low Stock</option>
-                <option value="critical">Critical Stock</option>
+                <option value="all">{{ __('All Products') }}</option>
+                <option value="low">{{ __('Low Stock') }}</option>
+                <option value="critical">{{ __('Critical Stock') }}</option>
             </select>
         </x-slot>
     </x-filter-bar>
@@ -57,9 +62,9 @@
                 <div class="sticky top-0 bg-gradient-to-r from-success-500 to-success-600 px-6 py-4 flex justify-between items-center rounded-t-lg z-10">
                     <div>
                         <h2 id="quick-add-title" class="text-xl font-bold text-white flex items-center gap-2">
-                            <i class="fas fa-bolt"></i> Quick Add Product
+                            <i class="fas fa-bolt"></i> {{ __('Quick Add Product') }}
                         </h2>
-                        <p class="text-success-100 text-sm mt-1">Fast entry • Essential fields only</p>
+                        <p class="text-success-100 text-sm mt-1">{{ __('Fast entry • Essential fields only') }}</p>
                     </div>
                     <button wire:click="$set('showQuickAdd', false)" 
                             class="text-white hover:text-gray-200 transition ml-4"
@@ -82,7 +87,7 @@
             <div class="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
                 <div
                     class="sticky top-0 bg-gradient-to-r from-green-500 to-green-600 px-6 py-4 flex justify-between items-center">
-                    <h2 class="text-xl font-bold text-white">Add New Product</h2>
+                    <h2 class="text-xl font-bold text-white">{{ __('Add New Product') }}</h2>
                     <button wire:click="$set('showCreateForm', false)"
                         class="text-white hover:text-gray-200 transition">
                         <i class="fas fa-times text-xl"></i>
@@ -102,7 +107,7 @@
             <div class="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
                 <div
                     class="sticky top-0 bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4 flex justify-between items-center">
-                    <h2 class="text-xl font-bold text-white"><i class="fas fa-edit mr-2"></i>Edit Product</h2>
+                    <h2 class="text-xl font-bold text-white"><i class="fas fa-edit mr-2"></i>{{ __('Edit Product') }}</h2>
                     <button wire:click="$set('editingProductId', null)"
                         class="text-white hover:text-gray-200 transition">
                         <i class="fas fa-times text-xl"></i>
@@ -124,9 +129,9 @@
                     class="sticky top-0 bg-gradient-to-r from-purple-500 to-purple-600 px-6 py-4 flex justify-between items-center">
                     <div>
                         <h2 class="text-xl font-bold text-white flex items-center gap-2">
-                            <i class="fas fa-file-import"></i> Bulk Import Products
+                            <i class="fas fa-file-import"></i> {{ __('Bulk Import Products') }}
                         </h2>
-                        <p class="text-purple-100 text-sm">Import multiple products from CSV file</p>
+                        <p class="text-purple-100 text-sm">{{ __('Import multiple products from CSV file') }}</p>
                     </div>
                     <button wire:click="$set('showBulkImport', false)"
                         class="text-white hover:text-gray-200 transition">
@@ -148,13 +153,13 @@
             <table class="w-full">
                 <thead class="bg-gray-50 border-b border-gray-200">
                     <tr>
-                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Product Name</th>
-                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Category</th>
-                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Unit</th>
-                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Price</th>
-                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Stock Level</th>
-                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Supplier</th>
-                        <th class="px-6 py-4 text-center text-sm font-semibold text-gray-900">Actions</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">{{ __('Product Name') }}</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">{{ __('Category') }}</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">{{ __('Unit') }}</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">{{ __('Price') }}</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">{{ __('Stock Level') }}</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">{{ __('Supplier') }}</th>
+                        <th class="px-6 py-4 text-center text-sm font-semibold text-gray-900">{{ __('Actions') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
@@ -190,7 +195,7 @@
                                                 @if ($product->aliases->count() > 3)
                                                     <span
                                                         class="text-blue-600 font-medium">+{{ $product->aliases->count() - 3 }}
-                                                        more</span>
+                                                        {{ __('more') }}</span>
                                                 @endif
                                             </span>
 
@@ -198,7 +203,7 @@
                                             @if ($product->aliases->count() > 3)
                                                 <div
                                                     class="hidden group-hover:block absolute left-0 top-6 bg-gray-800 text-white text-xs rounded-lg py-2 px-3 z-10 shadow-lg w-64">
-                                                    <p class="font-semibold mb-1">All alternative names:</p>
+                                                    <p class="font-semibold mb-1">{{ __('All alternative names:') }}</p>
                                                     <p>{{ $product->aliases->pluck('alias')->implode(', ') }}</p>
                                                     <div
                                                         class="absolute -top-1 left-4 w-2 h-2 bg-gray-800 transform rotate-45">
@@ -208,7 +213,7 @@
                                         </div>
                                     @else
                                         <div class="text-xs text-gray-400 mt-1 italic">
-                                            <i class="fas fa-info-circle"></i> No aliases
+                                            <i class="fas fa-info-circle"></i> {{ __('No aliases') }}
                                         </div>
                                     @endif
                                 </div>
@@ -266,14 +271,14 @@
                                     @if ($product->isLowStock() && $product->auto_reorder_enabled && $product->supplier_id)
                                         <button wire:click="autoReorder({{ $product->id }})"
                                             class="p-2 text-green-600 hover:bg-green-50 rounded transition"
-                                            title="Auto Reorder">
+                                            :title="__('Auto Reorder')">
                                             <i class="fas fa-redo"></i>
                                         </button>
                                     @endif
                                     
                                     @can('delete', $product)
                                         <button wire:click="deleteProduct({{ $product->id }})"
-                                            wire:confirm="Are you sure you want to delete this product?"
+                                            wire:confirm="{{ __('Are you sure you want to delete this product?') }}"
                                             class="p-2 text-red-600 hover:bg-red-50 rounded transition" title="Delete">
                                             <i class="fas fa-trash"></i>
                                         </button>
@@ -286,8 +291,8 @@
                             <td colspan="7">
                                 <x-empty-state 
                                     icon="fa-box-open"
-                                    title="No products found"
-                                    description="Try adjusting your search or add a new product" />
+                                    :title="__('No products found')"
+                                    :description="__('Try adjusting your search or add a new product')" />
                             </td>
                         </tr>
                     @endforelse

@@ -1,14 +1,16 @@
 <div>
     <!-- Page Header -->
     <x-page-header 
-        title="Sales" 
-        description="Track customer sales and inventory movements"
+        :title="__('Sales')" 
+        :description="__('Track customer sales and inventory movements')"
         icon="fa-cash-register">
         <x-slot name="actions">
-            <a href="{{ route('sales.create') }}"
-                class="bg-gradient-to-r from-success-500 to-success-600 text-white px-6 py-3 rounded-lg hover:from-success-600 hover:to-success-700 transition shadow-lg flex items-center gap-2">
-                <i class="fas fa-plus"></i> Record Sale
-            </a>
+            <x-app-button 
+                type="success" 
+                icon="plus"
+                :href="route('sales.create')">
+                {{ __('Record Sale') }}
+            </x-app-button>
         </x-slot>
     </x-page-header>
 
@@ -17,7 +19,7 @@
         <div class="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-6 shadow-sm">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-blue-600 text-sm font-semibold">Total Sales</p>
+                    <p class="text-blue-600 text-sm font-semibold">{{ __('Total Sales') }}</p>
                     <p class="text-3xl font-bold text-blue-900 mt-2">Rp {{ number_format($totalSales, 2) }}</p>
                 </div>
                 <i class="fas fa-chart-line text-4xl text-blue-200"></i>
@@ -27,7 +29,7 @@
         <div class="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-6 shadow-sm">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-green-600 text-sm font-semibold">Today's Sales</p>
+                    <p class="text-green-600 text-sm font-semibold">{{ __('Today\'s Sales') }}</p>
                     <p class="text-3xl font-bold text-green-900 mt-2">Rp {{ number_format($todaysSales, 2) }}</p>
                 </div>
                 <i class="fas fa-calendar-check text-4xl text-green-200"></i>
@@ -38,7 +40,7 @@
             class="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-6 shadow-sm">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-purple-600 text-sm font-semibold">Transactions</p>
+                    <p class="text-purple-600 text-sm font-semibold">{{ __('Transactions') }}</p>
                     <p class="text-3xl font-bold text-purple-900 mt-2">{{ $totalTransactions }}</p>
                 </div>
                 <i class="fas fa-receipt text-4xl text-purple-200"></i>
@@ -49,7 +51,7 @@
     <!-- Search and Filters -->
     <x-filter-bar>
         <x-slot name="search">
-            <input type="text" wire:model.live="search" placeholder="Search by customer name..."
+            <input type="text" wire:model.live="search" placeholder="{{ __('Search by customer name...') }}"
                 class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-success-500 focus:border-transparent shadow-sm">
         </x-slot>
         <x-slot name="filters">
@@ -66,7 +68,7 @@
             <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
                 <div
                     class="sticky top-0 bg-gradient-to-r from-green-500 to-green-600 px-6 py-4 flex justify-between items-center">
-                    <h2 class="text-xl font-bold text-white">Record Sale</h2>
+                    <h2 class="text-xl font-bold text-white">{{ __('Record Sale') }}</h2>
                     <button wire:click="$toggle('showCreateForm')" class="text-white hover:text-gray-200 transition">
                         <i class="fas fa-times text-xl"></i>
                     </button>
@@ -85,12 +87,12 @@
             <table class="w-full">
                 <thead class="bg-gray-50 border-b border-gray-200">
                     <tr>
-                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Sale ID</th>
-                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Customer</th>
-                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Date</th>
-                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Items</th>
-                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Total Amount</th>
-                        <th class="px-6 py-4 text-center text-sm font-semibold text-gray-900">Actions</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">{{ __('Sale ID') }}</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">{{ __('Customer') }}</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">{{ __('Date') }}</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">{{ __('Items') }}</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">{{ __('Total Amount') }}</th>
+                        <th class="px-6 py-4 text-center text-sm font-semibold text-gray-900">{{ __('Actions') }}</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
@@ -128,7 +130,7 @@
                                     <span
                                         class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium inline-block w-fit">
                                         {{ $sale->saleItems()->count() }}
-                                        item{{ $sale->saleItems()->count() !== 1 ? 's' : '' }}
+                                        {{ $sale->saleItems()->count() !== 1 ? __('items') : __('item') }}
                                     </span>
                                     <span
                                         class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium inline-block w-fit capitalize">
@@ -162,7 +164,7 @@
                                         <i class="fas fa-qrcode"></i>
                                         <span
                                             class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap">
-                                            Digital Receipt
+                                            {{ __('Digital Receipt') }}
                                         </span>
                                     </button>
 
@@ -173,20 +175,20 @@
                                         <i class="fas fa-receipt"></i>
                                         <span
                                             class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap">
-                                            Receipt Options
+                                            {{ __('Receipt Options') }}
                                         </span>
                                     </a>
 
                                     <!-- Delete (Admin/Manager only) -->
                                     @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
                                         <button wire:click="deleteSale({{ $sale->id }})"
-                                            wire:confirm="Are you sure you want to delete this sale? Stock will be restored."
+                                            wire:confirm="{{ __('Are you sure you want to delete this sale? Stock will be restored.') }}"
                                             class="p-2 text-red-600 hover:bg-red-50 rounded transition group relative"
                                             title="Delete">
                                             <i class="fas fa-trash"></i>
                                             <span
                                                 class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap">
-                                                Delete Sale
+                                                {{ __('Delete Sale') }}
                                             </span>
                                         </button>
                                     @endif
@@ -200,7 +202,7 @@
                             <tr class="bg-gray-50">
                                 <td colspan="6" class="px-6 py-4">
                                     <div class="space-y-2">
-                                        <p class="text-sm font-semibold text-gray-700">Items in this sale:</p>
+                                        <p class="text-sm font-semibold text-gray-700">{{ __('Items in this sale:') }}</p>
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             @foreach ($sale->saleItems as $item)
                                                 <div class="bg-white p-3 rounded border border-gray-200">
@@ -209,7 +211,7 @@
                                                             <p class="font-medium text-gray-900">
                                                                 {{ $item->product->name }}
                                                             </p>
-                                                            <p class="text-sm text-gray-600">Qty:
+                                                            <p class="text-sm text-gray-600">{{ __('Qty:') }}
                                                                 {{ $item->quantity }}
                                                                 ×
                                                                 Rp {{ number_format($item->unit_price, 2) }}</p>
@@ -231,8 +233,8 @@
                             <td colspan="6">
                                 <x-empty-state 
                                     icon="fa-receipt"
-                                    title="No sales found"
-                                    description="Record your first sale to get started" />
+                                    :title="__('No sales found')"
+                                    :description="__('Record your first sale to get started')" />
                             </td>
                         </tr>
                     @endforelse
@@ -253,7 +255,7 @@
                 <div
                     class="bg-gradient-to-r from-purple-500 to-purple-600 px-6 py-4 flex justify-between items-center rounded-t-lg">
                     <h2 class="text-xl font-bold text-white">
-                        <i class="fas fa-qrcode mr-2"></i>Digital Receipt
+                        <i class="fas fa-qrcode mr-2"></i>{{ __('Digital Receipt') }}
                     </h2>
                     <button wire:click="closeQrModal" class="text-white hover:text-gray-200 transition">
                         <i class="fas fa-times text-xl"></i>
@@ -269,16 +271,16 @@
                         {!! QrCode::size(250)->generate($selectedSaleForQr->digital_receipt_url) !!}
                     </div>
 
-                    <p class="text-sm text-gray-600 mt-4 mb-2">Customer scans to get digital receipt</p>
+                    <p class="text-sm text-gray-600 mt-4 mb-2">{{ __('Customer scans to get digital receipt') }}</p>
 
                     <div class="flex gap-2 mt-4">
                         <button onclick="copyReceiptLink('{{ $selectedSaleForQr->digital_receipt_url }}')"
                             class="flex-1 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold transition">
-                            <i class="fas fa-copy mr-2"></i>Copy Link
+                            <i class="fas fa-copy mr-2"></i>{{ __('Copy Link') }}
                         </button>
                         <a href="{{ $selectedSaleForQr->digital_receipt_url }}" target="_blank"
                             class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold transition text-center">
-                            <i class="fas fa-external-link-alt mr-2"></i>Open
+                            <i class="fas fa-external-link-alt mr-2"></i>{{ __('Open') }}
                         </a>
                     </div>
                 </div>
@@ -289,7 +291,7 @@
             <script>
                 function copyReceiptLink(url) {
                     navigator.clipboard.writeText(url).then(() => {
-                        alert('Receipt link copied to clipboard!');
+                        alert('{{ __('Receipt link copied to clipboard!') }}');
                     });
                 }
             </script>

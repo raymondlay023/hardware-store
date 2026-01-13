@@ -30,8 +30,8 @@ new #[Layout('layouts.guest')] class extends Component
         <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl mb-4 shadow-lg">
             <i class="fas fa-box text-2xl text-white"></i>
         </div>
-        <h2 class="text-2xl font-bold text-gray-900 mb-1">Welcome Back</h2>
-        <p class="text-sm text-gray-600">Sign in to your BangunanPro account</p>
+        <h2 class="text-2xl font-bold text-gray-900 mb-1">{{ __('Welcome Back') }}</h2>
+        <p class="text-sm text-gray-600">{{ __('Sign in to your BangunanPro account') }}</p>
     </div>
 
     <!-- Session Status -->
@@ -40,7 +40,7 @@ new #[Layout('layouts.guest')] class extends Component
     <form wire:submit="login" class="space-y-5">
         <!-- Email Address -->
         <div>
-            <x-input-label for="email" value="Email Address" class="text-sm font-semibold text-gray-700" />
+            <x-input-label for="email" :value="__('Email Address')" class="text-sm font-semibold text-gray-700" />
             <div class="mt-1 relative">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="fas fa-envelope text-gray-400"></i>
@@ -55,7 +55,7 @@ new #[Layout('layouts.guest')] class extends Component
 
         <!-- Password -->
         <div>
-            <x-input-label for="password" value="Password" class="text-sm font-semibold text-gray-700" />
+            <x-input-label for="password" :value="__('Password')" class="text-sm font-semibold text-gray-700" />
             <div class="mt-1 relative">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="fas fa-lock text-gray-400"></i>
@@ -74,22 +74,24 @@ new #[Layout('layouts.guest')] class extends Component
                 <input wire:model="form.remember" id="remember" type="checkbox" 
                     class="rounded border-gray-300 text-primary-600 shadow-sm focus:ring-primary-500 transition-colors" 
                     name="remember">
-                <span class="ml-2 text-sm text-gray-600">Remember me</span>
+                <span class="ml-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
             </label>
 
             @if (Route::has('password.request'))
                 <a href="{{ route('password.request') }}" wire:navigate
                     class="text-sm text-primary-600 hover:text-primary-700 font-medium transition-colors">
-                    Forgot password?
+                    {{ __('Forgot password?') }}
                 </a>
             @endif
         </div>
 
         <!-- Submit Button -->
-        <button type="submit" 
-            class="w-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2">
-            <i class="fas fa-sign-in-alt"></i>
-            <span>Sign In</span>
-        </button>
+        <x-app-button 
+            type="primary" 
+            icon="sign-in-alt"
+            type-attr="submit"
+            class="w-full">
+            {{ __('Sign In') }}
+        </x-app-button>
     </form>
 </div>

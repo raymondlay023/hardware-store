@@ -208,13 +208,16 @@
                                     </div>
 
                                     <!-- On "Add to Cart" button -->
-                                    <button type="button" wire:click="addItem" wire:loading.attr="disabled"
+                                    <x-app-button 
+                                        type="success" 
+                                        icon="cart-plus"
+                                        wire:click="addItem"
+                                        wire:loading.attr="disabled"
                                         wire:loading.class="opacity-50"
-                                        class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 rounded-lg font-semibold shadow-lg flex items-center justify-center gap-2 transition">
-                                        <i class="fas fa-cart-plus text-lg"></i>
+                                        class="w-full">
                                         <span wire:loading.remove>Add to Cart</span>
                                         <span wire:loading>Adding...</span>
-                                    </button>
+                                    </x-app-button>
                                 </div>
                             @endif
 
@@ -461,12 +464,17 @@
             @if ($items)
                 <div
                     class="grid grid-cols-1 md:grid-cols-2 gap-4 sticky bottom-0 bg-white p-5 rounded-lg shadow-lg border-t-2 border-green-500">
-                    <button type="submit" wire:loading.attr="disabled" wire:loading.class="opacity-50"
-                        class="bg-gradient-to-r from-green-500 via-green-600 to-emerald-600 hover:from-green-600 hover:via-green-700 hover:to-emerald-700 text-white px-6 py-4 rounded-lg font-bold text-lg flex items-center justify-center gap-2 shadow-lg transition">
-                        <i class="fas fa-check-circle text-xl"></i>
+                    <x-app-button 
+                        type="success" 
+                        icon="check-circle"
+                        type-attr="submit"
+                        wire:loading.attr="disabled"
+                        wire:loading.class="opacity-50"
+                        size="lg"
+                        class="w-full">
                         <span wire:loading.remove>Complete Sale</span>
                         <span wire:loading>Processing...</span>
-                    </button>
+                    </x-app-button>
                     <button type="button" wire:click="cancel"
                         class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-4 rounded-lg font-bold text-lg flex items-center justify-center gap-2 shadow-lg transition transform hover:scale-105 active:scale-95">
                         <i class="fas fa-times-circle text-xl"></i> Cancel
