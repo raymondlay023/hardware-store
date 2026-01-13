@@ -15,7 +15,7 @@
         <!-- Header -->
         <div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 text-center">
             <i class="fas fa-receipt text-4xl mb-3"></i>
-            <h1 class="text-2xl font-bold">{{ config('app.name', 'HARDWARE STORE') }}</h1>
+            <h1 class="text-2xl font-bold">{{ config('app.name', 'BangunanPro') }}</h1>
             <p class="text-blue-100 text-sm mt-1">Digital Receipt</p>
         </div>
 

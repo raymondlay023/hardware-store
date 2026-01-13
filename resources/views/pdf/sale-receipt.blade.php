@@ -30,7 +30,7 @@
         <!-- Header -->
         <div class="header">
             <h1>BangunanPro</h1>
-            <p>Hardware Store & Building Materials</p>
+            <p>BangunanPro - Sistem ERP Toko Bangunan</p>
             <p>Receipt #{{ str_pad($sale->id, 6, '0', STR_PAD_LEFT) }}</p>
         </div>
 

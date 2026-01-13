@@ -24,76 +24,109 @@ new class extends Component {
                     <a href="{{ route('dashboard') }}" wire:navigate
                         class="flex items-center gap-3 hover:opacity-90 transition">
                         <i class="fas fa-hammer text-2xl"></i>
-                        <span class="text-2xl font-bold">Hardware Store</span>
+                        <span class="text-2xl font-bold">BangunanPro</span>
                     </a>
                 </div>
 
                 <!-- Desktop Navigation Links -->
-                <div class="hidden md:flex md:items-center md:gap-8 md:ms-10">
+                <div class="hidden md:flex md:items-center md:gap-6 md:ms-10">
                     @auth
-                        <!-- Dashboard - Admin & Manager only -->
+                        {{-- Dashboard - Admin & Manager only --}}
                         @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
                             <a href="{{ route('dashboard') }}" wire:navigate
                                 class="hover:text-blue-100 transition flex items-center gap-2 {{ request()->routeIs('dashboard') ? 'border-b-2 border-white pb-1' : '' }}">
-                                <i class="fas fa-chart-line"></i> Dashboard
+                                <i class="fas fa-chart-line"></i> {{ __('Dashboard') }}
                             </a>
                         @endif
 
-                        <!-- Products - Admin & Manager only -->
+                        {{-- Inventory Dropdown - Admin & Manager only --}}
                         @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
-                            <a href="{{ route('products.index') }}" wire:navigate
-                                class="hover:text-blue-100 transition flex items-center gap-2 {{ request()->routeIs('products.*') ? 'border-b-2 border-white pb-1' : '' }}">
-                                <i class="fas fa-box"></i> Products
-                            </a>
+                            <x-nav-dropdown 
+                                :label="__('Inventory')" 
+                                icon="box"
+                                :active="request()->routeIs('products.*', 'inventory.*')">
+                                <x-nav-dropdown-link 
+                                    :href="route('products.index')" 
+                                    :active="request()->routeIs('products.*')"
+                                    icon="box">
+                                    {{ __('Products') }}
+                                </x-nav-dropdown-link>
+                                <x-nav-dropdown-link 
+                                    :href="route('inventory.adjust')" 
+                                    :active="request()->routeIs('inventory.adjust')"
+                                    icon="sliders-h">
+                                    {{ __('Stock Adjustment') }}
+                                </x-nav-dropdown-link>
+                                <x-nav-dropdown-link 
+                                    :href="route('inventory.movements')" 
+                                    :active="request()->routeIs('inventory.movements')"
+                                    icon="history">
+                                    {{ __('Movement History') }}
+                                </x-nav-dropdown-link>
+                            </x-nav-dropdown>
                         @endif
 
-                        <!-- Suppliers - Admin & Manager only -->
+                        {{-- Relationships Dropdown - Admin & Manager only --}}
                         @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
-                            <a href="{{ route('suppliers.index') }}" wire:navigate
-                                class="hover:text-blue-100 transition flex items-center gap-2 {{ request()->routeIs('suppliers.*') ? 'border-b-2 border-white pb-1' : '' }}">
-                                <i class="fas fa-truck"></i> Suppliers
-                            </a>
+                            <x-nav-dropdown 
+                                :label="__('Relationships')" 
+                                icon="handshake"
+                                :active="request()->routeIs('suppliers.*', 'customers.*')">
+                                <x-nav-dropdown-link 
+                                    :href="route('suppliers.index')" 
+                                    :active="request()->routeIs('suppliers.*')"
+                                    icon="truck">
+                                    {{ __('Suppliers') }}
+                                </x-nav-dropdown-link>
+                                <x-nav-dropdown-link 
+                                    :href="route('customers.index')" 
+                                    :active="request()->routeIs('customers.*')"
+                                    icon="users">
+                                    {{ __('Customers') }}
+                                </x-nav-dropdown-link>
+                            </x-nav-dropdown>
                         @endif
 
-                        <!-- Customers - Admin & Manager only -->
-                        @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
-                            <a href="{{ route('customers.index') }}" wire:navigate
-                                class="hover:text-blue-100 transition flex items-center gap-2 {{ request()->routeIs('customers.*') ? 'border-b-2 border-white pb-1' : '' }}">
-                                <i class="fas fa-users"></i> Customers
-                            </a>
-                        @endif
+                        {{-- Transactions Dropdown --}}
+                        <x-nav-dropdown 
+                            :label="__('Transactions')" 
+                            icon="exchange-alt"
+                            :active="request()->routeIs('sales.*', 'purchases.*')">
+                            <x-nav-dropdown-link 
+                                :href="route('sales.index')" 
+                                :active="request()->routeIs('sales.*')"
+                                icon="cash-register">
+                                {{ __('Sales') }}
+                            </x-nav-dropdown-link>
+                            @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
+                                <x-nav-dropdown-link 
+                                    :href="route('purchases.index')" 
+                                    :active="request()->routeIs('purchases.*')"
+                                    icon="shopping-cart">
+                                    {{ __('Purchases') }}
+                                </x-nav-dropdown-link>
+                            @endif
+                        </x-nav-dropdown>
 
-                        <!-- Reports - Admin & Manager only -->
+                        {{-- Reports Dropdown - Admin & Manager only --}}
                         @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
-                            <a href="{{ route('reports.index') }}" wire:navigate
-                                class="hover:text-blue-100 transition flex items-center gap-2 {{ request()->routeIs('reports.*') ? 'border-b-2 border-white pb-1' : '' }}">
-                                <i class="fas fa-chart-bar"></i> Reports
-                            </a>
-                        @endif
-
-                        <!-- Purchases - Admin & Manager only -->
-                        @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
-                            <a href="{{ route('purchases.index') }}" wire:navigate
-                                class="hover:text-blue-100 transition flex items-center gap-2 {{ request()->routeIs('purchases.*') ? 'border-b-2 border-white pb-1' : '' }}">
-                                <i class="fas fa-shopping-cart"></i> Purchases
-                            </a>
-                        @endif
-
-                        <!-- Sales - All roles -->
-                        <a href="{{ route('sales.index') }}" wire:navigate
-                            class="hover:text-blue-100 transition flex items-center gap-2 {{ request()->routeIs('sales.*') ? 'border-b-2 border-white pb-1' : '' }}">
-                            <i class="fas fa-cash-register"></i> Sales
-                        </a>
-
-                        @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
-                            <a href="{{ route('sales-report') }}" @class([
-                                'px-3 py-2 rounded-md text-sm font-medium',
-                                'bg-blue-700 text-white' => request()->routeIs('sales-report'),
-                                'text-gray-300 hover:bg-blue-700 hover:text-white' => !request()->routeIs(
-                                    'sales-report'),
-                            ])>
-                                <i class="fas fa-chart-line mr-2"></i> Sales Report
-                            </a>
+                            <x-nav-dropdown 
+                                :label="__('Reports')" 
+                                icon="chart-bar"
+                                :active="request()->routeIs('reports.*', 'sales-report')">
+                                <x-nav-dropdown-link 
+                                    :href="route('sales-report')" 
+                                    :active="request()->routeIs('sales-report')"
+                                    icon="chart-line">
+                                    {{ __('Sales Report') }}
+                                </x-nav-dropdown-link>
+                                <x-nav-dropdown-link 
+                                    :href="route('reports.index')" 
+                                    :active="request()->routeIs('reports.index')"
+                                    icon="chart-bar">
+                                    {{ __('All Reports') }}
+                                </x-nav-dropdown-link>
+                            </x-nav-dropdown>
                         @endif
 
                     @endauth
@@ -131,7 +164,7 @@ new class extends Component {
 
                             <!-- Profile Link -->
                             <x-dropdown-link :href="route('profile.edit')" wire:navigate>
-                                <i class="fas fa-user-edit me-2"></i> Edit Profile
+                                <i class="fas fa-user-edit me-2"></i> {{ __('Edit Profile') }}
                             </x-dropdown-link>
 
                             <!-- Admin Only: User Management -->
@@ -144,8 +177,7 @@ new class extends Component {
                             <!-- Logout -->
                             <button wire:click="logout" class="w-full text-start border-t border-gray-200" aria-label="Log out from your account">
                                 <x-dropdown-link>
-                                    <i class="fas fa-sign-out-alt me-2 text-red-600"></i> <span class="text-red-600">Log
-                                        Out</span>
+                                    <i class="fas fa-sign-out-alt me-2 text-red-600"></i> <span class="text-red-600">{{ __('Logout') }}</span>
                                 </x-dropdown-link>
                             </button>
                         </x-slot>
@@ -155,7 +187,7 @@ new class extends Component {
                 @guest
                     <a href="{{ route('login') }}"
                         class="bg-white text-blue-600 px-4 py-2 rounded-lg font-semibold hover:bg-blue-50 transition text-sm">
-                        <i class="fas fa-sign-in-alt"></i> Login
+                        <i class="fas fa-sign-in-alt"></i> {{ __('Login') }}
                     </a>
                 @endguest
             </div>
@@ -183,7 +215,7 @@ new class extends Component {
 
                 @guest
                     <a href="{{ route('login') }}" class="text-sm font-semibold">
-                        <i class="fas fa-sign-in-alt"></i> Login
+                        <i class="fas fa-sign-in-alt"></i> {{ __('Login') }}
                     </a>
                 @endguest
             </div>
@@ -198,7 +230,7 @@ new class extends Component {
                 @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
                     <a href="{{ route('dashboard') }}" wire:navigate
                         class="block px-3 py-2 rounded-md hover:bg-blue-500 transition {{ request()->routeIs('dashboard') ? 'bg-blue-500' : '' }}">
-                        <i class="fas fa-chart-line me-2"></i> Dashboard
+                        <i class="fas fa-chart-line me-2"></i> {{ __('Dashboard') }}
                     </a>
                 @endif
 
@@ -206,7 +238,7 @@ new class extends Component {
                 @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
                     <a href="{{ route('products.index') }}" wire:navigate
                         class="block px-3 py-2 rounded-md hover:bg-blue-500 transition {{ request()->routeIs('products.*') ? 'bg-blue-500' : '' }}">
-                        <i class="fas fa-box me-2"></i> Products
+                        <i class="fas fa-box me-2"></i> {{ __('Products') }}
                     </a>
                 @endif
 
@@ -214,7 +246,7 @@ new class extends Component {
                 @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
                     <a href="{{ route('suppliers.index') }}" wire:navigate
                         class="block px-3 py-2 rounded-md hover:bg-blue-500 transition {{ request()->routeIs('suppliers.*') ? 'bg-blue-500' : '' }}">
-                        <i class="fas fa-truck me-2"></i> Suppliers
+                        <i class="fas fa-truck me-2"></i> {{ __('Suppliers') }}
                     </a>
                 @endif
 
@@ -222,14 +254,14 @@ new class extends Component {
                 @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
                     <a href="{{ route('purchases.index') }}" wire:navigate
                         class="block px-3 py-2 rounded-md hover:bg-blue-500 transition {{ request()->routeIs('purchases.*') ? 'bg-blue-500' : '' }}">
-                        <i class="fas fa-shopping-cart me-2"></i> Purchases
+                        <i class="fas fa-shopping-cart me-2"></i> {{ __('Purchases') }}
                     </a>
                 @endif
 
                 <!-- Sales -->
                 <a href="{{ route('sales.index') }}" wire:navigate
                     class="block px-3 py-2 rounded-md hover:bg-blue-500 transition {{ request()->routeIs('sales.*') ? 'bg-blue-500' : '' }}">
-                    <i class="fas fa-cash-register me-2"></i> Sales
+                    <i class="fas fa-cash-register me-2"></i> {{ __('Sales') }}
                 </a>
             </div>
 
@@ -250,7 +282,7 @@ new class extends Component {
                 <div class="mt-3 space-y-1">
                     <a href="{{ route('profile.edit') }}" wire:navigate
                         class="block px-4 py-2 rounded hover:bg-blue-500 transition">
-                        <i class="fas fa-user-edit me-2"></i> Edit Profile
+                        <i class="fas fa-user-edit me-2"></i> {{ __('Edit Profile') }}
                     </a>
 
                     @if (Auth::user()->roles()->where('name', 'admin')->exists())
@@ -262,7 +294,7 @@ new class extends Component {
                     <button wire:click="logout"
                         class="w-full text-start px-4 py-2 rounded hover:bg-blue-500 transition text-red-200"
                         aria-label="Log out from your account">
-                        <i class="fas fa-sign-out-alt me-2"></i> Log Out
+                        <i class="fas fa-sign-out-alt me-2"></i> {{ __('Logout') }}
                     </button>
                 </div>
             </div>

@@ -55,7 +55,7 @@
             <!-- Footer -->
             <footer class="bg-gray-800 text-gray-300 mt-12">
                 <div class="max-w-7xl mx-auto px-4 py-6 text-center">
-                    <p>&copy; 2025 Hardware Store Inventory System. All rights reserved.</p>
+                    <p>&copy; {{ date('Y') }} BangunanPro. All rights reserved.</p>
                 </div>
             </footer>
         </div>

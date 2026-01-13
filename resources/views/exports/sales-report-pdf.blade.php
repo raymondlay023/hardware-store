@@ -97,7 +97,7 @@
 <body>
     <!-- Header -->
     <div class="header">
-        <h1>Hardware Store - Sales Report</h1>
+        <h1>BangunanPro - Laporan Penjualan</h1>
         <p><strong>Date Range:</strong> {{ $dateRange }}</p>
         <p><strong>Generated:</strong> {{ $generatedAt }}</p>
     </div>
@@ -150,7 +150,7 @@
 
     <!-- Footer -->
     <div class="footer">
-        <p>This is an automatically generated report from Hardware Store Inventory System</p>
+        <p>This is an automatically generated report from BangunanPro</p>
     </div>
 </body>
 

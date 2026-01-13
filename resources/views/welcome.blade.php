@@ -63,8 +63,8 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
                 <div>
-                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight">
-                        Kelola Toko Bangunan <span class="text-yellow-300">Lebih Mudah</span>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight" style="text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                        Kelola Toko Bangunan <span class="text-white">Lebih Mudah</span>
                     </h1>
                     <p class="mt-6 text-xl text-blue-100 leading-relaxed">
                         Sistem ERP lengkap untuk toko bangunan. POS, inventaris, pembelian, laporan keuangan, dan notifikasi WhatsApp dalam satu aplikasi.

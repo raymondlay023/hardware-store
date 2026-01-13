@@ -208,7 +208,7 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <h1>{{ config('app.name', 'HARDWARE STORE') }}</h1>
+            <h1>{{ config('app.name', 'BangunanPro') }}</h1>
             <p>SALES INVOICE / RECEIPT</p>
         </div>
 

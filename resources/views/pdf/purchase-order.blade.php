@@ -57,7 +57,7 @@
                     <td style="border: none; padding: 0; vertical-align: top;">
                         <div class="company-info">
                             <h1>BangunanPro</h1>
-                            <p>Hardware Store & Building Materials</p>
+                            <p>BangunanPro - Sistem ERP Toko Bangunan</p>
                             <p>Jl. Contoh No. 123, Jakarta</p>
                             <p>Phone: (021) 123-4567</p>
                         </div>

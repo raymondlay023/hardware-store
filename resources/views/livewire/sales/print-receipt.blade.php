@@ -187,7 +187,7 @@
                 @if ($printFormat === 'pdf')
                     <div class="bg-white border-2 border-gray-300 p-6 rounded-lg max-w-2xl mx-auto">
                         <div class="text-center mb-6">
-                            <h1 class="text-2xl font-bold text-gray-900">{{ config('app.name', 'HARDWARE STORE') }}</h1>
+                            <h1 class="text-2xl font-bold text-gray-900">{{ config('app.name', 'BangunanPro') }}</h1>
                             <p class="text-gray-600 text-sm">INVOICE</p>
                         </div>
 
