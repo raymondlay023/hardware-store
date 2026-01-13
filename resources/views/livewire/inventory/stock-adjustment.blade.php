@@ -5,11 +5,12 @@
         description="Adjust inventory levels with proper documentation"
         icon="fa-sliders-h">
         <x-slot name="actions">
-            <button wire:click="openModal"
-                class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition text-sm font-semibold flex items-center gap-2">
-                <i class="fas fa-plus"></i>
+            <x-app-button 
+                type="primary"
+                icon="plus"
+                wire:click="openModal">
                 New Adjustment
-            </button>
+            </x-app-button>
         </x-slot>
     </x-page-header>
 
@@ -196,14 +197,18 @@
 
                         <!-- Actions -->
                         <div class="flex justify-end gap-3">
-                            <button type="button" wire:click="closeModal"
-                                class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition font-semibold">
+                            <x-app-button 
+                                type="secondary"
+                                wire:click="closeModal">
                                 Cancel
-                            </button>
-                            <button type="submit"
-                                class="px-6 py-2 {{ $adjustmentType === 'add' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700' }} text-white rounded-lg transition font-semibold">
-                                <i class="fas fa-check mr-1"></i> Confirm Adjustment
-                            </button>
+                            </x-app-button>
+                            <x-app-button 
+                                :type="$adjustmentType === 'add' ? 'success' : 'danger'"
+                                icon="check"
+                                type-attr="submit"
+                                class="px-6">
+                                Confirm Adjustment
+                            </x-app-button>
                         </div>
                     </form>
                 </div>

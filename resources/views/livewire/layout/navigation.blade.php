@@ -170,7 +170,7 @@ new class extends Component {
                             <!-- Admin Only: User Management -->
                             @if (Auth::user()->roles()->where('name', 'admin')->exists())
                                 <x-dropdown-link href="#users">
-                                    <i class="fas fa-users me-2"></i> Manage Users
+                                    <i class="fas fa-users me-2"></i> {{ __('Manage Users') }}
                                 </x-dropdown-link>
                             @endif
 
@@ -287,7 +287,7 @@ new class extends Component {
 
                     @if (Auth::user()->roles()->where('name', 'admin')->exists())
                         <a href="#users" class="block px-4 py-2 rounded hover:bg-blue-500 transition">
-                            <i class="fas fa-users me-2"></i> Manage Users
+                            <i class="fas fa-users me-2"></i> {{ __('Manage Users') }}
                         </a>
                     @endif
 

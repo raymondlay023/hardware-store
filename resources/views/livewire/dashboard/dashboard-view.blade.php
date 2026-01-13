@@ -7,24 +7,26 @@
     <!-- Page Header -->
     <x-page-header 
         title="Dashboard" 
-        description="Overview of your hardware store inventory and sales"
+        :description="__('Centralized view of business stats and sales')"
         icon="fa-chart-line">
         <x-slot name="actions">
             <!-- Cache Clear Button (Admin/Manager only) -->
             @if (Auth::user()->roles()->whereIn('name', ['admin', 'manager'])->exists())
-                <button wire:click="clearCache"
-                    class="w-full sm:w-auto px-4 py-2.5 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition text-sm font-semibold flex items-center justify-center gap-2 shadow-sm"
+                <x-app-button 
+                    type="secondary" 
+                    icon="sync-alt"
+                    wire:click="clearCache"
+                    class="w-full sm:w-auto"
                     title="Clear dashboard cache for fresh data">
-                    <i class="fas fa-sync-alt"></i>
-                    <span>Refresh Cache</span>
-                </button>
+                    {{ __('Refresh Cache') }}
+                </x-app-button>
             @endif
         </x-slot>
     </x-page-header>
 
     <!-- Date Range Filter -->
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
-        <div class="flex flex-col lg:flex-row flex-wrap items-start lg:items-center gap-3">
+    <x-app-card no-padding class="mb-6">
+        <div class="flex flex-col lg:flex-row flex-wrap items-start lg:items-center gap-3 p-4">
             <div class="flex items-center gap-2 w-full lg:w-auto">
                 <i class="fas fa-calendar text-gray-400"></i>
                 <span class="text-sm font-semibold text-gray-700">{{ __('Period:') }}</span>
@@ -90,7 +92,7 @@
 
         <!-- Custom Date Picker -->
         @if ($showCustomDatePicker)
-            <div class="mt-4 pt-4 border-t border-gray-200">
+            <div class="mt-4 pt-4 border-t border-gray-200 px-4">
                 <div class="flex flex-col sm:flex-row items-stretch sm:items-end gap-4">
                     <div class="flex-1">
                         <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('From Date') }}</label>
@@ -105,15 +107,18 @@
                     </div>
 
                     <div class="w-full sm:w-auto">
-                        <button wire:click="applyCustomDateRange"
-                            class="w-full px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition">
-                            <i class="fas fa-check mr-2"></i>{{ __('Apply') }}
-                        </button>
+                        <x-app-button 
+                            type="primary" 
+                            icon="check"
+                            wire:click="applyCustomDateRange"
+                            class="w-full">
+                            {{ __('Apply') }}
+                        </x-app-button>
                     </div>
                 </div>
             </div>
         @endif
-    </div>
+    </x-app-card>
 
     <!-- Key Metrics Grid - RESPONSIVE -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-8">
@@ -191,26 +196,26 @@
             class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white p-3 sm:p-4 rounded-lg shadow-sm hover:shadow-md transition text-center group">
             <i
                 class="fas fa-cash-register text-2xl sm:text-3xl mb-1 sm:mb-2 block group-hover:scale-110 transition"></i>
-            <p class="font-semibold text-xs sm:text-sm">New Sale</p>
+            <p class="font-semibold text-xs sm:text-sm">{{ __('New Sale') }}</p>
         </a>
 
         <a href="{{ route('purchases.index') }}"
             class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white p-3 sm:p-4 rounded-lg shadow-sm hover:shadow-md transition text-center group">
             <i
                 class="fas fa-shopping-cart text-2xl sm:text-3xl mb-1 sm:mb-2 block group-hover:scale-110 transition"></i>
-            <p class="font-semibold text-xs sm:text-sm">New Purchase</p>
+            <p class="font-semibold text-xs sm:text-sm">{{ __('New Purchase') }}</p>
         </a>
 
         <a href="{{ route('products.index') }}"
             class="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white p-3 sm:p-4 rounded-lg shadow-sm hover:shadow-md transition text-center group">
             <i class="fas fa-box-open text-2xl sm:text-3xl mb-1 sm:mb-2 block group-hover:scale-110 transition"></i>
-            <p class="font-semibold text-xs sm:text-sm">Manage Inventory</p>
+            <p class="font-semibold text-xs sm:text-sm">{{ __('Manage Inventory') }}</p>
         </a>
 
         <a href="{{ route('sales.index') }}"
             class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white p-3 sm:p-4 rounded-lg shadow-sm hover:shadow-md transition text-center group">
             <i class="fas fa-chart-bar text-2xl sm:text-3xl mb-1 sm:mb-2 block group-hover:scale-110 transition"></i>
-            <p class="font-semibold text-xs sm:text-sm">View Reports</p>
+            <p class="font-semibold text-xs sm:text-sm">{{ __('View Reports') }}</p>
         </a>
     </div>
 
@@ -318,14 +323,12 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 mb-6 sm:mb-8">
         <!-- Low Stock Products -->
         <div class="lg:col-span-2">
-            <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-                <div
-                    class="px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-red-50 to-orange-50 border-b border-gray-200">
-                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 flex items-center gap-2">
-                        <i class="fas fa-exclamation-circle text-orange-500"></i>
-                        {{ __('Low Stock Alert') }}
-                    </h3>
-                </div>
+            <x-app-card 
+                title="Low Stock Alert"
+                icon="exclamation-circle"
+                header-color="warning" 
+                bordered
+                no-padding>
 
                 @if ($lowStockProducts->count() > 0)
                     <div class="divide-y max-h-96 overflow-y-auto">
@@ -347,12 +350,14 @@
                                             {{ $product->current_stock }} {{ $product->unit }}
                                         </span>
 
-                                        <a href="{{ route('purchases.create') }}?product={{ $product->id }}"
-                                            class="px-2 sm:px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded font-semibold transition whitespace-nowrap"
+                                        <x-app-button 
+                                            href="{{ route('purchases.create') }}?product={{ $product->id }}"
+                                            type="primary"
+                                            icon="plus"
+                                            size="sm"
                                             title="Reorder">
-                                            <i class="fas fa-plus mr-1"></i><span
-                                                class="hidden sm:inline">{{ __('Reorder') }}</span>
-                                        </a>
+                                            <span class="hidden sm:inline">{{ __('Reorder') }}</span>
+                                        </x-app-button>
                                     </div>
                                 </div>
                             </div>
@@ -364,49 +369,45 @@
                         <p class="text-gray-500 text-sm sm:text-base">{{ __('All products have healthy stock levels') }}</p>
                     </div>
                 @endif
-            </div>
+            </x-app-card>
         </div>
 
         <!-- Pending Purchases -->
         <div>
-            <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-                <div
-                    class="px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-orange-50 to-yellow-50 border-b border-gray-200">
-                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 flex items-center gap-2">
-                        <i class="fas fa-clock text-orange-500"></i>
-                        {{ __('Pending Orders') }}
-                    </h3>
-                </div>
+            <x-app-card 
+                title="Pending Orders"
+                icon="clock"
+                header-color="warning"
+                bordered>
 
-                <div class="p-4 sm:p-6">
-                    <div class="text-center">
+                <div class="text-center">
                         <p class="text-3xl sm:text-4xl font-bold text-orange-600">{{ $pendingPurchases }}</p>
                         <p class="text-xs sm:text-sm text-gray-600 mt-2">{{ __('Purchase orders awaiting receipt') }}</p>
 
                         @if ($pendingPurchases > 0)
-                            <a href="{{ route('purchases.index') }}"
-                                class="inline-block mt-3 sm:mt-4 px-3 sm:px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition text-xs sm:text-sm font-semibold">
+                            <x-app-button 
+                                href="{{ route('purchases.index') }}"
+                                type="warning"
+                                size="sm"
+                                class="mt-3 sm:mt-4">
                                 {{ __('View Orders') }}
-                            </a>
+                            </x-app-button>
                         @endif
-                    </div>
                 </div>
-            </div>
+            </x-app-card>
         </div>
     </div>
 
     <!-- Recent Sales and Top Products - RESPONSIVE -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-6 sm:mb-8">
         <!-- Recent Sales -->
-        <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-            <div
-                class="px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-green-50 to-emerald-50 border-b border-gray-200">
-                <h3 class="text-base sm:text-lg font-semibold text-gray-900 flex flex-wrap items-center gap-2">
-                    <i class="fas fa-receipt text-green-500"></i>
-                    <span>{{ __('Recent Sales') }}</span>
-                    <span class="text-xs sm:text-sm font-normal text-gray-500">({{ $dateRangeLabel }})</span>
-                </h3>
-            </div>
+        <x-app-card 
+            title="Recent Sales"
+            :description="'(' . $dateRangeLabel . ')'"
+            icon="receipt"
+            header-color="success" 
+            bordered
+            no-padding>
 
             @if ($recentSales->count() > 0)
                 <div class="divide-y max-h-80 sm:max-h-96 overflow-y-auto">
@@ -433,17 +434,16 @@
                     <p class="text-gray-500 text-sm sm:text-base">{{ __('No sales in this period') }}</p>
                 </div>
             @endif
-        </div>
+        </x-app-card>
 
         <!-- Top Selling Products -->
-        <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-            <div class="px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-purple-50 to-pink-50 border-b border-gray-200">
-                <h3 class="text-base sm:text-lg font-semibold text-gray-900 flex flex-wrap items-center gap-2">
-                    <i class="fas fa-star text-purple-500"></i>
-                    <span>{{ __('Top Sellers') }}</span>
-                    <span class="text-xs sm:text-sm font-normal text-gray-500">({{ $dateRangeLabel }})</span>
-                </h3>
-            </div>
+        <x-app-card 
+            title="Top Sellers"
+            :description="'(' . $dateRangeLabel . ')'"
+            icon="star"
+            header-color="purple" 
+            bordered
+            no-padding>
 
             @if ($topProducts->count() > 0)
                 <div class="divide-y max-h-80 sm:max-h-96 overflow-y-auto">
@@ -472,7 +472,7 @@
                     <p class="text-gray-500 text-sm sm:text-base">{{ __('No sales data in this period') }}</p>
                 </div>
             @endif
-        </div>
+        </x-app-card>
     </div>
 
     <!-- Recent Activity & Top Customers Row -->

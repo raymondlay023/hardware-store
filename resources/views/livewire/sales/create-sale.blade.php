@@ -38,16 +38,17 @@
                 <div class="lg:col-span-2 space-y-5">
 
                     <!-- Customer Info & Payment Method (Compact Top Section) -->
-                    <div class="bg-white rounded-lg shadow p-5 border-l-4 border-blue-500">
+                    <x-app-card header-color="info" bordered class="mb-5">
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <!-- Customer field with autocomplete -->
                             <div class="relative">
-                                <label class="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                                    <i class="fas fa-user mr-1 text-blue-600"></i>Customer
-                                </label>
-                                <input type="text" wire:model.live.debounce.300ms="customer_name"
+                                <x-form-input 
+                                    name="customer_name"
+                                    label="Customer"
+                                    icon="user"
                                     placeholder="e.g., PT. Maju Jaya"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm text-sm">
+                                    wire:model.live.debounce.300ms="customer_name"
+                                    class="uppercase tracking-wide" />
 
                                 @if (!empty($customerSuggestions))
                                     <div
@@ -61,10 +62,6 @@
                                         @endforeach
                                     </div>
                                 @endif
-
-                                @error('customer_name')
-                                    <span class="text-red-600 text-xs mt-1 block">{{ $message }}</span>
-                                @enderror
                             </div>
 
 
@@ -75,12 +72,14 @@
                                 </label>
                                 <div class="flex gap-1">
                                     <input type="date" wire:model="date"
-                                        class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm text-sm">
-                                    <button type="button" wire:click="setToday"
-                                        class="px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition text-xs font-semibold"
+                                        class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent shadow-sm text-sm">
+                                    <x-app-button 
+                                        type="primary"
+                                        size="sm"
+                                        wire:click="setToday"
                                         title="Set to today">
                                         Today
-                                    </button>
+                                    </x-app-button>
                                 </div>
                                 @error('date')
                                     <span class="text-red-600 text-xs mt-1 block">{{ $message }}</span>
@@ -89,29 +88,28 @@
 
                             <!-- Payment Method - with icons -->
                             <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                                    <i class="fas fa-credit-card mr-1 text-blue-600"></i>Payment
-                                </label>
-                                <select wire:model="payment_method"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm text-sm font-medium">
+                                <x-form-select 
+                                    name="payment_method"
+                                    label="Payment"
+                                    icon="credit-card"
+                                    wire:model="payment_method"
+                                    class="uppercase tracking-wide">
                                     <option value="cash">💵 Cash</option>
                                     <option value="card">💳 Card</option>
                                     <option value="check">✓ Check</option>
                                     <option value="transfer">📱 Transfer</option>
-                                </select>
-                                @error('payment_method')
-                                    <span class="text-red-600 text-xs mt-1 block">{{ $message }}</span>
-                                @enderror
+                                </x-form-select>
                             </div>
                         </div>
-                    </div>
+                    </x-app-card>
 
                     <!-- Product Search Section - ENHANCED -->
-                    <div class="bg-white rounded-lg shadow p-5 border-l-4 border-green-500">
-                        <h3 class="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide">
-                            <i class="fas fa-search text-green-600 mr-2"></i>Add Products
-                        </h3>
-
+                    <x-app-card 
+                        title="Add Products" 
+                        icon="search"
+                        header-color="success" 
+                        bordered
+                        class="mb-5">
                         <div class="space-y-3">
                             <!-- Search Bar with keyboard hint -->
                             <div class="relative group">
@@ -228,20 +226,22 @@
                                 </div>
                             @enderror
                         </div>
-                    </div>
+                    </x-app-card>
 
                     <!-- Cart Items Table - ENHANCED -->
                     @if ($items)
-                        <div class="bg-white rounded-lg shadow overflow-hidden border-l-4 border-purple-500">
-                            <div
-                                class="px-5 py-3 bg-gradient-to-r from-purple-50 to-purple-100 border-b flex items-center justify-between">
-                                <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wide">
-                                    <i class="fas fa-receipt mr-2 text-purple-600"></i>Cart Items
-                                </h3>
+                        <x-app-card 
+                            title="Cart Items" 
+                            icon="shopping-cart"
+                            header-color="purple" 
+                            bordered
+                            no-padding
+                            class="mb-5">
+                            <x-slot name="actions">
                                 <span class="bg-purple-600 text-white text-xs font-bold rounded-full px-3 py-1">
-                                    {{ count($items) }} item{{ count($items) !== 1 ? 's' : '' }}
+                                    {{ count($items) }} items
                                 </span>
-                            </div>
+                            </x-slot>
 
                             <div class="overflow-x-auto">
                                 <table class="w-full text-sm">
@@ -314,7 +314,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </x-app-card>
                     @else
                         <div class="bg-gray-50 rounded-lg p-8 text-center border-2 border-dashed border-gray-300">
                             <i class="fas fa-shopping-cart text-6xl text-gray-300 mb-4 block"></i>
@@ -380,11 +380,12 @@
 
                     <!-- Discount Section - Only show when items exist -->
                     @if ($items)
-                        <div class="bg-white rounded-lg shadow p-5 border-l-4 border-yellow-500">
-                            <h4 class="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide">
-                                <i class="fas fa-tag text-yellow-600 mr-1"></i>Discount
-                            </h4>
-
+                        <x-app-card 
+                            title="Discount" 
+                            icon="tag"
+                            header-color="warning" 
+                            bordered
+                            class="mb-5">
                             <div class="space-y-3">
                                 <!-- Discount Type -->
                                 <div>
@@ -438,17 +439,22 @@
                                     </button>
                                 </div>
                             </div>
-                        </div>
+                        </x-app-card>
 
                         <!-- Notes Section -->
-                        <div class="bg-white rounded-lg shadow p-5 border-l-4 border-blue-500">
+                        
+                        <x-app-card 
+                            title="Notes" 
+                            icon="sticky-note"
+                            header-color="info" 
+                            bordered>
                             <label class="block text-sm font-bold text-gray-900 mb-2 uppercase tracking-wide">
                                 <i class="fas fa-sticky-note text-blue-600 mr-1"></i>Notes
                             </label>
                             <textarea wire:model="notes" placeholder="Add notes... (optional)" rows="3"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none shadow-sm"></textarea>
                             <p class="text-xs text-gray-600 mt-2">Max 500 characters</p>
-                        </div>
+                        </x-app-card>
                     @else
                         <!-- Empty State for Right Column -->
                         <div class="bg-blue-50 rounded-lg p-5 border-l-4 border-blue-500 text-center">

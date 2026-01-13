@@ -11,6 +11,7 @@
 $typeClasses = match($type) {
     'primary' => 'bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white shadow-lg hover:shadow-xl',
     'success' => 'bg-gradient-to-r from-success-500 to-success-600 hover:from-success-600 hover:to-success-700 text-white shadow-lg hover:shadow-xl',
+    'warning' => 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-lg hover:shadow-xl',
     'danger' => 'bg-red-600 hover:bg-red-700 text-white shadow-sm hover:shadow',
     'secondary' => 'bg-gray-200 hover:bg-gray-300 text-gray-700 shadow-sm',
     'ghost' => 'bg-transparent hover:bg-gray-100 text-gray-700',

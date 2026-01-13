@@ -2,21 +2,18 @@
     <form wire:submit="save" class="space-y-5">
         <!-- Supplier and Date -->
         <div class="grid grid-cols-2 gap-4">
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                    <i class="fas fa-truck mr-2 text-orange-600"></i>Supplier <span class="text-red-500">*</span>
-                </label>
-                <select wire:model="supplier_id"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent shadow-sm">
+        <div>
+                <x-form-select
+                    name="supplier_id"
+                    label="Supplier"
+                    icon="truck"
+                    required
+                    wire:model="supplier_id">
                     <option value="">Select supplier</option>
                     @foreach ($suppliers as $supplier)
                         <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
                     @endforeach
-                </select>
-                @error('supplier_id')
-                    <span class="text-red-600 text-sm mt-1 block"><i
-                            class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</span>
-                @enderror
+                </x-form-select>
             </div>
 
             <div>
@@ -24,7 +21,7 @@
                     <i class="fas fa-calendar mr-2 text-orange-600"></i>Date <span class="text-red-500">*</span>
                 </label>
                 <input type="date" wire:model="date"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent shadow-sm">
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent shadow-sm">
                 @error('date')
                     <span class="text-red-600 text-sm mt-1 block"><i
                             class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</span>
@@ -81,10 +78,13 @@
                     </div>
                 </div>
 
-                <button type="button" wire:click="addItem"
-                    class="w-full bg-orange-100 text-orange-700 px-4 py-2 rounded-lg hover:bg-orange-200 transition font-semibold">
-                    <i class="fas fa-plus mr-2"></i> Add Item
-                </button>
+                <x-app-button 
+                    type="warning"
+                    icon="plus"
+                    wire:click="addItem"
+                    class="w-full">
+                    Add Item
+                </x-app-button>
 
                 @error('items')
                     <span class="text-red-600 text-sm block"><i
@@ -137,14 +137,20 @@
 
         <!-- Buttons -->
         <div class="flex gap-3 pt-4">
-            <button type="submit"
-                class="flex-1 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-2 rounded-lg hover:from-orange-600 hover:to-orange-700 transition font-semibold flex items-center justify-center gap-2 shadow">
-                <i class="fas fa-save"></i> Create Purchase Order
-            </button>
-            <button type="button" wire:click="cancel"
-                class="flex-1 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition font-semibold flex items-center justify-center gap-2">
-                <i class="fas fa-times"></i> Cancel
-            </button>
+            <x-app-button 
+                type="warning"
+                icon="save"
+                type-attr="submit"
+                class="flex-1">
+                Create Purchase Order
+            </x-app-button>
+            <x-app-button 
+                type="secondary"
+                icon="times"
+                wire:click="cancel"
+                class="flex-1">
+                Cancel
+            </x-app-button>
         </div>
     </form>
 </div>
