@@ -101,7 +101,7 @@ class WhatsAppService
     /**
      * Build sale receipt message
      */
-    protected function buildSaleReceiptMessage(Sale $sale): string
+    public function buildSaleReceiptMessage(Sale $sale): string
     {
         $storeName = config('app.name', 'BangunanPro');
         $items = '';
@@ -145,7 +145,7 @@ class WhatsAppService
     /**
      * Build low stock alert message
      */
-    protected function buildLowStockMessage(Product $product): string
+    public function buildLowStockMessage(Product $product): string
     {
         $message = "⚠️ *Peringatan Stok Rendah*\n\n";
         $message .= "Produk: *{$product->name}*\n";
@@ -159,7 +159,7 @@ class WhatsAppService
     /**
      * Format phone number for Indonesian format
      */
-    protected function formatPhoneNumber(string $phone): string
+    public function formatPhoneNumber(string $phone): string
     {
         // Remove any non-digit characters
         $phone = preg_replace('/[^0-9]/', '', $phone);
