@@ -109,7 +109,7 @@
                         icon="search"
                         header-color="success" 
                         bordered
-                        class="mb-5">
+                        class="mb-5 !overflow-visible">
                         <div class="space-y-3">
                             <!-- Search Bar with keyboard hint -->
                             <div class="relative group">
@@ -133,7 +133,7 @@
                                 <!-- Product Suggestions - Enhanced with categories -->
                                 @if (!$selectedProduct && $showProductSearch && $products)
                                     <div
-                                        class="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-gray-300 rounded-lg shadow-2xl z-20 max-h-80 overflow-y-auto">
+                                        class="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-gray-300 rounded-lg shadow-2xl z-50 max-h-80 overflow-y-auto">
                                         <div
                                             class="sticky top-0 bg-gray-50 px-4 py-2 border-b text-xs font-semibold text-gray-600">
                                             {{ count($products) }} result{{ count($products) !== 1 ? 's' : '' }} found
@@ -168,7 +168,7 @@
                                     </div>
                                 @elseif (!$selectedProduct && $showProductSearch && strlen($productSearch) >= 1 && !$products)
                                     <div
-                                        class="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-gray-300 rounded-lg shadow-2xl z-20 p-4 text-center">
+                                        class="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-gray-300 rounded-lg shadow-2xl z-50 p-4 text-center">
                                         <i class="fas fa-inbox text-3xl text-gray-300 mb-2 block"></i>
                                         <p class="text-gray-600 text-sm font-medium">No products found</p>
                                         <p class="text-gray-500 text-xs">Try searching with different keywords</p>
