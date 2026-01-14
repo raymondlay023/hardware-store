@@ -13,8 +13,6 @@ return new class extends Migration
     {
         Schema::table('products', function (Blueprint $table) {
             $table->foreignId('category_id')->nullable()->after('brand')->constrained()->nullOnDelete();
-            // Keep category string temporarily for migration
-            $table->string('category')->nullable()->change();
         });
     }
 
@@ -26,7 +24,6 @@ return new class extends Migration
         Schema::table('products', function (Blueprint $table) {
             $table->dropForeign(['category_id']);
             $table->dropColumn('category_id');
-            $table->string('category')->change();
         });
     }
 };

@@ -156,68 +156,134 @@
     <section id="harga" class="py-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-3xl mx-auto">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Harga Transparan</h2>
-                <p class="mt-4 text-xl text-gray-600">Pilih paket sesuai kebutuhan bisnis Anda</p>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Pilih Paket yang Sesuai</h2>
+                <p class="mt-4 text-xl text-gray-600">Mulai gratis, upgrade kapan saja</p>
+                <p class="mt-2 text-sm text-primary-600 font-semibold">💰 Hemat 17% dengan paket tahunan</p>
             </div>
             
-            <div class="mt-16 grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <div class="mt-16 grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
                 <!-- Free Plan -->
-                <div class="bg-white border-2 border-gray-200 rounded-2xl p-8 hover:border-primary-300 transition">
-                    <h3 class="text-xl font-bold text-gray-900">Gratis</h3>
+                <div class="bg-white border-2 border-gray-200 rounded-2xl p-6 hover:border-primary-300 transition">
+                    <h3 class="text-lg font-bold text-gray-900">Gratis</h3>
+                    <p class="text-sm text-gray-500 mt-1">Selamanya</p>
                     <div class="mt-4">
-                        <span class="text-4xl font-extrabold">Rp 0</span>
-                        <span class="text-gray-500">/bulan</span>
+                        <span class="text-3xl font-extrabold">Rp 0</span>
                     </div>
-                    <ul class="mt-8 space-y-4 text-gray-600">
-                        <li class="flex items-center gap-3">✓ 1 Pengguna</li>
-                        <li class="flex items-center gap-3">✓ 100 Produk</li>
-                        <li class="flex items-center gap-3">✓ POS Dasar</li>
-                        <li class="flex items-center gap-3 text-gray-400">✗ Laporan</li>
-                        <li class="flex items-center gap-3 text-gray-400">✗ WhatsApp</li>
+                    <ul class="mt-6 space-y-3 text-sm text-gray-600">
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-500">✓</span> 1 Outlet
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-500">✓</span> 100 Produk
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-500">✓</span> 1 User
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-500">✓</span> Laporan Basic
+                        </li>
+                        <li class="flex items-center gap-2 text-gray-400">
+                            <span>✗</span> WhatsApp
+                        </li>
                     </ul>
-                    <a href="{{ route('register') }}" class="mt-8 block text-center py-3 px-6 border-2 border-primary-600 text-primary-600 font-semibold rounded-xl hover:bg-primary-50 transition">
+                    <a href="{{ route('register') }}" class="mt-6 block text-center py-2.5 px-4 border-2 border-primary-600 text-primary-600 font-semibold rounded-lg hover:bg-primary-50 transition text-sm">
                         Mulai Gratis
                     </a>
                 </div>
                 
-                <!-- Business Plan (Featured) -->
-                <div class="bg-primary-600 text-white rounded-2xl p-8 transform md:-translate-y-4 shadow-2xl relative">
-                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-yellow-400 text-yellow-900 text-sm font-bold px-4 py-1 rounded-full">
-                        POPULER
-                    </div>
-                    <h3 class="text-xl font-bold">Usaha</h3>
+                <!-- Starter Plan -->
+                <div class="bg-white border-2 border-gray-200 rounded-2xl p-6 hover:border-primary-300 transition">
+                    <h3 class="text-lg font-bold text-gray-900">Starter</h3>
+                    <p class="text-sm text-gray-500 mt-1">Untuk pemula</p>
                     <div class="mt-4">
-                        <span class="text-4xl font-extrabold">Rp 199rb</span>
-                        <span class="text-blue-200">/bulan</span>
+                        <span class="text-3xl font-extrabold">Rp 199k</span>
+                        <span class="text-sm text-gray-500">/bulan</span>
                     </div>
-                    <ul class="mt-8 space-y-4 text-blue-100">
-                        <li class="flex items-center gap-3">✓ 3 Pengguna</li>
-                        <li class="flex items-center gap-3">✓ 2000 Produk</li>
-                        <li class="flex items-center gap-3">✓ POS + Inventaris</li>
-                        <li class="flex items-center gap-3">✓ Semua Laporan</li>
-                        <li class="flex items-center gap-3">✓ PDF & Export</li>
+                    <p class="text-xs text-gray-500 mt-1">atau Rp 1.99jt/tahun</p>
+                    <ul class="mt-6 space-y-3 text-sm text-gray-600">
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-500">✓</span> Unlimited Produk
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-500">✓</span> 3 Users
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-500">✓</span> Laporan Lengkap
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-500">✓</span> WhatsApp Notif
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-500">✓</span> Email Support
+                        </li>
                     </ul>
-                    <a href="{{ route('register') }}" class="mt-8 block text-center py-3 px-6 bg-white text-primary-600 font-bold rounded-xl hover:bg-blue-50 transition">
-                        Coba 30 Hari
+                    <a href="{{ route('register') }}" class="mt-6 block text-center py-2.5 px-4 border-2 border-primary-600 text-primary-600 font-semibold rounded-lg hover:bg-primary-50 transition text-sm">
+                        Coba 30 Hari Gratis
                     </a>
                 </div>
                 
-                <!-- Pro Plan -->
-                <div class="bg-white border-2 border-gray-200 rounded-2xl p-8 hover:border-primary-300 transition">
-                    <h3 class="text-xl font-bold text-gray-900">Profesional</h3>
-                    <div class="mt-4">
-                        <span class="text-4xl font-extrabold">Rp 399rb</span>
-                        <span class="text-gray-500">/bulan</span>
+                <!-- Business Plan (Featured) -->
+                <div class="bg-primary-600 text-white rounded-2xl p-6 transform md:-translate-y-2 shadow-2xl relative">
+                    <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full">
+                        ⭐ PALING POPULER
                     </div>
-                    <ul class="mt-8 space-y-4 text-gray-600">
-                        <li class="flex items-center gap-3">✓ 10 Pengguna</li>
-                        <li class="flex items-center gap-3">✓ Unlimited Produk</li>
-                        <li class="flex items-center gap-3">✓ Semua Fitur Usaha</li>
-                        <li class="flex items-center gap-3">✓ WhatsApp Otomatis</li>
-                        <li class="flex items-center gap-3">✓ Support Prioritas</li>
+                    <h3 class="text-lg font-bold mt-2">Business</h3>
+                    <p class="text-sm text-blue-100 mt-1">Paling laris</p>
+                    <div class="mt-4">
+                        <span class="text-3xl font-extrabold">Rp 349k</span>
+                        <span class="text-sm text-blue-200">/bulan</span>
+                    </div>
+                    <p class="text-xs text-blue-200 mt-1">atau Rp 3.49jt/tahun</p>
+                    <ul class="mt-6 space-y-3 text-sm text-blue-50">
+                        <li class="flex items-center gap-2">
+                            <span class="text-yellow-300">✓</span> Semua di Starter
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-yellow-300">✓</span> 10 Users
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-yellow-300">✓</span> Laporan Keuangan
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-yellow-300">✓</span> Riwayat Harga
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-yellow-300">✓</span> Activity Logs
+                        </li>
                     </ul>
-                    <a href="{{ route('register') }}" class="mt-8 block text-center py-3 px-6 border-2 border-primary-600 text-primary-600 font-semibold rounded-xl hover:bg-primary-50 transition">
-                        Coba 30 Hari
+                    <a href="{{ route('register') }}" class="mt-6 block text-center py-2.5 px-4 bg-white text-primary-600 font-bold rounded-lg hover:bg-blue-50 transition text-sm">
+                        Coba 30 Hari Gratis
+                    </a>
+                </div>
+                
+                <!-- Professional Plan -->
+                <div class="bg-white border-2 border-gray-200 rounded-2xl p-6 hover:border-primary-300 transition">
+                    <h3 class="text-lg font-bold text-gray-900">Professional</h3>
+                    <p class="text-sm text-gray-500 mt-1">Untuk bisnis besar</p>
+                    <div class="mt-4">
+                        <span class="text-3xl font-extrabold">Rp 599k</span>
+                        <span class="text-sm text-gray-500">/bulan</span>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">atau Rp 5.99jt/tahun</p>
+                    <ul class="mt-6 space-y-3 text-sm text-gray-600">
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-500">✓</span> Semua di Business
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-500">✓</span> Unlimited Users
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-500">✓</span> API Access
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-500">✓</span> Priority Support
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-500">✓</span> Training & Setup
+                        </li>
+                    </ul>
+                    <a href="#kontak" class="mt-6 block text-center py-2.5 px-4 border-2 border-primary-600 text-primary-600 font-semibold rounded-lg hover:bg-primary-50 transition text-sm">
+                        Hubungi Sales
                     </a>
                 </div>
             </div>
