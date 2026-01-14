@@ -167,12 +167,7 @@ new class extends Component {
                                 <i class="fas fa-user-edit me-2"></i> {{ __('Edit Profile') }}
                             </x-dropdown-link>
 
-                            <!-- Admin Only: User Management -->
-                            @if (Auth::user()->roles()->where('name', 'admin')->exists())
-                                <x-dropdown-link href="#users">
-                                    <i class="fas fa-users me-2"></i> {{ __('Manage Users') }}
-                                </x-dropdown-link>
-                            @endif
+
 
                             <!-- Logout -->
                             <button wire:click="logout" class="w-full text-start border-t border-gray-200" aria-label="Log out from your account">
@@ -285,11 +280,7 @@ new class extends Component {
                         <i class="fas fa-user-edit me-2"></i> {{ __('Edit Profile') }}
                     </a>
 
-                    @if (Auth::user()->roles()->where('name', 'admin')->exists())
-                        <a href="#users" class="block px-4 py-2 rounded hover:bg-blue-500 transition">
-                            <i class="fas fa-users me-2"></i> {{ __('Manage Users') }}
-                        </a>
-                    @endif
+
 
                     <button wire:click="logout"
                         class="w-full text-start px-4 py-2 rounded hover:bg-blue-500 transition text-red-200"
