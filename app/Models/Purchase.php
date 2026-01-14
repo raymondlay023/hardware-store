@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use App\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Purchase extends Model
 {
-    use LogsActivity;
+    use HasFactory, LogsActivity;
+    
     protected $fillable = ['supplier_id', 'total_amount', 'date', 'status'];
 
     protected $casts = [

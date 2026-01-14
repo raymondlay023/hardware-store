@@ -16,6 +16,8 @@ class StockMovement extends Model
         'notes',
     ];
 
+    protected $appends = ['reason']; // Add reason to JSON output
+
     public function product()
     {
         return $this->belongsTo(Product::class);
@@ -26,8 +28,38 @@ class StockMovement extends Model
         return $this->morphTo();
     }
 
+    // Alias for polymorphic relationship (backward compatibility)
+    public function referenceable()
+    {
+        return $this->morphTo('reference');
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    // Accessor for 'reason' (maps to 'notes')
+    public function getReasonAttribute()
+    {
+        return $this->notes;
+    }
+
+    // Mutator for 'reason' (maps to 'notes')
+    public function setReasonAttribute($value)
+    {
+        $this->attributes['notes'] = $value;
+    }
+
+    // Accessor for 'referenceable_type' (backward compatibility)
+    public function getReferenceableTypeAttribute()
+    {
+        return $this->reference_type;
+    }
+
+    // Accessor for 'referenceable_id' (backward compatibility)
+    public function getReferenceableIdAttribute()
+    {
+        return $this->reference_id;
     }
 }

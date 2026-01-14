@@ -67,7 +67,8 @@ class PurchaseService
                     $item->quantity,
                     'purchase',
                     "Purchase #{$purchase->id} received",
-                    $purchase
+                    $purchase,
+                    auth()->id() // Added userId parameter
                 );
             }
 
@@ -90,7 +91,7 @@ class PurchaseService
         return $purchase->purchaseItems()->create([
             'product_id' => $item['product_id'],
             'quantity' => $item['quantity'],
-            'unit_price' => $item['unit_price'],
+            'unit_cost' => $item['unit_cost'], // Changed from unit_price to unit_cost
         ]);
     }
 
@@ -103,7 +104,7 @@ class PurchaseService
     protected function calculateTotal(array $items): float
     {
         return collect($items)->sum(function ($item) {
-            return $item['unit_price'] * $item['quantity'];
+            return $item['unit_cost'] * $item['quantity']; // Changed from unit_price to unit_cost
         });
     }
 

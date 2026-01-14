@@ -69,16 +69,19 @@ class Product extends Model
      * Adjust stock and log movement.
      *
      * @param int $quantity Change in quantity (positive or negative)
-     * @param string $type Type of movement (purchase, sale, adjustment, return)
-     * @param string|null $notes
+     * @param string $type Type of movement (purchase, sale, adjustment_in, adjustment_out, etc.)
+     * @param string|null $reason Reason for adjustment (maps to 'notes' in database)
      * @param Model|null $reference Reference model (Sale, Purchase)
+     * @param int|null $userId User ID who performed the adjustment
      * @return StockMovement
      * @throws Exception
      */
-    public function adjustStock(int $quantity, string $type, ?string $notes = null, ?Model $reference = null)
+    public function adjustStock(int $quantity, string $type, ?string $reason = null, ?Model $reference = null, ?int $userId = null)
     {
-        // Prevent negative stock if critical? For now allow, but maybe warn.
-        // Or strictly strictly allow negative?
+        // Prevent negative stock
+        if ($this->current_stock + $quantity < 0) {
+            throw new Exception("Cannot reduce stock below zero. Current stock: {$this->current_stock}, Attempted change: {$quantity}");
+        }
         
         $this->current_stock += $quantity;
         $this->save();
@@ -89,8 +92,8 @@ class Product extends Model
             'type' => $type,
             'reference_type' => $reference ? get_class($reference) : null,
             'reference_id' => $reference ? $reference->getKey() : null,
-            'user_id' => Auth::id() ?? 1, // Fallback for seeds/tests
-            'notes' => $notes,
+            'user_id' => $userId ?? Auth::id() ?? 1, // Use provided userId, fallback to auth, then to 1 for tests
+            'notes' => $reason, // Map 'reason' parameter to 'notes' column
         ]);
     }
 
