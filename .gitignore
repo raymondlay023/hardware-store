@@ -3,6 +3,8 @@
 .env
 .env.backup
 .env.production
+.env.staging
+.env.local
 .phpactor.json
 .phpunit.result.cache
 /.fleet
@@ -22,3 +24,12 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+npm-debug.log
+yarn-error.log
+composer.lock.bak
+package-lock.json.bak
+.phpunit.cache
+_ide_helper.php
+_ide_helper_models.php
+.phpstorm.meta.php
+
