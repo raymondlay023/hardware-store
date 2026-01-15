@@ -32,4 +32,6 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->route('dashboard')
                 ->with('error', 'You do not have permission to access that page.');
         });
+
+        \Spatie\LaravelFlare\Facades\Flare::handles($exceptions);
     })->create();

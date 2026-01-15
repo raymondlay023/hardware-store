@@ -98,6 +98,13 @@ Route::get('/receipt/{sale}/{token}', function(\App\Models\Sale $sale, $token) {
 
 Route::view('/', 'welcome');
 
+Route::controller(\App\Http\Controllers\LegalController::class)->group(function () {
+    Route::get('/privacy-policy', 'privacy')->name('legal.privacy');
+    Route::get('/terms-of-service', 'terms')->name('legal.terms');
+    Route::get('/faq', 'faq')->name('support.faq');
+    Route::get('/manual', 'manual')->name('support.manual');
+});
+
 Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile.edit');

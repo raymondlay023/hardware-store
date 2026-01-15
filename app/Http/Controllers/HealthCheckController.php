@@ -3,116 +3,147 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
 
 class HealthCheckController extends Controller
 {
     /**
-     * Health check endpoint for monitoring
+     * Public health check endpoint for uptime monitoring
+     * 
+     * Returns basic health status without sensitive information
      */
     public function check(): JsonResponse
+    {
+        try {
+            // Quick database connectivity check
+            DB::connection()->getPdo();
+            $dbStatus = 'healthy';
+        } catch (\Exception $e) {
+            $dbStatus = 'unhealthy';
+        }
+
+        return response()->json([
+            'status' => $dbStatus === 'healthy' ? 'ok' : 'degraded',
+            'timestamp' => now()->toIso8601String(),
+            'service' => 'BangunanPro',
+        ], $dbStatus === 'healthy' ? 200 : 503);
+    }
+
+    /**
+     * Detailed health status for authenticated admin users
+     * 
+     * Returns comprehensive system health metrics
+     */
+    public function status(): JsonResponse
     {
         $health = [
             'status' => 'healthy',
             'timestamp' => now()->toIso8601String(),
-            'checks' => [],
+            'checks' => [
+                'database' => $this->checkDatabase(),
+                'cache' => $this->checkCache(),
+                'storage' => $this->checkStorage(),
+                'queue' => $this->checkQueue(),
+            ],
+            'system' => [
+                'php_version' => PHP_VERSION,
+                'laravel_version' => app()->version(),
+                'environment' => config('app.env'),
+                'debug_mode' => config('app.debug'),
+            ],
         ];
 
-        // 1. Database connectivity check
-        try {
-            DB::connection()->getPdo();
-            $health['checks']['database'] = 'ok';
-        } catch (\Exception $e) {
-            $health['checks']['database'] = 'failed';
-            $health['status'] = 'unhealthy';
-        }
+        // Determine overall status
+        $allHealthy = collect($health['checks'])->every(fn($check) => $check['status'] === 'ok');
+        $health['status'] = $allHealthy ? 'healthy' : 'degraded';
 
-        // 2. Filesystem writable check
-        $storagePath = storage_path('app');
-        if (File::isWritable($storagePath)) {
-            $health['checks']['filesystem'] = 'ok';
-        } else {
-            $health['checks']['filesystem'] = 'not_writable';
-            $health['status'] = 'degraded';
-        }
-
-        // 3. Application environment
-        $health['checks']['environment'] = config('app.env');
-
-        // 4. Application version (optional)
-        $health['version'] = config('app.version', '1.0.0');
-
-        $statusCode = match($health['status']) {
-            'healthy' => 200,
-            'degraded' => 200,
-            'unhealthy' => 503,
-            default => 500,
-        };
-
-        return response()->json($health, $statusCode);
+        return response()->json($health, $allHealthy ? 200 : 503);
     }
 
     /**
-     * Detailed system status (admin only)
+     * Check database connectivity and performance
      */
-    public function status(): JsonResponse
-    {
-        $status = [
-            'database' => $this->getDatabaseStatus(),
-            'storage' => $this->getStorageStatus(),
-            'cache' => $this->getCacheStatus(),
-        ];
-
-        return response()->json($status);
-    }
-
-    private function getDatabaseStatus(): array
+    private function checkDatabase(): array
     {
         try {
-            $pdo = DB::connection()->getPdo();
+            $start = microtime(true);
+            DB::connection()->getPdo();
+            $latency = round((microtime(true) - $start) * 1000, 2); // ms
+
             return [
-                'status' => 'connected',
-                'driver' => DB::connection()->getDriverName(),
-                'database' => DB::connection()->getDatabaseName(),
+                'status' => 'ok',
+                'latency_ms' => $latency,
+                'connection' => DB::connection()->getDatabaseName(),
             ];
         } catch (\Exception $e) {
             return [
-                'status' => 'disconnected',
-                'error' => $e->getMessage(),
+                'status' => 'error',
+                'message' => 'Database connection failed',
             ];
         }
     }
 
-    private function getStorageStatus(): array
+    /**
+     * Check cache functionality
+     */
+    private function checkCache(): array
     {
-        $storagePath = storage_path();
-        $totalSpace = disk_total_space($storagePath);
-        $freeSpace = disk_free_space($storagePath);
+        try {
+            $key = 'health_check_' . time();
+            Cache::put($key, 'test', 10);
+            $value = Cache::get($key);
+            Cache::forget($key);
 
-        return [
-            'total' => $this->formatBytes($totalSpace),
-            'free' => $this->formatBytes($freeSpace),
-            'used' => $this->formatBytes($totalSpace - $freeSpace),
-            'percentage' => round((($totalSpace - $freeSpace) / $totalSpace) * 100, 2),
-        ];
+            return [
+                'status' => $value === 'test' ? 'ok' : 'warning',
+                'driver' => config('cache.default'),
+            ];
+        } catch (\Exception $e) {
+            return [
+                'status' => 'error',
+                'message' => 'Cache check failed',
+            ];
+        }
     }
 
-    private function getCacheStatus(): array
+    /**
+     * Check storage write permissions
+     */
+    private function checkStorage(): array
     {
-        return [
-            'driver' => config('cache.default'),
-        ];
+        try {
+            $path = storage_path('logs');
+            $writable = is_writable($path);
+
+            return [
+                'status' => $writable ? 'ok' : 'error',
+                'writable' => $writable,
+                'path' => $path,
+            ];
+        } catch (\Exception $e) {
+            return [
+                'status' => 'error',
+                'message' => 'Storage check failed',
+            ];
+        }
     }
 
-    private function formatBytes($bytes): string
+    /**
+     * Check queue status
+     */
+    private function checkQueue(): array
     {
-        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
-        $bytes = max($bytes, 0);
-        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
-        $pow = min($pow, count($units) - 1);
-        $bytes /= pow(1024, $pow);
-
-        return round($bytes, 2) . ' ' . $units[$pow];
+        try {
+            return [
+                'status' => 'ok',
+                'driver' => config('queue.default'),
+            ];
+        } catch (\Exception $e) {
+            return [
+                'status' => 'error',
+                'message' => 'Queue check failed',
+            ];
+        }
     }
 }

@@ -1,0 +1,51 @@
+# This workflow will be used when you have a production server
+# Uncomment and configure when ready to deploy
+
+# name: Deploy to Production
+#
+# on:
+#   push:
+#     branches: [ main ]
+#   workflow_dispatch:
+#
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     if: github.ref == 'refs/heads/main'
+#
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
+#
+#       - name: Setup PHP
+#         uses: shivammathur/setup-php@v2
+#         with:
+#           php-version: '8.2'
+#
+#       - name: Install Composer dependencies
+#         run: composer install --prefer-dist --no-progress --no-interaction --no-dev --optimize-autoloader
+#
+#       - name: Deploy to server
+#         uses: appleboy/ssh-action@master
+#         with:
+#           host: ${{ secrets.SERVER_HOST }}
+#           username: ${{ secrets.SERVER_USER }}
+#           key: ${{ secrets.SERVER_SSH_KEY }}
+#           script: |
+#             cd /var/www/bangunanpro
+#             git pull origin main
+#             ./deploy.sh
+#
+#       - name: Notify on success
+#         if: success()
+#         run: echo "Deployment successful!"
+#
+#       - name: Notify on failure
+#         if: failure()
+#         run: echo "Deployment failed!"
+#         # Add Slack/Discord notification here
+
+# Required GitHub Secrets:
+# - SERVER_HOST: Your server IP address
+# - SERVER_USER: SSH username
+# - SERVER_SSH_KEY: Private SSH key for authentication
