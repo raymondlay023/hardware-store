@@ -8,13 +8,42 @@ services:
     restart: unless-stopped
     working_dir: /var/www/html
     volumes:
-      - ./:/var/www/html
+      # Use delegated for better performance on Windows
+      - ./:/var/www/html:delegated
       - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+      # Cache composer and npm for speed
+      - composer_cache:/root/.composer
+      - npm_cache:/root/.npm
+    environment:
+      - PHP_OPCACHE_ENABLE=0
+      - COMPOSER_MEMORY_LIMIT=-1
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-redis_dev_password}
     networks:
       - bangunanpro
     depends_on:
-      - mysql
-      - redis
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "php", "-v"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # Web server
   nginx:
@@ -22,14 +51,34 @@ services:
     container_name: bangunanpro_nginx
     restart: unless-stopped
     ports:
-      - "8000:80"
+      - "${NGINX_PORT:-8000}:80"
     volumes:
       - ./:/var/www/html
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
     networks:
       - bangunanpro
     depends_on:
-      - app
+      app:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # MySQL database
   mysql:
@@ -37,16 +86,37 @@ services:
     container_name: bangunanpro_mysql
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: ${DB_DATABASE:-bangunanpro}
+      MYSQL_DATABASE: ${DB_DATABASE:-bangunan_pro}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-secret}
       MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
       MYSQL_USER: ${DB_USERNAME:-bangunan}
+      MYSQL_ALLOW_EMPTY_PASSWORD: 0
     ports:
-      - "3306:3306"
+      - "${DB_PORT:-3307}:3306"  # Changed to 3307 to avoid XAMPP conflict
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
       - bangunanpro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "--silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    command: --default-authentication-plugin=mysql_native_password --max_connections=200
 
   # Redis cache
   redis:
@@ -54,9 +124,31 @@ services:
     container_name: bangunanpro_redis
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT:-6379}:6379"
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis_dev_password}
+    volumes:
+      - redis_data:/data
     networks:
       - bangunanpro
+    healthcheck:
+      test: ["CMD", "sh", "-c", "redis-cli -a $${REDIS_PASSWORD:-redis_dev_password} ping 2>/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # Queue worker
   queue:
@@ -68,12 +160,35 @@ services:
     command: php artisan queue:work --tries=3 --max-time=3600
     working_dir: /var/www/html
     volumes:
-      - ./:/var/www/html
+      - ./:/var/www/html:delegated
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-redis_dev_password}
     networks:
       - bangunanpro
     depends_on:
-      - mysql
-      - redis
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "ps", "aux", "|", "grep", "[q]ueue:work"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # Scheduler (cron)
   scheduler:
@@ -89,12 +204,35 @@ services:
       done"
     working_dir: /var/www/html
     volumes:
-      - ./:/var/www/html
+      - ./:/var/www/html:delegated
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-redis_dev_password}
     networks:
       - bangunanpro
     depends_on:
-      - mysql
-      - redis
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "schedule:run"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 networks:
   bangunanpro:
@@ -102,4 +240,10 @@ networks:
 
 volumes:
   mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+  composer_cache:
+    driver: local
+  npm_cache:
     driver: local

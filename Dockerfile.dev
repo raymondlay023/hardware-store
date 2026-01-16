@@ -11,15 +11,35 @@ RUN apk add --no-cache \
     freetype-dev \
     libjpeg-turbo-dev \
     libwebp-dev \
+    libxml2-dev \
+    oniguruma-dev \
     zip \
     unzip \
     mysql-client \
     nodejs \
     npm
 
-# Install PHP extensions
+# Install PHP extensions (curl comes pre-installed in php-fpm-alpine)
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-install pdo pdo_mysql zip gd bcmath
+    && docker-php-ext-install \
+        pdo \
+        pdo_mysql \
+        zip \
+        gd \
+        bcmath \
+        mbstring \
+        xml \
+        dom \
+        exif
+
+# Install Redis extension via PECL (need build tools)
+RUN apk add --no-cache --virtual .build-deps \
+        autoconf \
+        g++ \
+        make \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
+    && apk del .build-deps
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

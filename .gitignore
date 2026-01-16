@@ -33,3 +33,6 @@ _ide_helper.php
 _ide_helper_models.php
 .phpstorm.meta.php
 
+
+# Docker environment file (use .env.docker.example as template)
+.env.docker
