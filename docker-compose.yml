@@ -17,7 +17,7 @@ services:
     environment:
       - PHP_OPCACHE_ENABLE=0
       - COMPOSER_MEMORY_LIMIT=-1
-      - REDIS_PASSWORD=${REDIS_PASSWORD:-redis_dev_password}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-redis_dev_secure_2026}
     networks:
       - bangunanpro
     depends_on:
@@ -88,8 +88,6 @@ services:
     environment:
       MYSQL_DATABASE: ${DB_DATABASE:-bangunan_pro}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-secret}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
-      MYSQL_USER: ${DB_USERNAME:-bangunan}
       MYSQL_ALLOW_EMPTY_PASSWORD: 0
     ports:
       - "${DB_PORT:-3307}:3306"  # Changed to 3307 to avoid XAMPP conflict
@@ -125,13 +123,13 @@ services:
     restart: unless-stopped
     ports:
       - "${REDIS_PORT:-6379}:6379"
-    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis_dev_password}
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis_dev_secure_2026}
     volumes:
       - redis_data:/data
     networks:
       - bangunanpro
     healthcheck:
-      test: ["CMD", "sh", "-c", "redis-cli -a $${REDIS_PASSWORD:-redis_dev_password} ping 2>/dev/null || exit 1"]
+      test: ["CMD", "sh", "-c", "redis-cli -a $${REDIS_PASSWORD:-redis_dev_secure_2026} ping 2>/dev/null || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
